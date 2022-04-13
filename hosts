@@ -1,0 +1,38 @@
+[servers]
+server1.novpn ansible_ssh_host=10.0.0.6
+server2.novpn ansible_ssh_host=10.0.0.14
+server3.novpn ansible_ssh_host=10.0.0.4
+
+server1.vpn ansible_ssh_host=mk-server1.local
+server2.vpn ansible_ssh_host=mk-server2.local
+server3.vpn ansible_ssh_host=mk-server3.local
+
+[novpn]
+server1.novpn
+server2.novpn
+server3.novpn
+
+[vpn]
+server1.vpn
+server2.vpn
+server3.vpn
+
+[zabbix]
+server1.vpn
+
+[grafana]
+server1.vpn
+
+[web]
+server2.vpn
+
+[elk]
+server3.vpn
+
+[pg]
+server3.vpn
+
+[beats]
+server1.vpn
+server2.vpn
+
