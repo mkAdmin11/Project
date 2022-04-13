@@ -1,0 +1,17 @@
+---
+- name: openvpn_start
+  systemd:
+    name: openvpn.service
+    enabled: yes
+    state: started
+
+- name: openvpn_restart
+  systemd:
+    name: openvpn.service
+    state: restarted
+
+- name: openvpn_conf_start 
+  systemd:
+    name: openvpn@clientvpn.service
+    enabled: yes
+    state: started

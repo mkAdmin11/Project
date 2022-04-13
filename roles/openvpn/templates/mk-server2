@@ -1,0 +1,27 @@
+client
+dev tun
+proto udp
+remote {{ openvpn_host }} 1194
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+keepalive 10 120
+comp-lzo
+cipher DES-CBC
+
+<ca>
+-----BEGIN CERTIFICATE-----
+{{ ca }}
+-----END CERTIFICATE-----
+</ca>
+<cert>
+-----BEGIN CERTIFICATE-----
+{{ cert_server2 }}
+-----END CERTIFICATE-----
+</cert>
+<key>
+-----BEGIN PRIVATE KEY-----
+{{ key_server2 }}
+-----END PRIVATE KEY-----
+</key>

@@ -1,0 +1,22 @@
+---
+
+- name: openvpn_install
+  apt:
+    name=openvpn
+    state=latest
+  notify:
+    openvpn_start
+
+- name: openvpn_config
+  template:
+    src: "{{ ansible_hostname }}"
+    dest: /etc/openvpn/clientvpn.conf
+    mode: 0644
+  notify:
+    openvpn_restart
+
+- name: openvpn_connect
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  notify:
+    openvpn_conf_start
