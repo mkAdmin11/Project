@@ -1,0 +1,6 @@
+---
+
+- name: zabbix_restart 
+  systemd:
+    name: zabbix-agent.service
+    state: restarted

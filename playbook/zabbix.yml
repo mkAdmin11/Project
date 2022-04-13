@@ -1,0 +1,8 @@
+---
+- hosts: server2.vpn, server3.vpn
+  become:
+    true
+  become_user:
+    root
+  roles:
+  - zabbix

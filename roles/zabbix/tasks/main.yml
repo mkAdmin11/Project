@@ -1,0 +1,14 @@
+---
+
+- name: zabbix_install
+  apt:
+    name=zabbix-agent
+    state=latest
+
+- name: install_config
+  template:
+    src: zabbix_agentd.conf
+    dest: /etc/zabbix/zabbix_agentd.conf
+    mode: 0644
+  notify:
+    zabbix_restart
