@@ -1,7 +1,7 @@
 client
 dev tun
 proto udp
-remote {{ openvpn_host }} 1194
+remote {{ server1.novpn_ip }} 1194
 resolv-retry infinite
 nobind
 persist-key
@@ -12,16 +12,18 @@ cipher DES-CBC
 
 <ca>
 -----BEGIN CERTIFICATE-----
-{{ ca }}
+{{ vpn.ca }}
 -----END CERTIFICATE-----
 </ca>
+
 <cert>
 -----BEGIN CERTIFICATE-----
-{{ cert_server2 }}
+{{ server2.vpn_cert }}
 -----END CERTIFICATE-----
 </cert>
+
 <key>
 -----BEGIN PRIVATE KEY-----
-{{ key_server2 }}
+{{ server2.vpn_key }}
 -----END PRIVATE KEY-----
 </key>

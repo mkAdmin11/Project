@@ -1,0 +1,14 @@
+---
+
+- name: task_config_client
+  template:
+    src: "{{ ansible_hostname }}"
+    dest: /etc/openvpn/clientvpn.conf
+    mode: 0644
+
+- name: task_start_client
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: openvpn@clientvpn.service
+    enabled: yes
+    state: started

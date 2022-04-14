@@ -1,22 +1,20 @@
 ---
 
-- name: openvpn_install
+- name: task_install
   apt:
     name=openvpn
     state=latest
-  notify:
-    openvpn_start
 
-- name: openvpn_config
-  template:
-    src: "{{ ansible_hostname }}"
-    dest: /etc/openvpn/clientvpn.conf
-    mode: 0644
-  notify:
-    openvpn_restart
-
-- name: openvpn_connect
+- name: task_start
   ansible.builtin.systemd:
-    daemon_reload: yes
-  notify:
-    openvpn_conf_start
+    name: openvpn.service
+    enabled: yes
+    state: started
+
+- name: tasks_server
+  import_tasks: server.yml
+  when: ansible_hostname == 'mk-server1'
+
+- name: tasks_client
+  import_tasks: client.yml
+  when: ansible_hostname != 'mk-server1'
