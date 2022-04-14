@@ -13,7 +13,7 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    mode: 0600
   with_items:
   - {src: '{{ ansible_hostname }}',dest: '/etc/openvpn/servervpn.conf'}
   - {src: 'client1vpn',dest: '/etc/openvpn/ccd/client1vpn'}

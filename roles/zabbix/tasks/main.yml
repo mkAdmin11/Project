@@ -1,14 +1,28 @@
 ---
 
-- name: zabbix_install
+- name: tasks_server
+  import_tasks: server.yml
+  when: ansible_hostname == 'mk-server1'
+
+- name: task_install_agent
   apt:
     name=zabbix-agent
     state=latest
 
-- name: install_config
+- name: task_start_agent
+  ansible.builtin.systemd:
+    name: zabbix-agent.service
+    enabled: yes
+    state: started
+
+- name: task_config_agent
   template:
     src: zabbix_agentd.conf
     dest: /etc/zabbix/zabbix_agentd.conf
     mode: 0644
   notify:
-    zabbix_restart
+    handler_restart_agent
+
+- name: tasks_php
+  import_tasks: php.yml
+  when: ansible_hostname == 'mk-server2'

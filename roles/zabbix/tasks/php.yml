@@ -1,0 +1,14 @@
+---
+
+- name: task_install_php
+  apt:
+    name=zabbix-frontend-php
+    state=latest
+
+- name: tasks_config_php
+  template:
+    src: zabbix.conf.php
+    dest: /etc/zabbix/web/zabbix.conf.php 
+    owner: www-data
+    group: www-data
+    mode: 0600      
