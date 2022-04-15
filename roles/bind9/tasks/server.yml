@@ -1,0 +1,35 @@
+---
+
+- name: task_install_server
+  apt:
+    name=bind9
+    state=latest
+
+- name: task_start_server
+  ansible.builtin.systemd:
+    name: named.service 
+    enabled: yes
+    state: started
+
+- name: task_mkdir
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "directory"
+    mode: "{{ item.mode }}"
+  with_items:
+  - {path: '/etc/bind/myzones',mode: '0755'}
+  - {path: '/etc/bind/myzones/{{ domain.second }}',mode: '0755'}
+  - {path: '/etc/bind/myzones/local',mode: '0755'}
+
+- name: task_config_server
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+  - {src: 'local.db',dest: '/etc/bind/myzones/local/local.db'}
+  - {src: 'public.db',dest: '/etc/bind/myzones/{{ domain.second }}/{{ domain.second }}.db'}
+  - {src: 'named.conf.local',dest: '/etc/bind/named.conf.local'}
+  - {src: 'named.conf.options',dest: '/etc/bind/named.conf.options'}
+  notify:
+    handler_reconfig_server
