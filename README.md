@@ -1,17 +1,10 @@
 # Project
-
 - 1 - OpenVPN
-
 ├── hosts
-
 ├── playbook
-
 │   └── openvpn.yml
-
 ├── README.md
-
 ├── roles
-
 │   ├── openvpn
 │       ├── tasks
 │       │   ├── client.yml
