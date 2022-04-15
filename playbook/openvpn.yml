@@ -1,6 +1,6 @@
 ---
 
-- name: Install openvpn-server
+- name: Install and config OpenVPN-server and clients
   hosts: novpn
   become: true
   become_user: root

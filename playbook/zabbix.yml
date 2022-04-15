@@ -1,9 +1,9 @@
 ---
-- hosts: vpn
-  become:
-    true
-  become_user:
-    root
+
+- name: Install and config Zabbix-server and Zabbix-agent
+  hosts: vpn
+  become: true
+  become_user: root
   vars_files:
   - ../secret.yml
   roles:
