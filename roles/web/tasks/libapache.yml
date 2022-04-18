@@ -1,0 +1,11 @@
+---
+
+- name: task_apache2_lib
+  apt:
+    pkg:
+    - libapache2-mod-php
+    - libapache2-mod-wsgi-py3
+    - libapache2-mod-rpaf
+
+- name: php_little_change
+  shell: sed -i.bak 's/;extension=pgsql/extension=pgsql/g' /etc/php/7.4/apache2/php.ini

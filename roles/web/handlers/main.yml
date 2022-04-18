@@ -1,0 +1,11 @@
+---
+
+- name: handler_start_nginx
+  systemd:
+    name: nginx.service
+    state: started
+
+- name: handler_start_apache2
+  systemd:
+    name: apache2.service
+    state: started

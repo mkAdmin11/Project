@@ -1,0 +1,20 @@
+---
+
+- name: rmdir
+  file:
+    path: "{{ item.path }}"
+    state: "absent"
+  with_items:
+  - {path: '/etc/apache2/sites-enabled'}
+  - {path: '/etc/apache2/sites-available'}
+  - {path: '/etc/nginx/sites-enabled'}
+  - {path: '/etc/nginx/sites-available'}
+
+- name: mkdir
+  file:
+    path: "{{ item.path }}"
+    state: "directory"
+    mode: "0755"
+  with_items:
+  - {path: '/etc/apache2/sites-enabled'}
+  - {path: '/etc/nginx/sites-enabled'}
