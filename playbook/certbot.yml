@@ -1,0 +1,10 @@
+---
+
+- name: Install and config nginx + apache2 + PHP 
+  hosts: server2.vpn 
+  become: true
+  become_user: root
+  vars_files:
+  - ../secret.yml
+  roles:
+  - certbot
