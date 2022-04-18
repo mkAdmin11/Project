@@ -1,6 +1,6 @@
 [servers]
 server1.novpn ansible_ssh_host=10.0.0.6
-server2.novpn ansible_ssh_host=10.0.0.14
+server2.novpn ansible_ssh_host=10.0.0.12
 server3.novpn ansible_ssh_host=10.0.0.4
 
 server1.vpn ansible_ssh_host=mk-server1.local
