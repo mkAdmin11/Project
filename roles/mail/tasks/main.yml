@@ -1,0 +1,77 @@
+---
+
+- name: Config_postfix
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  with_items:
+  - {src: 'main.cf',dest: '/etc/postfix/main.cf'}
+  - {src: 'virtual_mailbox_domains',dest: '/etc/postfix/virtual_mailbox_domains'}
+  - {src: 'master.cf',dest: '/etc/postfix/master.cf'}
+
+- name: Postfix_lookup
+  shell: "postmap /etc/postfix/virtual_mailbox_domains"
+  notify:
+    handler_restart_postfix
+
+- name: Install_dovecot
+  apt:
+    pkg:
+    - "dovecot-core"
+    - "dovecot-imapd"
+    - "dovecot-pop3d"
+    - "dovecot-lmtpd"
+
+- name: Add_group
+  ansible.builtin.group:
+    name: "vmail"
+    state: "present"
+    gid: "5000"
+
+- name: Add_user
+  ansible.builtin.user:
+    name: "vmail"
+    comment: "virtual mail user"
+    uid: "5000"
+    group: "vmail"
+    home: "/var/mail/vhosts"
+    create_home: "yes"
+
+- name: Get_dir_stats
+  stat:
+    path: "/var/mail/vhosts/admin11.tk"
+  register: maildir
+  
+- name: Make_dir
+  shell: "mkdir /var/mail/vhosts/{{ domain.second }}{{ domain.first }}"
+  when: maildir.stat.isdir is not defined
+
+- name: Chown_dir
+  shell: "chown -R vmail:vmail /var/mail/vhosts/"
+
+- name: Dovecot_listen
+  shell: "sed -i.bak 's/#listen = *, ::/listen = 0.0.0.0/g' /etc/dovecot/dovecot.conf"
+
+- name: Config_dovecot
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0644"
+  with_items:
+  - {src: '10-auth.conf',dest: '/etc/dovecot/conf.d/10-auth.conf'}
+  - {src: '10-master.conf',dest: '/etc/dovecot/conf.d/10-master.conf'}
+  - {src: 'auth-passwdfile.conf.ext',dest: '/etc/dovecot/conf.d/auth-passwdfile.conf.ext'}
+  - {src: '10-mail.conf',dest: '/etc/dovecot/conf.d/10-mail.conf'}
+  - {src: '10-ssl.conf',dest: '/etc/dovecot/conf.d/10-ssl.conf'}
+  - {src: 'dovecot-users',dest: '/etc/dovecot/dovecot-users'}
+  notify:
+    handler_restart_dovecot
+
+- name: Enable_mail
+  ansible.builtin.systemd:
+    name: "{{ item.name }}"
+    enabled: "yes"
+  with_items:
+  - {name: 'postfix.service'}
+  - {name: 'dovecot.service'}
