@@ -1,0 +1,26 @@
+---
+
+- name: Add_repository_key
+  ansible.builtin.apt_key:
+    # curl -sL https://www.pgadmin.org/static/packages_pgadmin_org.pub | tee yarn.asc | gpg --keyid-format long
+    id: "E8697E2EEF76C02D3A6332778881B2A8210976F2"
+    url: "https://www.pgadmin.org/static/packages_pgadmin_org.pub"
+    state: "present"
+
+- name: Add_repository_list
+  ansible.builtin.template:
+    src: "pgadmin4.list"
+    dest: "/etc/apt/sources.list.d/pgadmin4.list"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: apt_update
+  apt:
+    update_cache: "yes"
+
+- name: Install_pgAdmin
+  apt:
+    name: "pgadmin4"
+    state: "latest"
+
