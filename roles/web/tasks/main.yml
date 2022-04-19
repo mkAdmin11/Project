@@ -1,51 +1,51 @@
 ---
 
-- name: tasks_install_PHP
-  import_tasks: php.yml
+- name: tasks_PHP
+  import_tasks: "php.yml"
 
-- name: task_install_nginx
+- name: Install_nginx
   apt:
-    name=nginx
-    state=latest
+    name: "nginx"
+    state: "latest"
 
-- name: task_stop_nginx
+- name: Stop_nginx
   systemd:
-    name: nginx.service 
-    enabled: yes
-    state: stopped 
+    name: "nginx.service"
+    enabled: "yes"
+    state: "stopped"
 
-- name: task_install_apache2
+- name: Install_apache2
   apt:
-    name=apache2
-    state=latest
+    name: "apache2"
+    state: "latest"
 
-- name: task_stop_apache2
+- name: Stop_apache2
   systemd:
-    name: apache2.service
-    enabled: yes
-    state: stopped
+    name: "apache2.service"
+    enabled: "yes"
+    state: "stopped"
 
 - name: tasks_apache2_lib
-  import_tasks: libapache.yml
+  import_tasks: "libapache.yml"
 
 - name: tasks_clear_config
-  import_tasks: clear.yml
+  import_tasks: "clear.yml"
 
-- name: task_config_nginx
+- name: Config_nginx
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    mode: "0644"
   with_items:
-  - {src: 'nginx.conf', dest: '/etc/nginx/sites-enabled/{{ domain.second }}.conf'}
+  - {src: 'nginx.conf', dest: '/etc/nginx/sites-enabled/nginx.conf'}
   - {src: 'forcustomer.conf', dest: '/etc/nginx/sites-enabled/forcustomer.conf'}
   notify:
     handler_start_nginx
 
-- name: task_config_apache_port
+- name: Config_apache2_port
   shell: sed -i.bak 's/Listen 80/Listen {{ ansible_facts.tun0.ipv4.address }}:8080/g' /etc/apache2/ports.conf
 
-- name: task_config_apache2
+- name: Config_apache2
   template:
     src: "apache.conf"
     dest: "/etc/apache2/sites-enabled/apache.conf"

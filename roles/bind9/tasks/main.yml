@@ -1,13 +1,13 @@
 ---
 
 - name: tasks_server
-  import_tasks: server.yml
+  import_tasks: "server.yml"
   when: ansible_hostname == 'mk-server2'
 
-- name: task_config_hosts
+- name: Config_hosts
   template:
-    src: resolved.conf
-    dest: /etc/systemd/resolved.conf
-    mode: 0644
+    src: "resolved.conf"
+    dest: "/etc/systemd/resolved.conf"
+    mode: "0644"
   notify:
     handler_restart_resolved

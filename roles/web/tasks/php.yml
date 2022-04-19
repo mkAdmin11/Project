@@ -1,6 +1,6 @@
 ---
 
-- name: task_install_php
+- name: Install_PHP
   apt:
     pkg:
     - php7.4

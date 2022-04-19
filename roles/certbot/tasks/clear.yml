@@ -1,9 +1,6 @@
 ---
 
-- name: rmdir
+- name: Remove_conf
   file:
-    path: "{{ item.path }}"
+    path: "/etc/nginx/sites-enabled/forcustomer.conf"
     state: "absent"
-  with_items:
-  - {path: '/etc/nginx/sites-enabled/forcustomer.conf'}
-  - {path: '/etc/nginx/sites-enabled/{{ domain.second }}.conf'}

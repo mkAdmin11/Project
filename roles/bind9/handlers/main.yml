@@ -1,9 +1,9 @@
 ---
 
 - name: handler_reconfig_server
-  shell: rndc reload
+  shell: "rndc reload"
 
 - name: handler_restart_resolved
   systemd:
-    name: systemd-resolved
-    state: restarted
+    name: "systemd-resolved"
+    state: "restarted"

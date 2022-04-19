@@ -1,6 +1,6 @@
 ---
 
-- name: rmdir
+- name: Remove_dir
   file:
     path: "{{ item.path }}"
     state: "absent"
@@ -10,7 +10,7 @@
   - {path: '/etc/nginx/sites-enabled'}
   - {path: '/etc/nginx/sites-available'}
 
-- name: mkdir
+- name: Make_dir
   file:
     path: "{{ item.path }}"
     state: "directory"

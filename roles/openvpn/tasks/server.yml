@@ -1,15 +1,27 @@
 ---
 
-- name: task_mk_source
+- name: Make_source_dir
   ansible.builtin.file:
-    path: "{{ item.path }}"
-    state: "{{ item.state }}"
-    mode: "{{ item.mode }}"
+    path: "/etc/openvpn/ccd"
+    state: "directory"
+    mode: "0755"
   with_items:
   - {path: '/etc/openvpn/client.list',state: 'touch',mode: '0644'}
   - {path: '/etc/openvpn/ccd',state: 'directory',mode: '0755'}
 
-- name: task_config_server
+- name: Get_client_list_stats
+  stat:
+    path: "/etc/openvpn/client.list"
+  register: list
+
+- name: Make_client_list
+  ansible.builtin.file:
+    path: "/etc/openvpn/client.list"
+    state: "touch"
+    mode: "0644"
+  when: list.stat.isreg is not defined
+
+- name: Config_server
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -19,9 +31,9 @@
   - {src: 'client1vpn',dest: '/etc/openvpn/ccd/client1vpn'}
   - {src: 'client2vpn',dest: '/etc/openvpn/ccd/client2vpn'}
 
-- name: task_start_server
+- name: Start_server
   ansible.builtin.systemd:
-    daemon_reload: yes
-    name: openvpn@servervpn.service
-    enabled: yes
-    state: started
+    daemon_reload: "yes"
+    name: "openvpn@servervpn.service"
+    enabled: "yes"
+    state: "started"

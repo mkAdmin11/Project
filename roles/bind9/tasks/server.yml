@@ -1,27 +1,27 @@
 ---
 
-- name: task_install_server
+- name: Install_DNS_server
   apt:
-    name=bind9
-    state=latest
+    name: "bind9"
+    state: "latest"
 
-- name: task_start_server
+- name: Start_DNS_server
   ansible.builtin.systemd:
-    name: named.service 
-    enabled: yes
-    state: started
+    name: "named.service"
+    enabled: "yes"
+    state: "started"
 
-- name: task_mkdir
+- name: Make_dir_for_my_zones
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: "directory"
-    mode: "{{ item.mode }}"
+    mode: "0755"
   with_items:
-  - {path: '/etc/bind/myzones',mode: '0755'}
-  - {path: '/etc/bind/myzones/{{ domain.second }}',mode: '0755'}
-  - {path: '/etc/bind/myzones/local',mode: '0755'}
+  - {path: '/etc/bind/myzones'}
+  - {path: '/etc/bind/myzones/{{ domain.second }}'}
+  - {path: '/etc/bind/myzones/local'}
 
-- name: task_config_server
+- name: Config_server
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

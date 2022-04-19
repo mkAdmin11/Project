@@ -1,11 +1,11 @@
 ---
 
-- name: rmdir
+- name: Remove_dir
   file:
     path: "/var/www"
     state: "absent"
 
-- name: mkdir
+- name: Make_dir
   file:
     path: "/var/www"
     state: "directory"
@@ -16,7 +16,7 @@
     repo: "git@github.com:mkAdmin11/www.git"
     dest: "/var/www"
 
-- name: Change_www
+- name: Change_www_permision
   shell: "{{ item.shell }}"
   with_items:
   - {shell: 'find /var/www/wordpress -type d -exec chmod 755 {} \;'}
