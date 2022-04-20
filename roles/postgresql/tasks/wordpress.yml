@@ -1,0 +1,33 @@
+---
+
+- name: Configure wordpress db 
+  become: yes
+  become_user: postgres
+  block:
+    - name: Create db
+      postgresql_db:
+        name: "{{ wp.db_name }}"
+    - name: Create user
+      postgresql_user:
+        db: "{{ wp.db_name }}"
+        name: "{{ wp.db_user }}"
+        password: "{{ wp.db_pass }}"
+        priv: "ALL"
+        #        role_attr_flags: SUPERUSER
+    - name: Set owner
+      postgresql_owner:
+        db: "{{ wp.db_name }}"
+        new_owner: "{{ wp.db_user }}"
+        obj_name: "{{ wp.db_name }}"
+        obj_type: database
+
+- name: Add rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: host
+    users: "{{ wp.db_name }}"
+    databases: "{{ wp.db_user }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: md5
+  notify:
+    handler_restart_postgresql

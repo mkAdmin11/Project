@@ -1,0 +1,43 @@
+---
+
+- name: Install PostgrSQL
+  apt:
+    pkg:
+    - postgresql-{{ pg_ver }}
+    - postgresql-contrib-{{ pg_ver }}
+
+- name: Install python3 and ower pkg
+  apt:
+    pkg:
+    - python3-pip
+    - python3-dev
+    - libpq-dev
+    - acl
+
+- name: Install python lib
+  pip:
+    name: psycopg2
+    state: present
+
+- name: Start and Disable PostgreSQL server
+  systemd:
+    name: postgresql.service
+    enabled: no
+    state: started
+
+- name: Config PostgreSQL
+  shell: sed -i.bak "s/#listen_addresses = 'localhost'/listen_addresses = '{{ ansible_facts.tun0.ipv4.address }}, 127.0.0.1'/g" /etc/postgresql/12/main/postgresql.conf
+  notify:
+    handler_restart_postgresql
+
+- name: Configure Zabbix DB 
+  import_tasks: zabbix.yml
+
+- name: Configure Roundcube DB
+  import_tasks: roundcube.yml
+
+- name: Configure Wordpress DB
+  import_tasks: worbpress.yml
+
+- name: Configure PostgreSQL monitoring iser
+  import_tasks: pgmonitoring.yml
