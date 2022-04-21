@@ -1,32 +1,32 @@
 ---
 
-- name: Configure roundcube db 
+- name: Configure Roundcube db
   become: yes
   become_user: postgres
   block:
-    - name: Create db
+    - name: Roundcube. Create db
       postgresql_db:
         name: "{{ roundcube.db_name }}"
-    - name: Create user
+        encoding: UTF-8
+    - name: Roundcube. Create user
       postgresql_user:
         db: "{{ roundcube.db_name }}"
         name: "{{ roundcube.db_user }}"
         password: "{{ roundcube.db_pass }}"
-        priv: "ALL"
-        #        role_attr_flags: SUPERUSER
-    - name: Import schema and data
+        priv: ALL
+    - name: Roundcube. Import schema and data
       postgresql_db:
         name: "{{ roundcube.db_name }}"
         state: restore
         target: "{{ roundcube.db_schema }}"
-    - name: Set owner
+    - name: Roundcube. Set owner
       postgresql_owner:
         db: "{{ roundcube.db_name }}"
         new_owner: "{{ roundcube.db_user }}"
         obj_name: "{{ roundcube.db_name }}"
         obj_type: database
 
-- name: Add rule
+- name: Roundcube. Add rule
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
     contype: host

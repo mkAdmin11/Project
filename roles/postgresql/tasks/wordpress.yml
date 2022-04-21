@@ -1,27 +1,27 @@
 ---
 
-- name: Configure wordpress db 
+- name: Configure Wordpress db
   become: yes
   become_user: postgres
   block:
-    - name: Create db
+    - name: WP. Create db
       postgresql_db:
         name: "{{ wp.db_name }}"
-    - name: Create user
+        encoding: UTF-8
+    - name: WP. Create user
       postgresql_user:
         db: "{{ wp.db_name }}"
         name: "{{ wp.db_user }}"
         password: "{{ wp.db_pass }}"
-        priv: "ALL"
-        #        role_attr_flags: SUPERUSER
-    - name: Set owner
+        priv: ALL
+    - name: WP. Set owner
       postgresql_owner:
         db: "{{ wp.db_name }}"
         new_owner: "{{ wp.db_user }}"
         obj_name: "{{ wp.db_name }}"
         obj_type: database
 
-- name: Add rule
+- name: WP. Add rule
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
     contype: host

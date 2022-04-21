@@ -1,0 +1,71 @@
+---
+
+- name: Configure DEMO db 
+  become: yes
+  become_user: postgres
+  block:
+    - name: DEMO. Create db
+      postgresql_db:
+        name: "{{ demo.db_name1 }}"
+        encoding: UTF-8
+        state: present
+    - name: DEMO. Create user
+      postgresql_user:
+        name: "{{ demo.db_user }}"
+        password: "{{ demo.db_pass }}"
+        state: present
+    - name: DEMO. Import schema and data
+      postgresql_db:
+        name: "{{ demo.db_name1 }}"
+        state: restore
+        target: "{{ demo.db_schema }}"
+    - name: DEMO. Rename
+      postgresql_db:
+        name: "{{ demo.db_name1 }}"
+        state: rename
+        target: "{{ demo.db_name2 }}"
+    - name: DEMO. Create db
+      postgresql_db:
+        name: "{{ demo.db_name1 }}"
+        encoding: UTF-8
+        state: present
+    - name: DEMO. Import schema and data
+      postgresql_db:
+        name: "{{ demo.db_name1 }}"
+        state: restore
+        target: "{{ demo.db_schema }}"
+    - name: DEMO. Set db owner
+      postgresql_owner:
+        db: "{{ demo.db_name2 }}"
+        new_owner: "{{ demo.db_user }}"
+        obj_name: "{{ demo.db_name2 }}"
+        obj_type: database
+    - name: DEMO. Set schema owner
+      postgresql_owner:
+        db: "{{ demo.db_name2 }}"
+        new_owner: "{{ demo.db_user }}"
+        obj_name: bookings
+        obj_type: schema
+    - name: DEMO. Grant
+      postgresql_privs:
+        database: "{{ demo.db_name2 }}"
+        privs: All
+        type: table 
+        objs: ALL_IN_SCHEMA
+        schema: bookings
+        roles: "{{ demo.db_user }}"
+        grant_option: yes
+
+- name: DEMO. Add rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: host
+    users: "{{ demo.db_user }}"
+    databases: "{{ item.databases }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: md5
+  with_items:
+  - {databases: '{{ demo.db_name1 }}'}
+  - {databases: '{{ demo.db_name2 }}'}
+  notify:
+    handler_restart_postgresql
