@@ -1,7 +1,7 @@
 ---
 
-- name: Install and config nginx + apache2 + PHP 
-  hosts: server2.vpn 
+- name: Install and config Postfix + Dovecot 
+  hosts: web
   become: true
   become_user: root
   vars_files:

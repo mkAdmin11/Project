@@ -2,10 +2,10 @@
 
 - name: handler_restart_postfix
   systemd:
-    name: "postfix.service"
-    state: "restarted"
+    name: postfix.service
+    state: restarted
 
 - name: handler_restart_dovecot
   systemd:
-    name: "dovecot.service"
-    state: "restarted"
+    name: dovecot.service
+    state: restarted

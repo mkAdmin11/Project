@@ -2,5 +2,5 @@
 
 - name: handler_restart_apache
   systemd:
-    name: "apache2.service"
-    state: "restarted"
+    name: apache2.service
+    state: restarted

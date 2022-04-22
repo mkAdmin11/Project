@@ -2,6 +2,6 @@
 
 - name: handler_restart_grafana 
   systemd:
-    daemon_reload: "yes"
-    name: "grafana-server.service"
-    state: "restarted"
+    daemon_reload: yes
+    name: grafana-server.service
+    state: restarted

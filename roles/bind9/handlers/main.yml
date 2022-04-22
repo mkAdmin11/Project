@@ -5,5 +5,5 @@
 
 - name: handler_restart_resolved
   systemd:
-    name: "systemd-resolved"
-    state: "restarted"
+    name: systemd-resolved
+    state: restarted

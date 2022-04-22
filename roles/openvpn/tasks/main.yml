@@ -1,20 +1,20 @@
 ---
 
-- name: Install_OpenVPN
+- name: Install OpenVPN
   apt:
-    name: "openvpn"
-    state: "latest"
+    name: openvpn
+    state: latest
 
-- name: Start_OpenVPN
-  ansible.builtin.systemd:
-    name: "openvpn.service"
-    enabled: "yes"
-    state: "started"
+- name: Starti OpenVPN
+  systemd:
+    name: openvpn.service
+    enabled: yes
+    state: started
 
-- name: tasks_server
-  import_tasks: "server.yml"
+- name: Up OpenVPN server
+  import_tasks: server.yml
   when: ansible_hostname == 'mk-server1'
 
-- name: tasks_client
-  import_tasks: "client.yml"
+- name: Up OpenVPN clients
+  import_tasks: client.yml
   when: ansible_hostname != 'mk-server1'

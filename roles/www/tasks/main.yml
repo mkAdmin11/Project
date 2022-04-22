@@ -1,32 +1,33 @@
 ---
 
-- name: Remove_dir
+- name: Remove dir
   file:
     path: "/var/www"
-    state: "absent"
+    state: absent
 
-- name: Make_dir
+- name: Make dir
   file:
     path: "/var/www"
-    state: "directory"
-    mode: "0755"
+    state: directory
+    mode: 0755
 
-- name: Download_git_www
-  ansible.builtin.git:
+- name: Download www git
+  git:
     repo: "git@github.com:mkAdmin11/www.git"
     dest: "/var/www"
 
-- name: Change_www_permision
+- name: Change www permision
   shell: "{{ item.shell }}"
   with_items:
   - {shell: 'find /var/www/wordpress -type d -exec chmod 755 {} \;'}
   - {shell: 'find /var/www/wordpress -type f -exec chmod 644 {} \;'}
   - {shell: 'chown -R www-data:www-data /var/www/wordpress'}
+  - {shell: 'chown -R www-data:www-data /var/www/forcustomer/feedback/uploads'}
 
-- name: config_apache
+- name: Config Apache2
   template:
-    src: "apache.conf"
+    src: apache.conf
     dest: "/etc/apache2/sites-enabled/apache.conf"
-    mode: "0644"
+    mode: 0644
   notify:
     handler_restart_apache

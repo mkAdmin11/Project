@@ -1,7 +1,7 @@
 ---
 
-- name: Install and config nginx + apache2 + PHP 
-  hosts: server2.vpn 
+- name: Config SSL nginx  
+  hosts: web
   become: true
   become_user: root
   vars_files:

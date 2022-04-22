@@ -1,63 +1,63 @@
 ---
 
-- name: Config_postfix
+- name: Config Postfix
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: "0644"
+    mode: 0644
   with_items:
   - {src: 'main.cf',dest: '/etc/postfix/main.cf'}
   - {src: 'virtual_mailbox_domains',dest: '/etc/postfix/virtual_mailbox_domains'}
   - {src: 'master.cf',dest: '/etc/postfix/master.cf'}
 
-- name: Postfix_lookup
+- name: Postfix lookup
   shell: "postmap /etc/postfix/virtual_mailbox_domains"
   notify:
     handler_restart_postfix
 
-- name: Install_dovecot
+- name: Install Dovecot
   apt:
     pkg:
-    - "dovecot-core"
-    - "dovecot-imapd"
-    - "dovecot-pop3d"
-    - "dovecot-lmtpd"
+    - dovecot-core
+    - dovecot-imapd
+    - dovecot-pop3d
+    - dovecot-lmtpd
 
-- name: Add_group
-  ansible.builtin.group:
-    name: "vmail"
-    state: "present"
-    gid: "5000"
+- name: Add group
+  group:
+    name: vmail
+    state: present
+    gid: 5000
 
-- name: Add_user
-  ansible.builtin.user:
-    name: "vmail"
+- name: Add user
+  user:
+    name: vmail
     comment: "virtual mail user"
-    uid: "5000"
-    group: "vmail"
+    uid: 5000
+    group: vmail
     home: "/var/mail/vhosts"
-    create_home: "yes"
+    create_home: yes
 
-- name: Get_dir_stats
+- name: Get dir stats
   stat:
     path: "/var/mail/vhosts/admin11.tk"
   register: maildir
   
-- name: Make_dir
+- name: Make dir
   shell: "mkdir /var/mail/vhosts/{{ domain.second }}{{ domain.first }}"
   when: maildir.stat.isdir is not defined
 
-- name: Chown_dir
+- name: Chown dir
   shell: "chown -R vmail:vmail /var/mail/vhosts/"
 
-- name: Dovecot_listen
+- name: Dovecot listen
   shell: "sed -i.bak 's/#listen = *, ::/listen = 0.0.0.0/g' /etc/dovecot/dovecot.conf"
 
-- name: Config_dovecot
+- name: Config Dovecot
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: "0644"
+    mode: 0644
   with_items:
   - {src: '10-auth.conf',dest: '/etc/dovecot/conf.d/10-auth.conf'}
   - {src: '10-master.conf',dest: '/etc/dovecot/conf.d/10-master.conf'}
@@ -68,10 +68,10 @@
   notify:
     handler_restart_dovecot
 
-- name: Enable_mail
-  ansible.builtin.systemd:
+- name: Enable mail
+  systemd:
     name: "{{ item.name }}"
-    enabled: "yes"
+    enabled: yes
   with_items:
   - {name: 'postfix.service'}
   - {name: 'dovecot.service'}

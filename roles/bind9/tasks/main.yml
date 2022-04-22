@@ -1,13 +1,13 @@
 ---
 
-- name: tasks_server
-  import_tasks: "server.yml"
+- name: Up server
+  import_tasks: server.yml
   when: ansible_hostname == 'mk-server2'
 
-- name: Config_hosts
+- name: Configure hosts
   template:
-    src: "resolved.conf"
+    src: resolved.conf
     dest: "/etc/systemd/resolved.conf"
-    mode: "0644"
+    mode: 0644
   notify:
     handler_restart_resolved

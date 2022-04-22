@@ -1,7 +1,7 @@
 ---
 
 - name: Install and config pgAdmin 
-  hosts: server2.vpn
+  hosts: web
   become: true
   become_user: root
   vars_files:

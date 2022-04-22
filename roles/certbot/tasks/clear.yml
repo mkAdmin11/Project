@@ -1,6 +1,6 @@
 ---
 
-- name: Remove_conf
+- name: Remove nossl conf
   file:
     path: "/etc/nginx/sites-enabled/forcustomer.conf"
-    state: "absent"
+    state: absent

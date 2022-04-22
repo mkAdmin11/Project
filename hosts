@@ -29,10 +29,9 @@ server2.vpn
 [elk]
 server3.vpn
 
-[pg]
+[db]
 server3.vpn
 
 [beats]
 server1.vpn
 server2.vpn
-

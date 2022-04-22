@@ -1,6 +1,6 @@
 ---
 
-- name: Resolv_plagin_dependenc
+- name: Resolve plugin dependenc
   apt:
     pkg:
     - libx11-6

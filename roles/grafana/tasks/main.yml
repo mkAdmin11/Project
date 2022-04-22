@@ -1,49 +1,48 @@
 ---
 
-- name: Add_repository_key
-  ansible.builtin.apt_key:
-    # curl -sL https://packages.grafana.com/gpg.key | tee | gpg --keyid-format long
-    id: "CA6D481DBD044C76"
+- name: Add Grafana repository key
+  apt_key:
+    id: CA6D481DBD044C76  # curl -sL https://packages.grafana.com/gpg.key | tee | gpg --keyid-format long
     url: "https://packages.grafana.com/gpg.key"
-    state: "present"
+    state: present
 
-- name: Add_repository_list
-  ansible.builtin.template:
-    src: "grafana.list"
+- name: Add Grafana repository list
+  template:
+    src: grafana.list
     dest: "/etc/apt/sources.list.d/grafana.list"
-    owner: "root"
-    group: "root"
-    mode: "0644"
+    owner: root
+    group: root
+    mode: 0644
 
-- name: apt_update
+- name: apt update
   apt:
-    update_cache: "yes"
+    update_cache: yes
 
-- name: Install_grafana
+- name: Install Grafana
   apt:
-    name: "grafana"
-    state: "latest"
+    name: grafana
+    state: latest
 
-- name: Start_server
-  ansible.builtin.systemd:
-    daemon_reload: "yes"
-    name: "grafana-server.service"
-    enabled: "yes"
-    state: "started"
+- name: Start Grafana server
+  systemd:
+    daemon_reload: yes
+    name: grafana-server.service
+    enabled: yes
+    state: started
 
-- name: tasks_plagin_dependenc
-  import_tasks: "plagins.yml"
+- name: Resolve plugin dependenc
+  import_tasks: plagins.yml
 
-- name: Install_plagins
+- name: Install plagins
   shell: "{{ item.shell }}"
   with_items:
   - {shell: 'grafana-cli plugins install alexanderzobnin-zabbix-app'}
   - {shell: 'grafana-cli plugins install grafana-image-renderer'}
 
-- name: Config_grafana
+- name: Config Grafana
   template:
-    src: "grafana.ini"
+    src: grafana.ini
     dest: "/etc/grafana/grafana.ini"
-    mode: "0644"
+    mode: 0644
   notify:
     handler_restart_grafana
