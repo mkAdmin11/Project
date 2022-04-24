@@ -1,0 +1,30 @@
+---
+
+- name: Install java
+  apt:
+    name: default-jdk
+    state: latest
+
+- name: Install elasticsearch
+  apt:
+    deb: "{{ elk.deb.elastic }}"
+
+- name: Configure elasticsearch
+  template:
+    src: elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+    mode: 0660
+
+- name: Restart and Disable elasticsearch
+  systemd:
+    name: elasticsearch.service
+    enabled: no
+    state: restarted
+
+- name: Add ELK users
+  shell: "{{ item.shell }}"
+  with_items:
+  - {shell: '/usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.users.elastic.name }} -p {{ elk.users.elastic.pass }} -r {{ elk.users.elastic.role }}'}
+  - {shell: '/usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.users.kibana.name }} -p {{ elk.users.kibana.pass }} -r {{ elk.users.kibana.role }}'}
+  - {shell: '/usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.users.monitoring.name }} -p {{ elk.users.monitoring.pass }} -r {{ elk.users.monitoring.role }}'}
+  ignore_errors: True

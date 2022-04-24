@@ -1,0 +1,17 @@
+---
+
+- name: Install kibana
+  apt:
+    deb: "{{ elk.deb.kibana }}"
+
+- name: Configure kibana
+  template:
+    src: kibana.yml
+    dest: /etc/kibana/kibana.yml
+    mode: 0660
+
+- name: Restart and Disable kibana
+  systemd:
+    name: kibana.service
+    enabled: no
+    state: restarted
