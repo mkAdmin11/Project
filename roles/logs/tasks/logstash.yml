@@ -1,0 +1,20 @@
+---
+
+- name: Install logstash 
+  apt:
+    deb: "{{ elk.deb.logstash }}"
+
+- name: Configure logstash
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+  - {src: 'logstash.conf',dest: '/etc/logstash/conf.d/logstash.conf'}
+  - {src: 'logstash.yml',dest: '/etc/logstash/logstash.yml'}
+
+- name: Restart and Disable logstash
+  systemd:
+    name: logstash.service
+    enabled: no
+    state: restarted

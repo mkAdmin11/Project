@@ -1,0 +1,24 @@
+---
+
+- name: Install fitebeat 
+  apt:
+    deb: "{{ elk.deb.filebeat }}"
+
+- name: Configure filebeat
+  template:
+    src: "{{ ansible_hostname }}"
+    dest: /etc/filebeat/filebeat.yml 
+    mode: 0644
+
+- name: Configure filebeat plugin
+  template:
+    src: system.yml
+    dest: /etc/filebeat/modules.d/system.yml
+    mode: 0644
+  when: ansible_hostname == 'mk-server1'
+
+- name: Restart and Disable filebeat
+  systemd:
+    name: filebeat.service
+    enabled: no
+    state: restarted
