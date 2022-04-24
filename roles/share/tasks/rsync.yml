@@ -1,0 +1,9 @@
+---
+
+- name: Rsync
+  become: yes
+  become_user: mk-ansible
+  shell: "{{ item.shell }}"
+  with_items:
+  - {shell: 'rsync -avzhe ssh /share/* mk-ansible@mk-server2.local:/share/'}
+  - {shell: 'rsync -avzhe ssh /share/* mk-ansible@mk-server3.local:/share/'}
