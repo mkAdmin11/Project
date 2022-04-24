@@ -25,8 +25,8 @@
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
     contype: host
-    users: "{{ wp.db_name }}"
-    databases: "{{ wp.db_user }}"
+    users: "{{ wp.db_user }}"
+    databases: "{{ wp. db_name}}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
     method: md5
   notify:

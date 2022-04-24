@@ -30,17 +30,38 @@
   notify:
     handler_restart_postgresql
 
-- name: Configure Zabbix db 
-  import_tasks: zabbix.yml
+- name: Setting permissions
+  shell: chown -R postgres:mk-ansible /share/pg
 
-- name: Configure Roundcube db
-  import_tasks: roundcube.yml
+- name: Upload dump
+  become: yes
+  become_user: postgres
+  shell: psql -f /share/pg/dumpfile postgres
 
-- name: Configure Wordpress db 
-  import_tasks: wordpress.yml
+- name: Users. Add rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: host
+    users: "{{ item.users }}"
+    databases: "{{ item.databases }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: md5
+  with_items:
+  - {users: '{{ zabbix.db_user }}',databases: '{{ zabbix.db_name }}'}
+  - {users: '{{ wp.db_user }}',databases: '{{ wp.db_name }}'}
+  - {users: '{{ roundcube.db_user }}',databases: '{{ roundcube.db_name }}'}
+  - {users: '{{ demo.db_user }}',databases: '{{ demo.db_name1 }}'}
+  - {users: '{{ demo.db_user }}',databases: '{{ demo.db_name2 }}'} 
+  notify:
+    handler_restart_postgresql
 
-- name: Configure DEMO db
-  import_tasks: demo.yml
-
-- name: Configure PostgreSQL monitoring user
-  import_tasks: pgmonitoring.yml
+- name: Monitoring. Add rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: host
+    users: "{{ zabbix.monidoring.db_user }}"
+    databases: "{{ zabbix.db_name }}"
+    source: 127.0.0.1/8
+    method: md5
+  notify:
+    handler_restart_postgresql 
