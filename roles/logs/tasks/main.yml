@@ -1,5 +1,21 @@
 ---
 
+- name: Check list
+  stat:
+    path: /etc/apt/sources.list.d/elastic-7.x.list
+  register: list
+
+- name: Add repo
+  template:
+    src: elastic-7.x.list
+    dest: /etc/apt/sources.list.d/elastic-7.x.list
+    mode: 0644
+  when: list.stat.isreg is not defined
+
+- name: apt update
+  apt:
+    update_cache: yes
+
 - name: Install Logstash 
   import_tasks: logstash.yml
   when: ansible_hostname == 'mk-server3'

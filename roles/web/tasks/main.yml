@@ -22,8 +22,11 @@
 - name: Stop Apache2
   systemd:
     name: apache2.service
-    enabled: yes
+    enabled: no
     state: stopped
+
+- name: Cron
+  include_tasks: apache2_cron.yml
 
 - name: Install Apache2 lib
   import_tasks: libapache.yml

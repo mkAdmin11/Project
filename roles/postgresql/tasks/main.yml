@@ -25,6 +25,9 @@
     enabled: no
     state: started
 
+- name: Cron
+  include_tasks: postgres_cron.yml
+
 - name: PostgreSQL listen addresses
   shell: sed -i.bak "s/#listen_addresses = 'localhost'/listen_addresses = '{{ ansible_facts.tun0.ipv4.address }}, 127.0.0.1'/g" /etc/postgresql/{{ db.ver }}/main/postgresql.conf
   notify:

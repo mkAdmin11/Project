@@ -1,0 +1,7 @@
+---
+
+- name: Remode job duplication
+  shell: sed -i '/systemctl start elasticsearch.service/d' /root/start.sh
+
+- name: Add jod
+  shell: echo "systemctl start elasticsearch.service" >> /root/start.sh

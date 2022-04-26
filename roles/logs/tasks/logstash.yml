@@ -2,7 +2,12 @@
 
 - name: Install logstash 
   apt:
-    deb: "{{ elk.deb.logstash }}"
+    name: logstash
+    state: latest
+
+- name: Systemd reread
+  systemd:
+    daemon_reload: yes
 
 - name: Configure logstash
   template:
@@ -18,3 +23,6 @@
     name: logstash.service
     enabled: no
     state: restarted
+
+- name: Cron
+  include_tasks: logstash_cron.yml

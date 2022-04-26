@@ -1,0 +1,7 @@
+---
+
+- name: Remode job duplication
+  shell: sed -i '/systemctl start filebeat.service/d' /root/start.sh
+
+- name: Add jod
+  shell: echo "systemctl start filebeat.service" >> /root/start.sh

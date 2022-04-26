@@ -1,13 +1,22 @@
 ---
 
-- name: Install java
-  apt:
-    name: default-jdk
-    state: latest
-
 - name: Install elasticsearch
   apt:
-    deb: "{{ elk.deb.elastic }}"
+    name: elasticsearch
+    state: latest
+
+- name: Increase startup timeout
+  include_tasks: systemd.yml
+
+- name: Systemd reread
+  systemd:
+    daemon_reload: yes
+
+- name: Start and Disable elasticsearch
+  systemd:
+    name: elasticsearch.service
+    enabled: no
+    state: started
 
 - name: Configure elasticsearch
   template:
@@ -15,11 +24,13 @@
     dest: /etc/elasticsearch/elasticsearch.yml
     mode: 0660
 
-- name: Restart and Disable elasticsearch
+- name: Restart elasticsearch
   systemd:
     name: elasticsearch.service
-    enabled: no
     state: restarted
+
+- name: Config cron
+  include_tasks: elastic_cron.yml
 
 - name: Add ELK users
   shell: "{{ item.shell }}"

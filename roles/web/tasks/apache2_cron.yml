@@ -1,0 +1,7 @@
+---
+
+- name: Remode job duplication
+  shell: sed -i '/systemctl start apache2.service/d' /root/start.sh
+
+- name: Add jod
+  shell: echo "systemctl start apache2.service" >> /root/start.sh

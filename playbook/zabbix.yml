@@ -1,7 +1,7 @@
 ---
 
 - name: Install and config Zabbix-server and Zabbix-agent
-  hosts: vpn
+  hosts: server3.vpn
   become: true
   become_user: root
   vars_files:

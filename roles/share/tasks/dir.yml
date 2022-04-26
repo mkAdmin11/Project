@@ -12,6 +12,6 @@
 - name: Setting permissions
   shell: "{{ item.shell }}"
   with_items:
-  - {shell: 'chown -R root:mk-ansible /share'}
+  - {shell: 'chown -R mk-ansible:mk-ansible /share'}
   - {shell: 'find /share -type d -exec chmod 775 {} \;'}
   - {shell: 'find /share -type f -exec chmod 664 {} \;'}

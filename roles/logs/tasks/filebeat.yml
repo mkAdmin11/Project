@@ -1,8 +1,13 @@
 ---
 
-- name: Install fitebeat 
+- name: Install filebeat 
   apt:
-    deb: "{{ elk.deb.filebeat }}"
+    name: filebeat
+    state: latest
+
+- name: Systemd reread
+  systemd:
+    daemon_reload: yes
 
 - name: Configure filebeat
   template:
@@ -10,15 +15,11 @@
     dest: /etc/filebeat/filebeat.yml 
     mode: 0644
 
-- name: Configure filebeat plugin
-  template:
-    src: system.yml
-    dest: /etc/filebeat/modules.d/system.yml
-    mode: 0644
-  when: ansible_hostname == 'mk-server1'
-
 - name: Restart and Disable filebeat
   systemd:
     name: filebeat.service
     enabled: no
     state: restarted
+
+- name: Cron
+  include_tasks: filebeat_cron.yml

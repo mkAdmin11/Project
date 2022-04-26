@@ -2,7 +2,8 @@
 
 - name: Install kibana
   apt:
-    deb: "{{ elk.deb.kibana }}"
+    name: kibana
+    state: latest
 
 - name: Configure kibana
   template:
@@ -10,8 +11,15 @@
     dest: /etc/kibana/kibana.yml
     mode: 0660
 
+- name: Systemd reread
+  systemd:
+    daemon_reload: yes
+
 - name: Restart and Disable kibana
   systemd:
     name: kibana.service
     enabled: no
     state: restarted
+
+- name: Config cron
+  include_tasks: kibana_cron.yml

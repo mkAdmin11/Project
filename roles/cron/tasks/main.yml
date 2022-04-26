@@ -1,0 +1,46 @@
+---
+
+- name: Get script stat
+  stat:
+    path: /root/start.sh
+  register: skript
+
+- name: Make script template
+  block:
+    - name: Make script
+      file:
+        path: /root/start.sh
+        state: touch
+        owner: root
+        group: root
+        mode: 0770
+    - name: First line
+      shell: echo "#!/bin/bash" > /root/start.sh
+  when: skript.stat.isreg is not defined
+
+- name: Job after reboot elk+db server
+  cron:
+    name: "Job after reboot"
+    special_time: reboot
+    job: "sleep 120 && /root/start.sh >/dev/null 2>&1"
+  when: ansible_hostname == 'mk-server3'
+
+- name: Job after reboot other servers
+  cron:
+    name: "Job after reboot"
+    special_time: reboot
+    job: "sleep 300 && /root/start.sh >/dev/null 2>&1"
+  when: ansible_hostname != 'mk-server3'
+
+- name: Sync cron
+  become: yes
+  become_user: mk-ansible
+  cron:
+    name: "{{ item.name }}"
+    minute: "0"
+    hour: "*/2"
+    job: "{{ item.job }}"
+  with_items:
+  - {name: 'Sync mk-server2',job: 'rsync -avzhe ssh /share/* mk-ansible@mk-server2.local:/share/'}
+  - {name: 'Sync mk-server3',job: 'rsync -avzhe ssh /share/* mk-ansible@mk-server3.local:/share/'}
+  when: ansible_hostname == 'mk-server1'
