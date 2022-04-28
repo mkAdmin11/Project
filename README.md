@@ -1,8 +1,6 @@
 # Project
 
-
-СПИСОК PLAYBOOK:
-================
+## СПИСОК PLAYBOOK:
 
 0. test.yml
 1. start.yml
@@ -19,8 +17,7 @@
 12. zabbix.yml
 13. grafana.yml
 
-Test
---------
+### Test
 Не обращайте внимание, просто потестить маленькие роли)
 
 Start
