@@ -41,11 +41,14 @@
 + Домен третьего уровя forcustomer проксирует запросы на Apache2. 
 
 ### WWW
-*Сервер 2.* Использется шара - копируется код для обработки Apache2:
+*Сервер 2.*
+<br/>
+Использется шара - копируется код для обработки Apache2:
 + Wordress - основа домена [второго уровня](https://admin11.tk/). За основу взята актуальная на момент создания версия 5.9.3. Для использования PostgreSQL плагин [pg4wp](https://github.com/kevinoid/postgresql-for-wordpress). Также установлена тема Basic от [WP Puzzle](https://admin11.tk/wp-admin/themes.php?theme=basic) со слегка измененными стилями CSS и плагин [Contact Form 7](https://contactform7.com/).
 + Страница картинка для домена [третьего уровня](https://forcustomer.admin11.tk/). И форма обратной связи, за основы взят [этот](https://github.com/itchief/feedback-form) проект с GitHub, также внесены небольшие изменения в PHP код и CSS стили, форма упакована в страницу картинку.
 + Настроенный Roundcube версии 1.5.2 для [почтового сервера](https://admin11.tk/app/mail/).
-
+<br/>
+Настройка Apache2
 
 
 
