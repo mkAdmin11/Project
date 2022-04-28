@@ -42,7 +42,7 @@
 
 ### WWW
 *Сервер 2.* Использется шара - копируется код для обработки Apache2:
-+ Wordress
++ Wordress - за основу взята актуальная на момент создания версия 5.9.3. Для использования PostgreSQL плагин [pg4wp](https://github.com/kevinoid/postgresql-for-wordpress)
 
 
 
