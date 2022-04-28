@@ -23,3 +23,7 @@
 - name: Install Filebeat
   import_tasks: filebeat.yml
   when: ansible_hostname != 'mk-server3'
+
+- name: Change number of replicas
+  shell: "curl -u {{ elk.users.elastic.name }}:{{ elk.users.elastic.pass }} -XPUT \"elk.local:9200/$idx/_settings\" -H 'Content-Type: application/json' -d '{ \"index\": { \"number_of_replicas\": 0 } }'"
+  when: ansible_hostname == 'mk-server3'
