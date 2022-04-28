@@ -35,5 +35,3 @@
     databases: "{{ zabbix.db_name }}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
     method: md5
-  notify:
-    handler_restart_postgresql

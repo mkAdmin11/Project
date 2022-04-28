@@ -5,7 +5,6 @@
     pkg:
     - certbot
     - python3-certbot-nginx
-    - apt-transport-https
     - python
     - python-dev
     - gcc
@@ -16,49 +15,40 @@
     - libffi-dev
     - ca-certificates
 
-- name: Get html stats
-  stat:
-    path: "/var/www/html"
-  register: html
-
-- name: Make html
-  shell: "cp -r /usr/share/nginx/html /var/www/html"
-  when: html.stat.isdir is not defined
+- name: Clear html
+  import_tasks: clear.yml
 
 - name: Get first cert stats
   stat:
-    path: "/etc/letsencrypt/live/{{ domain.second }}{{ domain.first }}"
+    path: /etc/letsencrypt/live/{{ domain.second }}{{ domain.first }}
   register: first
 
 - name: Get second cert stat
   stat:
-    path: "/etc/letsencrypt/live/forcustomer.{{ domain.second }}{{ domain.first }}"
+    path: /etc/letsencrypt/live/forcustomer.{{ domain.second }}{{ domain.first }}
   register: second
 
 - name: Get DH stat
   stat:
-    path: "/etc/letsencrypt/ssl-dhparams.pem"
+    path: /etc/letsencrypt/ssl-dhparams.pem
   register: dh
 
 - name: Generate first cert
-  shell: "letsencrypt certonly --webroot --agree-tos -w /var/www/forcustomer -m admin@{{ domain.second }}{{ domain.first }} -d {{ domain.second }}{{ domain.first }}"
+  shell: letsencrypt certonly --webroot --agree-tos -w /var/www/html -m admin@{{ domain.second }}{{ domain.first }} -d {{ domain.second }}{{ domain.first }}
   when: first.stat.isdir is not defined
 
 - name: Generate second cert
-  shell: "letsencrypt certonly --webroot --agree-tos -w /var/www/forcustomer -m admin@{{ domain.second }}{{ domain.first }} -d forcustomer.{{ domain.second }}{{ domain.first }}"
+  shell: letsencrypt certonly --webroot --agree-tos -w /var/www/html -m admin@{{ domain.second }}{{ domain.first }} -d forcustomer.{{ domain.second }}{{ domain.first }}
   when: second.stat.isdir is not defined
 
 - name: Generate dh
-  shell: "openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048"
+  shell: openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
   when: dh.stat.isreg is not defined
-
-- name: Clear config
-  import_tasks: clear.yml
 
 - name: Config_nginx
   template:
     src: nginx.conf
-    dest: "/etc/nginx/sites-enabled/nginx.conf"
+    dest: /etc/nginx/sites-enabled/nginx.conf
     mode: 0644
   notify:
     handler_restart_nginx

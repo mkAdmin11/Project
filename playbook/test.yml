@@ -1,10 +1,11 @@
 ---
 
-- name: Preparing zhare
-  hosts: vpn
+- name: Install and config web content
+  hosts: db
+  gather_facts: no
   become: true
   become_user: root
   vars_files:
   - ../secret.yml
   roles:
-  - share
+  - test 

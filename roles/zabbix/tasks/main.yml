@@ -34,3 +34,7 @@
 - name: PHP frontend
   import_tasks: php.yml
   when: ansible_hostname == 'mk-server2'
+
+- name: PostgreSQL monitorinx
+  import_tasks: postgres.yml
+  when: ansible_hostname == 'mk-server3'

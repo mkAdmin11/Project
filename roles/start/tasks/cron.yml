@@ -3,7 +3,7 @@
 - name: Get script stat
   stat:
     path: /root/start.sh
-  register: skript
+  register: script
 
 - name: Make script template
   block:
@@ -33,14 +33,14 @@
   when: ansible_hostname != 'mk-server3'
 
 - name: Sync cron
-  become: yes
-  become_user: mk-ansible
   cron:
     name: "{{ item.name }}"
     minute: "0"
     hour: "*/2"
     job: "{{ item.job }}"
   with_items:
-  - {name: 'Sync mk-server2',job: 'rsync -avzhe ssh /share/* mk-ansible@mk-server2.local:/share/'}
-  - {name: 'Sync mk-server3',job: 'rsync -avzhe ssh /share/* mk-ansible@mk-server3.local:/share/'}
+  - {name: 'Sync mk-server2',job: 'rsync -arze ssh /share/ mk-adm2@mk-server2.local:/share/'}
+  - {name: 'Reverce sync mk-server2',job: 'rsync -arze ssh mk-adm2@mk-server2.local:/share/ /share/'}
+  - {name: 'Sync mk-server3',job: 'rsync -arze ssh /share/ mk-adm3@mk-server3.local:/share/'}
+  - {name: 'Reverce sync mk-server3',job: 'rsync -arze ssh mk-adm3@mk-server3.local:/share/ /share/'}
   when: ansible_hostname == 'mk-server1'

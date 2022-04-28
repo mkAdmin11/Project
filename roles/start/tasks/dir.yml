@@ -1,0 +1,10 @@
+---
+
+- name: Get share stats
+  stat:
+    path: /share
+  register: share_stats
+
+- name: Make dir
+  shell: mkdir /share
+  when: share_stats.stat.isdir is not defined

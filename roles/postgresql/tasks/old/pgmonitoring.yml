@@ -20,5 +20,3 @@
     databases: "{{ zabbix.db_name }}"
     source: 127.0.0.1/8 
     method: md5
-  notify:
-    handler_restart_postgresql

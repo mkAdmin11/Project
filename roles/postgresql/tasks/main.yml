@@ -30,11 +30,9 @@
 
 - name: PostgreSQL listen addresses
   shell: sed -i.bak "s/#listen_addresses = 'localhost'/listen_addresses = '{{ ansible_facts.tun0.ipv4.address }}, 127.0.0.1'/g" /etc/postgresql/{{ db.ver }}/main/postgresql.conf
-  notify:
-    handler_restart_postgresql
 
 - name: Setting permissions
-  shell: chown -R postgres:mk-ansible /share/pg
+  shell: chown -R postgres:postgres /share/pg
 
 - name: Upload dump
   become: yes
@@ -55,8 +53,6 @@
   - {users: '{{ roundcube.db_user }}',databases: '{{ roundcube.db_name }}'}
   - {users: '{{ demo.db_user }}',databases: '{{ demo.db_name1 }}'}
   - {users: '{{ demo.db_user }}',databases: '{{ demo.db_name2 }}'} 
-  notify:
-    handler_restart_postgresql
 
 - name: Monitoring. Add rule
   postgresql_pg_hba:
@@ -66,5 +62,9 @@
     databases: "{{ zabbix.db_name }}"
     source: 127.0.0.1/8
     method: md5
-  notify:
-    handler_restart_postgresql 
+
+- name: handler_restart_postgresql
+  systemd:
+    daemon_reload: yes
+    name: postgresql.service
+    state: restarted

@@ -36,12 +36,9 @@
 
 - name: Config nginx
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: nginx.conf
+    dest: /etc/nginx/sites-enabled/nginx.conf 
     mode: 0644
-  with_items:
-  - {src: 'nginx.conf', dest: '/etc/nginx/sites-enabled/nginx.conf'}
-  - {src: 'forcustomer.conf', dest: '/etc/nginx/sites-enabled/forcustomer.conf'}
   notify:
     handler_start_nginx
 
@@ -51,7 +48,7 @@
 - name: Config Apache2
   template:
     src: apache.conf
-    dest: "/etc/apache2/sites-enabled/apache.conf"
+    dest: /etc/apache2/sites-enabled/apache.conf
     mode: 0644
   notify:
     handler_start_apache2

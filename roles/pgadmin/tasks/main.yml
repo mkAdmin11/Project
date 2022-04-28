@@ -20,6 +20,6 @@
 
 - name: Install pgAdmin
   apt:
-    name:"pgadmin4
+    name: pgadmin4
     state: latest
 

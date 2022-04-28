@@ -1,11 +1,11 @@
 [servers]
-server1.novpn ansible_ssh_host=10.0.0.6
-server2.novpn ansible_ssh_host=10.0.0.12
-server3.novpn ansible_ssh_host=10.0.0.13
+server1.novpn ansible_host=10.0.0.6 ansible_user=mk-adm1
+server2.novpn ansible_host=10.0.0.12 ansible_user=mk-adm2
+server3.novpn ansible_host=10.0.0.13 ansible_user=mk-adm3
 
-server1.vpn ansible_ssh_host=mk-server1.local
-server2.vpn ansible_ssh_host=mk-server2.local
-server3.vpn ansible_ssh_host=mk-server3.local
+server1.vpn ansible_host=mk-server1.local ansible_user=mk-adm1
+server2.vpn ansible_host=mk-server2.local ansible_user=mk-adm2
+server3.vpn ansible_host=mk-server3.local ansible_user=mk-adm3
 
 [novpn]
 server1.novpn

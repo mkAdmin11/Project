@@ -40,15 +40,17 @@
 
 - name: Get dir stats
   stat:
-    path: "/var/mail/vhosts/admin11.tk"
+    path: "/var/mail/vhosts/{{ domain.second }}{{ domain.first }}"
   register: maildir
-  
+ 
 - name: Make dir
-  shell: "mkdir /var/mail/vhosts/{{ domain.second }}{{ domain.first }}"
+  file:
+    path: "/var/mail/vhosts/{{ domain.second }}{{ domain.first }}"
+    state: directory
+    owner: vmail 
+    group: vmail
+    mode: 0770
   when: maildir.stat.isdir is not defined
-
-- name: Chown dir
-  shell: "chown -R vmail:vmail /var/mail/vhosts/"
 
 - name: Dovecot listen
   shell: "sed -i.bak 's/#listen = *, ::/listen = 0.0.0.0/g' /etc/dovecot/dovecot.conf"
@@ -67,11 +69,3 @@
   - {src: 'dovecot-users',dest: '/etc/dovecot/dovecot-users'}
   notify:
     handler_restart_dovecot
-
-- name: Enable mail
-  systemd:
-    name: "{{ item.name }}"
-    enabled: yes
-  with_items:
-  - {name: 'postfix.service'}
-  - {name: 'dovecot.service'}

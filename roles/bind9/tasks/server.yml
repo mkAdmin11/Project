@@ -31,5 +31,6 @@
   - {src: 'public.db',dest: '/etc/bind/myzones/{{ domain.second }}/{{ domain.second }}.db'}
   - {src: 'named.conf.local',dest: '/etc/bind/named.conf.local'}
   - {src: 'named.conf.options',dest: '/etc/bind/named.conf.options'}
-  notify:
-    handler_reconfig_server
+
+- name: Reconfig server
+  shell: rndc reload

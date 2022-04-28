@@ -3,7 +3,7 @@
 - name: Config client
   template:
     src: "{{ ansible_hostname }}"
-    dest: "/etc/openvpn/clientvpn.conf"
+    dest: /etc/openvpn/clientvpn.conf
     mode: 0644
 
 - name: Starti client

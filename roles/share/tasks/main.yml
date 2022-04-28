@@ -1,9 +1,0 @@
----
-
-- name: Make share 
-  import_tasks: dir.yml
-  when: ansible_hostname != 'mk-server1'
-
-- name: Rsync
-  import_tasks: rsync.yml
-  when: ansible_hostname == 'mk-server1'

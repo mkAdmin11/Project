@@ -67,5 +67,3 @@
   with_items:
   - {databases: '{{ demo.db_name1 }}'}
   - {databases: '{{ demo.db_name2 }}'}
-  notify:
-    handler_restart_postgresql

@@ -5,7 +5,7 @@
     name: openvpn
     state: latest
 
-- name: Starti OpenVPN
+- name: Start OpenVPN
   systemd:
     name: openvpn.service
     enabled: yes

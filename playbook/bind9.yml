@@ -1,6 +1,6 @@
 ---
 
-- name: Install and config Bind9 and hosts
+- name: Install and config Bind9 and hosts DNS
   hosts: novpn
   become: true
   become_user: root

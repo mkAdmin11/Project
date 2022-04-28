@@ -1,6 +1,0 @@
----
-
-- name: handler_restart_postgresql
-  systemd:
-    name: postgresql.service
-    state: restarted

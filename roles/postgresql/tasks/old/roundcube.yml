@@ -34,5 +34,3 @@
     databases: "{{ roundcube.db_user }}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
     method: md5
-  notify:
-    handler_restart_postgresql

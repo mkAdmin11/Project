@@ -9,5 +9,8 @@
     src: resolved.conf
     dest: "/etc/systemd/resolved.conf"
     mode: 0644
-  notify:
-    handler_restart_resolved
+
+- name: handler_restart_resolved
+  systemd:
+    name: systemd-resolved
+    state: restarted

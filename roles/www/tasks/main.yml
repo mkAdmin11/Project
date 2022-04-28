@@ -2,25 +2,20 @@
 
 - name: Remove dir
   file:
-    path: "/var/www"
+    path: /var/www
     state: absent
 
-- name: Make dir
-  file:
-    path: "/var/www"
-    state: directory
-    mode: 0755
-
 - name: Download www git
-  git:
-    repo: "git@github.com:mkAdmin11/www.git"
-    dest: "/var/www"
+  copy:
+    src: /share/web/www/
+    dest: /var/www
+    remote_src: yes
 
 - name: Change www permision
   shell: "{{ item.shell }}"
   with_items:
-  - {shell: 'find /var/www/wordpress -type d -exec chmod 755 {} \;'}
-  - {shell: 'find /var/www/wordpress -type f -exec chmod 644 {} \;'}
+  - {shell: 'find /var/www/wordpress -type d -exec chmod 750 {} \;'}
+  - {shell: 'find /var/www/wordpress -type f -exec chmod 640 {} \;'}
   - {shell: 'chown -R www-data:www-data /var/www/wordpress'}
   - {shell: 'chown -R www-data:www-data /var/www/forcustomer/feedback/uploads'}
 

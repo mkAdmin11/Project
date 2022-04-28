@@ -1,6 +1,9 @@
 ---
 
-- name: Remove nossl conf
+- name: Remove html dir
   file:
-    path: "/etc/nginx/sites-enabled/forcustomer.conf"
+    path: /var/www/html
     state: absent
+
+- name: Make html
+  shell: cp -r /usr/share/nginx/html /var/www/html
