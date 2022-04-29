@@ -1,6 +1,6 @@
-# Project
+# PROJECT
 
-## СПИСОК PLAYBOOK:
+## Список playbook:
 
 1. Start
 2. OpenVPN
