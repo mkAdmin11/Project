@@ -2,19 +2,19 @@
 
 ## СПИСОК PLAYBOOK:
 
-1. start.yml
-2. openvpn.yml
-3. bind9.yml
-4. postgreslq.yml
-5. web.yml
-6. certbot.yml
-7. www.yml
-8. mail.yml
-9. pgadmin.yml
-10. elastic.yml
-11. logs.yml
-12. zabbix.yml
-13. grafana.yml
+1. Start
+2. OpenVPN
+3. Bind9
+4. PostgreSQL
+5. WEB
+6. Certbot
+7. WWW
+8. Mail
+9. pgAmin
+10. Elastic
+11. Logs
+12. Zabbix
+13. Grafana
 
 ## Start
 
