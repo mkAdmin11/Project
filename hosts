@@ -1,11 +1,11 @@
 [servers]
-server1.novpn ansible_host=10.0.0.6 ansible_user=mk-adm1
-server2.novpn ansible_host=10.0.0.12 ansible_user=mk-adm2
-server3.novpn ansible_host=10.0.0.13 ansible_user=mk-adm3
+server1.novpn ansible_host="{{ server1.novpn_ip }}" ansible_user="{{ server1.user }}"
+server2.novpn ansible_host="{{ server2.novpn_ip }}" ansible_user="{{ server2.user }}"
+server3.novpn ansible_host="{{ server3.novpn_ip }}" ansible_user="{{ server3.user }}"
 
-server1.vpn ansible_host=mk-server1.local ansible_user=mk-adm1
-server2.vpn ansible_host=mk-server2.local ansible_user=mk-adm2
-server3.vpn ansible_host=mk-server3.local ansible_user=mk-adm3
+server1.vpn ansible_host="{{ server1.name }}".local ansible_user="{{ server1.user }}"
+server2.vpn ansible_host="{{ server2.name }}".local ansible_user="{{ server2.user }}"
+server3.vpn ansible_host="{{ server3.name }}".local ansible_user="{{ server3.user }}"
 
 [novpn]
 server1.novpn
