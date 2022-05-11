@@ -55,6 +55,9 @@
 - name: Dovecot listen
   shell: "sed -i.bak 's/#listen = *, ::/listen = 0.0.0.0/g' /etc/dovecot/dovecot.conf"
 
+- name: Dovecot imap only
+  shell: "sed -i 's/*.protocol/imapd.protocol/g' /etc/dovecot/dovecot.conf"
+
 - name: Config Dovecot
   template:
     src: "{{ item.src }}"
