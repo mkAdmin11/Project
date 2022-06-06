@@ -16,6 +16,9 @@
 12. *Zabbix*
 13. *Grafana*
 
+
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/master/start.sh)"
+
 ## Внимание
 При необходимости выполнения действий помимо представленных ролей, они выделены **!!! данным образом !!!**
 
