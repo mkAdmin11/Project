@@ -10,16 +10,16 @@
   roles:
   - {role: test, tags: test}
 
-#start
-#openvpn
-#bind9
-#postgreslq
-#web
-#certbot
-#www
-#mail
-#pgadmin
-#elastic
-#logs
-#zabbix
-#grafana
+#start novpn
+#openvpn novpn
+#bind9 novpn
+#postgreslq db
+#web web
+#certbot web
+#www web
+#mail web
+#pgadmin web
+#elastic elk
+#logs vpn
+#zabbix vpn
+#grafana grafana
