@@ -14,4 +14,4 @@ sudo rm /etc/ansible/hosts
 sudo ln -s /ansible/hosts /etc/ansible/
 
 echo "alias play='ansible-playbook /ansible/play.yml'" >> ~/.bashrc
-source ~/.bashrc
+. ~/.bashrc
