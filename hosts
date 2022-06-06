@@ -1,4 +1,5 @@
 [servers]
+
 server1.novpn ansible_host="{{ server1.novpn_ip }}" ansible_user="{{ server1.user }}"
 server2.novpn ansible_host="{{ server2.novpn_ip }}" ansible_user="{{ server2.user }}"
 server3.novpn ansible_host="{{ server3.novpn_ip }}" ansible_user="{{ server3.user }}"

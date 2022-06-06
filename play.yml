@@ -1,0 +1,25 @@
+---
+
+- name: SkillFactory final project playbook
+  hosts: server1.novpn
+  gather_facts: yes
+  become: true
+  become_user: root
+  vars_files:
+  - secret.yml
+  roles:
+  - {role: test, tags: test}
+
+#start
+#openvpn
+#bind9
+#postgreslq
+#web
+#certbot
+#www
+#mail
+#pgadmin
+#elastic
+#logs
+#zabbix
+#grafana
