@@ -3,6 +3,9 @@
 - name: Update pkg
   apt:
     update_cache: yes
+
+- name: Upgrade pkg
+  apt:
     only_upgrade: yes
 
 - name: Install some pkg
@@ -13,9 +16,7 @@
     - tree
     - apt-transport-https
     - unzip
-    - zip 
-    - git 
-    - zsh
+    - zip
 
 - name: Set timezone 
   timezone:
