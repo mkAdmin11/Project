@@ -13,8 +13,8 @@
 
 - name: openvpn - up server
   import_tasks: server.yml
-  when: ansible_hostname == '{{ server1.name }}'
+  when: ansible_hostname == server1.name|string
 
 - name: openvpn - up clients
   import_tasks: client.yml
-  when: ansible_hostname != '{{ server1.name }}'
+  when: ansible_hostname != server1.name|string

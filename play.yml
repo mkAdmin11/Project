@@ -1,28 +1,56 @@
 ---
 
-- hosts: server1.novpn
-  tags: novpn
+- name: test - novpn
+  hosts: novpn
   gather_facts: yes
   become: true
   become_user: root
   become_method: sudo
-  roles:
-    - {role: test, tags: test}
-    - {role: start, tags: start}
-    - {role: openvpn, tags: openvpn}
   vars_files:
     - secret.yml
+  roles:
+    - test
+  tags:
+    - test
 
-- hosts: server1.vpn
-  tags: vpn
+- name: test - vpn 
+  hosts: vpn
   gather_facts: yes
   become: true
   become_user: root
   become_method: sudo
-  roles:
-    - {role: test, tags: vtest}
   vars_files:
     - secret.yml
+  roles:
+    - test
+  tags:
+    - vtest
+
+- name: start
+  hosts: novpn
+  gather_facts: yes
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - start
+  tags:
+    - start
+
+- name: openvpn
+  hosts: novpn
+  gather_facts: yes
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - openvpn
+  tags:
+    - openvpn
 
 #bind9 novpn
 #postgreslq db

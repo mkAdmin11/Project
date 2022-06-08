@@ -15,7 +15,7 @@
     dest: "{{ item.dest }}"
     mode: 0640
     backup: yes
-  when_items:
+  with_items:
   - {src: 'client1vpn', dest: '/etc/openvpn/ccd/client1vpn'}
   - {src: 'client2vpn', dest: '/etc/openvpn/ccd/client2vpn'}
 
@@ -32,3 +32,15 @@
     name: openvpn@servervpn.service
     enabled: yes
     state: started
+
+- name: vpnserver - add ufw rule
+  ufw:
+    rule: allow
+    proto: udp
+    port: 1194
+    direction: in
+    interface: eth0 
+
+- name: vpnserver - reloaded ufw
+  ufw:
+    state: reloaded

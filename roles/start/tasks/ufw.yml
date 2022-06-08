@@ -14,14 +14,15 @@
   ufw:
     rule: allow
     name: OpenSSH
-  when: ansible_hostname == '{{ server2.name }}'
+  when: ansible_hostname == server2.name|string
 
 - name: ufw - allow ssh on other servers
   ufw:
     rule: allow
-    name: OpenSSH
-    interface: "{{ default_ipv4.interface }}"
-  when: ansible_hostname != '{{ server2.name }}'
+    interface: "{{ ansible_facts.default_ipv4.interface }}"
+    direction: in
+    to_port: 22
+  when: ansible_hostname != server2.name|string
 
 - name: ufw - enable
   ufw:
