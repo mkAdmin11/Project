@@ -1,12 +1,13 @@
 ---
 
-- name: Config client
+- name: vpnclient - config client
   template:
     src: "{{ ansible_hostname }}"
     dest: /etc/openvpn/clientvpn.conf
     mode: 0644
+    backup: yes
 
-- name: Starti client
+- name: vpnclient - start client
   systemd:
     daemon_reload: yes
     name: openvpn@clientvpn.service

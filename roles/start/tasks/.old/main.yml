@@ -1,0 +1,38 @@
+---
+
+- name: Update pkg
+  apt:
+    update_cache: yes
+
+- name: Upgrade pkg
+  apt:
+    only_upgrade: yes
+
+- name: Install some pkg
+  apt:
+    pkg:
+    - net-tools
+    - network-manager
+    - tree
+    - apt-transport-https
+    - unzip
+    - zip
+
+- name: Set timezone 
+  timezone:
+    name: Europe/Moscow
+
+- name: Make share
+  import_tasks: dir.yml
+  when: ansible_hostname != 'mk-server1'
+
+- name: Set permissions
+  import_tasks: perm.yml
+
+- name: Sync share
+  import_tasks: rsync.yml
+  when: ansible_hostname == 'mk-server1'
+
+- name: Cron
+  import_tasks: cron.yml
+  when: ansible_hostname == 'mk-server1'

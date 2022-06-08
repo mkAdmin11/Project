@@ -1,14 +1,14 @@
 ---
 
-- name: Update pkg
+- name: apt - update cache
   apt:
     update_cache: yes
 
-- name: Upgrade pkg
+- name: apt - upgrade
   apt:
     only_upgrade: yes
 
-- name: Install some pkg
+- name: apt - install few packages
   apt:
     pkg:
     - net-tools
@@ -18,21 +18,16 @@
     - unzip
     - zip
 
-- name: Set timezone 
+- name: timezone - set timezone 
   timezone:
     name: Europe/Moscow
 
-- name: Make share
-  import_tasks: dir.yml
-  when: ansible_hostname != 'mk-server1'
+- name: sshd - configure
+  include_tasks: sshd.yml
 
-- name: Set permissions
-  import_tasks: perm.yml
+- name: ufw - configure
+  include_tasks: ufw.yml
 
-- name: Sync share
-  import_tasks: rsync.yml
-  when: ansible_hostname == 'mk-server1'
-
-- name: Cron
-  import_tasks: cron.yml
-  when: ansible_hostname == 'mk-server1'
+- name: vim & bash - configure
+  include_tasks: useful.yml
+  tags: useful

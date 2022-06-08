@@ -1,4 +1,9 @@
 ---
 
 - name: test
-  ping:
+#  debug:
+#    var: ansible_facts
+  file:
+    path: /ansible/test 
+    state: directory
+    mode: 0750
