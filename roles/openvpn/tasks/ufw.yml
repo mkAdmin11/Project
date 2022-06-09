@@ -1,0 +1,22 @@
+---
+
+- name: vpnserver - add openvpn ufw rule
+  ufw:
+    rule: allow
+    proto: udp
+    port: 1194
+    direction: in
+    interface: eth0 
+  when: ansible_hostname == server1.name|string
+
+- name: vpnserver - add ssh ufw rule
+  ufw:
+    rule: allow
+    proto: tcp
+    port: 22
+    direction: in
+    interface: tun0
+
+- name: vpnserver - reloaded ufw
+  ufw:
+    state: reloaded

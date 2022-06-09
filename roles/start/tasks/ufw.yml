@@ -19,6 +19,7 @@
 - name: ufw - allow ssh on other servers
   ufw:
     rule: allow
+    proto: tcp
     interface: "{{ ansible_facts.default_ipv4.interface }}"
     direction: in
     to_port: 22
@@ -33,4 +34,3 @@
   ufw:
     state: reloaded
   when: ufw_enabled is not changed
-

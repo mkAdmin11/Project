@@ -1,0 +1,14 @@
+---
+
+- name: sshd - configure
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: 'ListenAddress {{ ansible_facts.tun0.ipv4.address }}'
+    insertafter: 'ListenAddress {{ ansible_facts.default_ipv4.address }}'
+    state: present
+
+- name: sshd - reload
+  systemd:
+    name: sshd.service
+    enabled: yes
+    state: reloaded
