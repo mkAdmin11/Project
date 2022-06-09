@@ -32,14 +32,29 @@
     name: openvpn@servervpn.service
     enabled: yes
     state: started
+  register: server_started
 
-- name: vpnserver - add ufw rule
+- name: vpnserver - reload server
+  systemd:
+    name: openvpn@servervpn.service
+    state: restarted
+  when:  server_started is not changed
+
+- name: vpnserver - add openvpn ufw rule
   ufw:
     rule: allow
     proto: udp
     port: 1194
     direction: in
     interface: eth0 
+
+- name: vpnserver - add ssh ufw rule
+  ufw:
+    rule: allow
+    proto: udp
+    port: 22
+    direction: in
+    interface: tun0
 
 - name: vpnserver - reloaded ufw
   ufw:

@@ -1,59 +1,54 @@
 ---
 
-- name: test - novpn
-  hosts: novpn
-  gather_facts: yes
+- hosts: novpn
   become: true
   become_user: root
   become_method: sudo
+  gather_facts: yes
   vars_files:
-    - secret.yml
-  roles:
-    - test
+    - secret.yml 
   tags:
+    - novpn
     - test
-
-- name: test - vpn 
-  hosts: vpn
-  gather_facts: yes
-  become: true
-  become_user: root
-  become_method: sudo
-  vars_files:
-    - secret.yml
-  roles:
-    - test
-  tags:
-    - vtest
-
-- name: start
-  hosts: novpn
-  gather_facts: yes
-  become: true
-  become_user: root
-  become_method: sudo
-  vars_files:
-    - secret.yml
-  roles:
     - start
-  tags:
-    - start
-
-- name: openvpn
-  hosts: novpn
-  gather_facts: yes
-  become: true
-  become_user: root
-  become_method: sudo
-  vars_files:
-    - secret.yml
-  roles:
-    - openvpn
-  tags:
     - openvpn
 
-#bind9 novpn
-#postgreslq db
+- hosts: novpn
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: test, tags: test}
+    - {role: start, tags: start}
+    - {role: openvpn, tags: openvpn}
+  tags:
+    - novpn
+
+- hosts: vpn
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  tags:
+    - vpn
+    - vtest 
+
+- hosts: vpn
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: test, tags: vtest}
+  tags:
+    - vpn
+
+# postgreslq db
 #web web
 #certbot web
 #www web

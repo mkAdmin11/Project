@@ -6,7 +6,8 @@
 
 - name: apt - upgrade
   apt:
-    only_upgrade: yes
+    upgrade: safe
+  tags: useful
 
 - name: apt - install few packages
   apt:

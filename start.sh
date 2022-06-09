@@ -8,9 +8,9 @@ sudo mkdir /ansible
 sudo chown -R $(whoami):$(whoami) /ansible/
 git clone https://github.com/mkAdmin11/ansible.git /ansible/
 
-sudo rm -rf /etc/ansible/roles/
+sudo mv /etc/ansible/roles/ /etc/ansible/backup_roles_$(date +%F_%T)
 sudo ln -s /ansible/roles/ /etc/ansible/
-sudo rm /etc/ansible/hosts
+sudo mv /etc/ansible/hosts /etc/ansible/backup_hosts_$(date +%F_%T)
 sudo ln -s /ansible/hosts /etc/ansible/
 
 vi /home/$(whoami)/.ssh/id_rsa

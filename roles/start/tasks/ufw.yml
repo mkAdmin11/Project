@@ -27,3 +27,10 @@
 - name: ufw - enable
   ufw:
     state: enabled
+  register: ufw_enabled
+
+- name: ufw - reload
+  ufw:
+    state: reloaded
+  when: ufw_enabled is not changed
+

@@ -5,7 +5,6 @@
     path: /etc/ssh/sshd_config
     regexp: '^#ListenAddress 0.0.0.0$'
     replace: 'ListenAddress 0.0.0.0'
-  register: sshd_server2
   when: ansible_hostname == server2.name|string
 
 - name: sshd - configure other servers
@@ -13,19 +12,10 @@
     path: /etc/ssh/sshd_config
     regexp: '^#ListenAddress 0.0.0.0$'
     replace: 'ListenAddress {{ ansible_facts.default_ipv4.address }}'
-  register: sshd_noserver2
   when: ansible_hostname != server2.name|string
 
-- name: sshd - reload {{ server2.name }}
+- name: sshd - reload
   systemd:
     name: sshd.service
     enabled: yes
-    state: restarted
-  when: sshd_server2.changed and ansible_hostname == server2.name|string
-
-- name: sshd - reload other servers
-  systemd:
-    name: sshd.service
-    enabled: yes
-    state: restarted
-  when: sshd_noserver2.changed and ansible_hostname != server2.name|string
+    state: reloaded
