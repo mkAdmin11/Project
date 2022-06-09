@@ -18,11 +18,3 @@
 - name: openvpn - up clients
   import_tasks: client.yml
   when: ansible_hostname != server1.name|string
-
-- name: ufw - config
-  import_tasks: ufw.yml
-  when: ansible_hostname != server2.name|string
-
-- name: ssh - config
-  import_tasks: ssh.yml
-  when: ansible_hostname != server2.name|string

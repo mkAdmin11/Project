@@ -14,6 +14,14 @@
     replace: 'ListenAddress {{ ansible_facts.default_ipv4.address }}'
   when: ansible_hostname != server2.name|string
 
+- name: sshd - configure other servers to vpn
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: 'ListenAddress {{ ansible_facts.tun0.ipv4.address }}'
+    insertafter: 'ListenAddress {{ ansible_facts.default_ipv4.address }}'
+    state: present
+  when: ansible_hostname != server2.name|string
+
 - name: sshd - reload
   systemd:
     name: sshd.service

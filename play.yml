@@ -12,6 +12,7 @@
     - test
     - start
     - openvpn
+    - security
 
 - hosts: novpn
   become: true
@@ -23,6 +24,7 @@
     - {role: test, tags: test}
     - {role: start, tags: start}
     - {role: openvpn, tags: openvpn}
+    - {role: security, tags: security}
   tags:
     - novpn
 
