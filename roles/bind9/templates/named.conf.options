@@ -19,7 +19,7 @@ options {
                 77.88.8.1;
         };
 
-        listen-on port 53 { 0.0.0.0; {{ server2.novpn_ip }}; };
+        listen-on port 53 {  {{ ansible_facts.default_ipv4.address }}; {{ ansible_facts.tun0.ipv4.address }}; };
         allow-query { any; };
 
 

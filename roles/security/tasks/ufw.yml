@@ -1,5 +1,9 @@
 ---
 
+- name: ufw - disables and resets firewall to installation defaults
+  ufw:
+    state: reset
+
 - name: ufw - allow outgoing trafic
   ufw:
     default: allow
@@ -9,6 +13,11 @@
   ufw:
     default: deny
     direction: incoming
+
+- name: ufw - deny IPv6
+  ufw:
+    rule: reject
+    proto: ipv6
 
 - name: ufw - allow ssh on {{ server2.name }} 
   ufw:
@@ -41,6 +50,7 @@
     port: 22
     direction: in
     interface: tun0
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
   when: ansible_hostname != server2.name|string
 
 - name: ufw - enable

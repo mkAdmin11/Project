@@ -1,16 +1,26 @@
 ---
 
-- name: Up server
+- name: bind - config server
   import_tasks: server.yml
-  when: ansible_hostname == 'mk-server2'
+  when: ansible_hostname == server2.name|string
 
-- name: Configure hosts
+- name: ufw - add bind rule
+  import_tasks: ufw.yml 
+  when: ansible_hostname == server2.name|string
+
+- name: resolv - config hosts
   template:
     src: resolved.conf
     dest: "/etc/systemd/resolved.conf"
     mode: 0644
 
-- name: handler_restart_resolved
+- name: resolv - restart
   systemd:
     name: systemd-resolved
     state: restarted
+
+- name: cron - restart systemd-resolved after reboot server
+  cron:
+    name: restart systemd-resolved after reboot server
+    special_time: reboot
+    job: "/bin/sleep 30 && /bin/systemctl restart systemd-resolved.service"

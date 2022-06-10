@@ -27,3 +27,9 @@
     name: sshd.service
     enabled: yes
     state: reloaded
+
+- name: cron - reload sshd after reboot server
+  cron:
+    name: reload sshd  after reboot server
+    special_time: reboot
+    job: "/bin/sleep 30 && /bin/systemctl reload sshd.service"

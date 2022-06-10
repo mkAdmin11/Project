@@ -37,7 +37,8 @@
     - secret.yml
   tags:
     - vpn
-    - vtest 
+    - vtest
+    - bind9
 
 - hosts: vpn
   become: true
@@ -47,6 +48,7 @@
     - secret.yml
   roles:
     - {role: test, tags: vtest}
+    - {role: bind9, tags: bind9}
   tags:
     - vpn
 

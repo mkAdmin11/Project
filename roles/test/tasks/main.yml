@@ -2,5 +2,10 @@
 
 - name: test
 #  ping:
-  debug:
-    var: ansible_facts
+#  debug:
+#    var: ansible_facts
+  file:
+    path: /ansible/test/test
+    state: directory
+    mode: 775
+  when: ansible_hostname == server1.name|string
