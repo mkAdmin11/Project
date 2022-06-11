@@ -14,7 +14,7 @@
     default: deny
     direction: incoming
 
-- name: ufw - deny IPv6
+- name: ufw -  reject IPv6
   ufw:
     rule: reject
     proto: ipv6
@@ -25,13 +25,27 @@
     name: OpenSSH
   when: ansible_hostname == server2.name|string
 
-- name: ufw - allow ssh on other servers
+- name: ufw - allow ssh on other servers (novpn)
   ufw:
     rule: allow
     proto: tcp
     interface: "{{ ansible_facts.default_ipv4.interface }}"
     direction: in
     to_port: 22
+    src: '{{ item }}'
+  loop:
+    - "{{ server1.novpn_ip }}"
+    - "{{ server2.novpn_ip }}"
+  when: ansible_hostname != server2.name|string
+
+- name: ufw - allow ssh on other servers (vpn)
+  ufw:
+    rule: allow
+    proto: tcp
+    port: 22
+    direction: in
+    interface: tun0
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
   when: ansible_hostname != server2.name|string
 
 - name: vpnserver - add openvpn ufw rule
@@ -42,16 +56,6 @@
     direction: in
     interface: eth0
   when: ansible_hostname == server1.name|string
-
-- name: vpnserver - add ssh ufw rule
-  ufw:
-    rule: allow
-    proto: tcp
-    port: 22
-    direction: in
-    interface: tun0
-    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
-  when: ansible_hostname != server2.name|string
 
 - name: ufw - enable
   ufw:
