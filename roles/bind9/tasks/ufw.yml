@@ -1,6 +1,6 @@
 ---
 
-- name: ufw - allow ssh on {{ server2.name }} 
+- name: ufw - allow bind9 on {{ server2.name }} 
   ufw:
     rule: allow
     name: Bind9 
