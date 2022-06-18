@@ -1,0 +1,44 @@
+---
+
+- name: bind - install
+  apt:
+    name: bind9
+    state: latest
+
+- name: bind - start
+  systemd:
+    name: named.service
+    enabled: yes
+    state: started
+
+- name: bind - make zones dir
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - {path: '/etc/bind/myzones/{{ domain.second }}'}
+    - {path: '/etc/bind/myzones/local'}
+
+- name: bind - config server
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - {src: 'local.db', dest: '/etc/bind/myzones/local/local.db'}
+    - {src: 'public.db', dest: '/etc/bind/myzones/{{ domain.second }}/{{ domain.second }}.db'}
+    - {src: 'named.conf.local', dest: '/etc/bind/named.conf.local'}
+    - {src: 'named.conf.options', dest: '/etc/bind/named.conf.options'}
+
+- name: bind - reload server
+  shell: rndc reload
+
+- name: bind - add ufw rule
+  ufw:
+    rule: allow
+    name: Bind9
+
+- name: bind - reload ufw
+  ufw:
+    state: reloaded

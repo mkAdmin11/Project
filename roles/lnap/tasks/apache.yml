@@ -1,0 +1,72 @@
+---
+
+- name: apache - install apache
+  apt:
+    name: apache2
+    state: latest
+
+- name: apache - stop and disable
+  systemd:
+    name: apache2.service
+    enabled: no
+    state: stopped
+
+- name: apache - cron
+  cron:
+    name: start apache after reboot server
+    special_time: reboot 
+    job: "/bin/sleep 45 && /bin/systemctl start apache2.service"
+
+- name: apache - install mod
+  apt:
+    pkg:
+    - libapache2-mod-php
+    - libapache2-mod-wsgi-py3
+    - libapache2-mod-rpaf
+
+- name: apache - find enabled configs
+  find:
+    path: /etc/apache2/sites-enabled/
+    file_type: any
+  register: apache_conf
+
+- name: apache - remove enabled config
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ apache_conf.files }}"
+
+- name: apache - set port
+  replace:
+    path: /etc/apache2/ports.conf 
+    regexp: '^Listen 80$'
+    replace: 'Listen {{ ansible_facts.tun0.ipv4.address }}:8080'
+    backup: yes
+
+- name: apache - copy config
+  template:
+    src: apache.conf
+    dest: /etc/apache2/sites-available/apache.conf
+    mode: 0644
+    backup: yes
+
+- name: apache - enabled config
+  file:
+    src: /etc/apache2/sites-available/apache.conf
+    dest: /etc/apache2/sites-enabled/apache.conf
+    owner: root
+    group: root
+    state: link
+
+- name: apache - add ufw rule
+  ufw:
+    rule: allow
+    port: 8080 
+    direction: in
+    interface: tun0
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+
+- name: apache - started
+  systemd:
+    name: apache2.service
+    state: started

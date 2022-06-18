@@ -11,10 +11,10 @@
     enabled: yes
     state: started
 
-- name: openvpn - up server
+- name: openvpn - config server
   import_tasks: server.yml
   when: ansible_hostname == server1.name|string
 
-- name: openvpn - up clients
+- name: openvpn - config clients
   import_tasks: client.yml
   when: ansible_hostname != server1.name|string

@@ -1,0 +1,52 @@
+---
+
+- name: dbms - install postgrsql
+  apt:
+    pkg:
+    - postgresql-{{ db.ver }}
+    - postgresql-contrib-{{ db.ver }}
+
+- name: dbms - install python3 and ower pkg
+  apt:
+    pkg:
+    - python3-pip
+    - python3-dev
+    - libpq-dev
+    - acl
+
+- name: dbms - install python lib
+  pip:
+    name: psycopg2
+    state: present
+
+- name: dbms - create db share
+  file:
+    path: /db_share
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: 0755
+
+- name: dbms - stop and disable postgresql
+  systemd:
+    name: postgresql.service
+    enabled: no
+    state: stopped
+
+- name: dbms - add cron rule
+  cron:
+    name: start postgresql after reboot server
+    special_time: reboot
+    job: "/bin/sleep 45 && /bin/systemctl start postgresql.service"
+
+- name: dbms - listen addresses
+  replace:
+    path: /etc/postgresql/{{ db.ver }}/main/postgresql.conf
+    regexp: "^#listen_addresses = 'localhost"
+    replace: "listen_addresses = '{{ ansible_facts.tun0.ipv4.address }}"
+    backup: yes
+
+- name: dbms - start postgresql service
+  systemd:
+    name: postgresql.service
+    state: started

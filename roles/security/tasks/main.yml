@@ -1,7 +1,7 @@
 ---
 
-- name: sshd - configure
+- name: security - config sshd
   include_tasks: sshd.yml
 
-- name: ufw - configure
+- name: security - configure ufw
   include_tasks: ufw.yml

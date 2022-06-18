@@ -1,14 +1,14 @@
 ---
 
-- name: apt - update cache
+- name: start - update cache
   apt:
     update_cache: yes
 
-- name: apt - upgrade
+- name: start - safe upgrade
   apt:
     upgrade: safe
 
-- name: apt - install few packages
+- name: start - install few packages
   apt:
     pkg:
     - net-tools
@@ -18,9 +18,29 @@
     - unzip
     - zip
 
-- name: timezone - set timezone 
+- name: start - set timezone 
   timezone:
     name: Europe/Moscow
 
-- name: vim & bash - configure
-  include_tasks: useful.yml
+- name: start - config vim
+  template:
+    src: vimrc.local
+    dest: /etc/vim/vimrc.local
+    owner: root
+    group: root
+    mode: "0644"
+    backup: yes
+
+- name: start - config bash
+  block:
+    - lineinfile:
+        line: source .bashrc.local
+        path: /home/{{ ansible_user }}/.bashrc
+        backup: yes
+    - template:
+        src: bashrc.local
+        dest: /home/{{ ansible_user }}/.bashrc.local
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0600"
+        backup: yes

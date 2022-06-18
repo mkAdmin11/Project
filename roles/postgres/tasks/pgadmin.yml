@@ -1,0 +1,32 @@
+---
+
+- name: pgadmin - add pgadmin repository key
+  apt_key:
+    id: E8697E2EEF76C02D3A6332778881B2A8210976F2
+    # curl -sL https://www.pgadmin.org/static/packages_pgadmin_org.pub | tee | gpg --keyid-format long
+    url: "https://www.pgadmin.org/static/packages_pgadmin_org.pub"
+    state: present
+
+- name: pgadmin - add pgadmin repository list
+  template:
+    src: pgadmin4.list
+    dest: "/etc/apt/sources.list.d/pgadmin4.list"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: pgadmin - install pgadmin
+  apt:
+    update_cache: yes
+    name: pgadmin4
+    state: latest
+
+- name: pgadmin - script
+  expect:
+    command: /usr/pgadmin4/bin/setup-web.sh
+    responses:
+      Question:
+        - pgadmin@{{ domain.second }}{{ domain.top }}
+        - {{ db.demo.pass }}
+        - y
+        - y 

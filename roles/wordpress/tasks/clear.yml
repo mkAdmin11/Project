@@ -1,0 +1,21 @@
+---
+
+- name: clear - backup www
+  copy:
+    src: /var/www/
+    dest: /var/www_{{ ansible_date_time.iso8601 }}/
+    remote_src: yes
+
+- name: clear - remove www
+  file:
+    path: /var/www/
+    state: absent
+
+- name: clear - make new www dir
+  file:
+    path: /var/www/
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+

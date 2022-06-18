@@ -1,0 +1,36 @@
+---
+
+- name: demo - download demo dump
+  get_url:
+    url: https://edu.postgrespro.ru/demo-small.zip
+    dest: /db_share/demo.zip
+    mode: 0644
+    owner: postgres
+    group: postgres
+
+- name: demo - unzip demo dump
+  unarchive:
+    src: /db_share/demo.zip
+    dest: /db_share/
+    owner: postgres
+    group: postgres
+    remote_src: yes
+    list_files: yes
+  register: unzip
+
+- name: demo - create user
+  postgresql_user:
+    name: "{{ db.demo.user }}"
+    password: "{{ db.demo.pass }}"
+
+- name: demo - create db
+  postgresql_db:
+    name: "{{ db.demo.name1 }}"
+    owner: "{{ db.demo.user }}"
+    encoding: UTF-8
+
+- name: demo - restore db
+  postgresql_db:
+    name: "{{ db.demo.name1 }}"
+    state: restore
+    target: /db_share/{{ unzip.files[0] }}

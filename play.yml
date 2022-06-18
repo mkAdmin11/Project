@@ -4,60 +4,47 @@
   become: true
   become_user: root
   become_method: sudo
-  gather_facts: yes
   vars_files:
-    - secret.yml 
+    - secret.yml
+  roles:
+    - {role: facts,       tags: [test, start, openvpn, security]}
+    - {role: test,        tags: test}
+    - {role: start,       tags: start}
+    - {role: openvpn,     tags: openvpn}
+    - {role: security,    tags: security}
   tags:
     - novpn
-    - test
-    - start
-    - openvpn
-    - security
 
-- hosts: novpn
+- hosts: web 
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: test, tags: test}
-    - {role: start, tags: start}
-    - {role: openvpn, tags: openvpn}
-    - {role: security, tags: security}
+    - {role: facts,       tags: [webtest, dns, lnap, ssl]}
+    - {role: test,        tags: webtest}
+    - {role: dns,         tags: dns}
+    - {role: lnap,        tags: lnap}
+    - {role: ssl,         tags: ssl}
   tags:
-    - novpn
+    - web
 
-- hosts: vpn
-  become: true
-  become_user: root
-  become_method: sudo
-  gather_facts: yes
-  vars_files:
-    - secret.yml
-  tags:
-    - vpn
-    - vtest
-    - bind9
-
-- hosts: vpn
+- hosts: [web, db]
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: test, tags: vtest}
-    - {role: bind9, tags: bind9}
+    - {role: facts,       tags: [wwwtest, wordpress, postgres]}
+    - {role: test,        tags: wwwtest}
+    - {role: postgres,    tags: postgres}
+    - {role: wordpress,   tags: wordpress}
   tags:
-    - vpn
+    - www
 
-# postgreslq db
-#web web
-#certbot web
-#www web
 #mail web
-#pgadmin web
 #elastic elk
 #logs vpn
 #zabbix vpn

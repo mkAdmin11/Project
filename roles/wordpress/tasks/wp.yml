@@ -1,0 +1,50 @@
+--- 
+
+#- name: wp - download wordpress
+#  get_url:
+#    url: https://ru.wordpress.org/latest-ru_RU.zip
+#    dest: /web_share/wordpress.zip
+#    mode: 0644
+#    owner: root
+#    group: root
+
+- name: wp - unzip wordpress.zip
+  unarchive:
+    src: /web_share/wordpress.zip 
+    dest: /var/www/ 
+    owner: www-data
+    group: www-data
+    remote_src: yes
+
+- name: wp - config wordpress
+  template:
+    src: wp-config.php
+    dest: /var/www/wordpress/wp-config.php
+    mode: 0644
+    owner: www-data
+    group: www-data
+
+#- name: wp - download pg4wp
+#  get_url:
+#    url: https://github.com/kevinoid/postgresql-for-wordpress/archive/refs/heads/wordpress4-compat.zip
+#    dest: /web_share/pg4wp.zip
+#    mode: 0644
+#    owner: root
+#    group: root
+
+- name: wp - unzip pg4wp.zip
+  unarchive:
+    src: /web_share/pg4wp.zip
+    dest:  /web_share
+    remote_src: yes
+
+- name: wp - copy pg4wp
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: www-data
+    group: www-data
+    remote_src: yes
+  with_items:
+    - {src: /web_share/postgresql-for-wordpress-wordpress4-compat/pg4wp/, dest: /var/www/wordpress/wp-content/pg4wp/}
+    - {src: /web_share/postgresql-for-wordpress-wordpress4-compat/pg4wp/db.php, dest: /var/www/wordpress/wp-content/db.php}

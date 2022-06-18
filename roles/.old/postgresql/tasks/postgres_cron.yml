@@ -1,7 +1,0 @@
----
-
-- name: Remove job duplication
-  shell: sed -i '/systemctl start postgresql.service/d' /root/start.sh
-
-- name: Add jod
-  shell: echo "systemctl start postgresql.service" >> /root/start.sh

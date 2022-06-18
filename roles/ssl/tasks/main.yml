@@ -1,0 +1,45 @@
+---
+
+- name: certbot - install
+  apt:
+    pkg:
+    - certbot
+    - python3-certbot-nginx
+    - python
+    - python-dev
+    - gcc
+    - dialog
+    - libaugeas0
+    - augeas-lenses
+    - libssl-dev
+    - libffi-dev
+    - ca-certificates
+
+- name: certbot - get cert stat
+  stat:
+    path: /etc/letsencrypt/live/{{ domain.second }}{{ domain.top }}/privkey.pem
+  register: cert
+
+- name: certbot - get dh stat
+  stat:
+    path: /etc/letsencrypt/ssl-dhparams.pem
+  register: dh
+
+- name: sertbot - generate cert
+  shell: letsencrypt certonly --webroot --agree-tos -w /var/www/html -m admin@{{ domain.second }}{{ domain.top }} -d {{ domain.second }}{{ domain.top }}
+  when: cert.stat.isdir is not defined
+
+- name: sertbot - generate dh
+  shell: openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
+  when: dh.stat.isreg is not defined
+
+- name: certbot - config nginx
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/nginx.conf
+    mode: 0644
+
+- name: certnot - reload nginx
+  systemd:
+    name: nginx.service
+    state: reloaded

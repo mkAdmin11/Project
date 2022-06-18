@@ -1,6 +1,8 @@
 ---
 
-- name: test
+- name: test - ping
   ping:
-#  debug:
-#    var: ansible_facts
+
+- name: test - show facts 
+  debug:
+    var: ansible_facts

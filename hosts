@@ -27,10 +27,10 @@ server1.vpn
 [web]
 server2.vpn
 
-[elk]
+[db]
 server3.vpn
 
-[db]
+[elk]
 server3.vpn
 
 [beats]

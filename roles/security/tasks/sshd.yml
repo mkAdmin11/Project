@@ -1,12 +1,12 @@
 ---
 
-- name: sshd - configure other servers
+- name: sshd - default listen adress 
   replace:
     path: /etc/ssh/sshd_config
     regexp: '^#ListenAddress 0.0.0.0$'
     replace: 'ListenAddress {{ ansible_facts.default_ipv4.address }}'
 
-- name: sshd - configure other servers to vpn
+- name: sshd - vpn listen adress
   lineinfile:
     path: /etc/ssh/sshd_config
     line: 'ListenAddress {{ ansible_facts.tun0.ipv4.address }}'
@@ -21,6 +21,6 @@
 
 - name: cron - reload sshd after reboot server
   cron:
-    name: reload sshd  after reboot server
+    name: reload sshd after reboot server
     special_time: reboot
     job: "/bin/sleep 30 && /bin/systemctl reload sshd.service"
