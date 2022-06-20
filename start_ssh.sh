@@ -2,12 +2,12 @@
 
 mv /home/$(whoami)/.ssh/id_rsa /home/$(whoami)/.ssh/id_rsa_backup_$(date +%F_%T)
 echo "Редактировать приватный ключ (нажать Enter)"
-read
+read zero
 vi /home/$(whoami)/.ssh/id_rsa
 
 mv /home/$(whoami)/.ssh/id_rsa.pub /home/$(whoami)/.ssh/id_rsa.pub_backup_$(date +%F_%T)
 echo "Редактировать публичный ключ (нажать Enter)"
-read
+read zero
 vi /home/$(whoami)/.ssh/id_rsa.pud
 
 chmod 600 /home/$(whoami)/.ssh/id_rsa*
