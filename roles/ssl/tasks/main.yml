@@ -1,6 +1,6 @@
 ---
 
-- name: certbot - install
+- name: ssl - install
   apt:
     pkg:
     - certbot
@@ -15,31 +15,31 @@
     - libffi-dev
     - ca-certificates
 
-- name: certbot - get cert stat
+- name: ssl - get cert stat
   stat:
     path: /etc/letsencrypt/live/{{ domain.second }}{{ domain.top }}/privkey.pem
   register: cert
 
-- name: certbot - get dh stat
+- name: ssl - get dh stat
   stat:
     path: /etc/letsencrypt/ssl-dhparams.pem
   register: dh
 
-- name: sertbot - generate cert
+- name: ssl - generate cert
   shell: letsencrypt certonly --webroot --agree-tos -w /var/www/html -m admin@{{ domain.second }}{{ domain.top }} -d {{ domain.second }}{{ domain.top }}
   when: cert.stat.isdir is not defined
 
-- name: sertbot - generate dh
+- name: ssl - generate dh
   shell: openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
   when: dh.stat.isreg is not defined
 
-- name: certbot - config nginx
+- name: ssl - config nginx
   template:
     src: nginx.conf
     dest: /etc/nginx/sites-available/nginx.conf
     mode: 0644
 
-- name: certnot - reload nginx
+- name: ssl - reload nginx service
   systemd:
     name: nginx.service
     state: reloaded

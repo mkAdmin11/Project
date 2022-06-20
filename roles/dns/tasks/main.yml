@@ -15,7 +15,7 @@
     name: systemd-resolved
     state: restarted
 
-- name: dns - restart systemd-resolved after reboot server
+- name: dns - cron 
   cron:
     name: restart systemd-resolved after reboot server
     special_time: reboot

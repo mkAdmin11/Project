@@ -48,6 +48,10 @@
     rule: allow
     name: Nginx Full
 
+- name: nginx - reload ufw
+  ufw:
+    state: reloaded
+
 - name: nginx - started service
   systemd:
     name: nginx.service

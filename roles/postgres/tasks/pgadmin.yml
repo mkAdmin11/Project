@@ -21,12 +21,23 @@
     name: pgadmin4
     state: latest
 
+- name: pgadmin - install python3 and ower pkg
+  apt:
+    pkg:
+    - python3-pip
+    - python3-dev
+
+- name: dbms - install python lib
+  pip:
+    name: pexpect
+    state: present
+
 - name: pgadmin - script
   expect:
     command: /usr/pgadmin4/bin/setup-web.sh
     responses:
-      Question:
-        - pgadmin@{{ domain.second }}{{ domain.top }}
-        - {{ db.demo.pass }}
-        - y
-        - y 
+      (?i)Email address: "{{ mail.user4 }}@{{ domain.second }}{{ domain.top }}"
+      (?i)Password: "{{ mail.pass4 }}"
+      (?i)Retype password: "{{ mail.pass4 }}"
+      (?i)Do you wish to continue(.*): "n"
+    timeout: 5

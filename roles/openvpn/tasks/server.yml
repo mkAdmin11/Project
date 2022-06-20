@@ -1,6 +1,6 @@
 ---
 
-- name: vpnserver - make server source
+- name: server - make server source
   file:
     path: "{{ item.path }}"
     state: "{{ item.state }}"
@@ -9,7 +9,7 @@
   - {path: '/etc/openvpn/client.list', state: 'touch', mode: '0640'}
   - {path: '/etc/openvpn/ccd', state: 'directory' ,mode: '0750'}
 
-- name: vpnserver - make client config file
+- name: server - make client config file
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -19,14 +19,14 @@
   - {src: 'client1vpn', dest: '/etc/openvpn/ccd/client1vpn'}
   - {src: 'client2vpn', dest: '/etc/openvpn/ccd/client2vpn'}
 
-- name: vpnserver - config server
+- name: server - config server
   template:
     src: "{{ ansible_hostname }}"
     dest: /etc/openvpn/servervpn.conf
     mode: 0600
     backup: yes
 
-- name: vpnserver - start server
+- name: server - start server
   systemd:
     daemon_reload: yes
     name: openvpn@servervpn.service
@@ -34,7 +34,7 @@
     state: started
   register: server_started
 
-- name: vpnserver - reload server
+- name: server - reload server
   systemd:
     name: openvpn@servervpn.service
     state: restarted

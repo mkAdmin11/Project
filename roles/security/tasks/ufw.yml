@@ -44,7 +44,7 @@
     proto: tcp
     port: 22
     direction: in
-    interface: tun0
+    interface: "{{ ansible_facts.tun0.device }}"
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
   when: ansible_hostname != server2.name|string
 

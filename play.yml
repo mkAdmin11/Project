@@ -15,6 +15,19 @@
   tags:
     - novpn
 
+- hosts: vpn 
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: [vpntest, dns]}
+    - {role: test,        tags: vpntest}
+    - {role: dns,         tags: dns}
+  tags:
+    - vpn 
+
 - hosts: web 
   become: true
   become_user: root
@@ -22,9 +35,8 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [webtest, dns, lnap, ssl]}
+    - {role: facts,       tags: [webtest, lnap, ssl]}
     - {role: test,        tags: webtest}
-    - {role: dns,         tags: dns}
     - {role: lnap,        tags: lnap}
     - {role: ssl,         tags: ssl}
   tags:

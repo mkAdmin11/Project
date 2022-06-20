@@ -63,10 +63,14 @@
     rule: allow
     port: 8080 
     direction: in
-    interface: tun0
+    interface: "{{ ansible_facts.tun0.device }}"
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
 
-- name: apache - started
+- name: apache - reload ufw
+  ufw:
+    state: reloaded
+
+- name: apache - start service
   systemd:
     name: apache2.service
     state: started

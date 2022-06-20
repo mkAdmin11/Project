@@ -46,6 +46,18 @@
     replace: "listen_addresses = '{{ ansible_facts.tun0.ipv4.address }}"
     backup: yes
 
+- name: dbms - add ufw rule
+  ufw:
+    rule: allow
+    port: 5432
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+
+- name: apache - reload ufw
+  ufw:
+    state: reloaded
+
 - name: dbms - start postgresql service
   systemd:
     name: postgresql.service
