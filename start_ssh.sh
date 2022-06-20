@@ -10,6 +10,7 @@ vi /home/$(whoami)/.ssh/id_rsa.pud
 
 chmod 600 /home/$(whoami)/.ssh/id_rsa*
 
+
 echo -e "/nIP первого сервера:"
 read IP_1
 ssh-keyscan -H $(IP_1) >> ~/.ssh/known_hosts
