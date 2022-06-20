@@ -9,6 +9,10 @@ mv /home/$(whoami)/.ssh/id_rsa.pub /home/$(whoami)/.ssh/id_rsa.pub_backup_$(date
 vi /home/$(whoami)/.ssh/id_rsa.pud
 chmod 600 /home/$(whoami)/.ssh/id_rsa*
 
+ssh-keyscan -H 10.0.0.11 >> ~/.ssh/known_hosts
+ssh-keyscan -H 10.0.0.12 >> ~/.ssh/known_hosts
+ssh-keyscan -H 10.0.0.13 >> ~/.ssh/known_hosts
+
 git config --global user.name "Admin11SF"
 git config --global user.email "k-maksim@internet.ru"
 
