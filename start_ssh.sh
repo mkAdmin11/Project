@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Приступаем..."
+echo "========================================================================"
+
 mv /home/$(whoami)/.ssh/id_rsa /home/$(whoami)/.ssh/id_rsa_backup_$(date +%F_%T)
 echo "Редактировать приватный ключ (нажать Enter)"
 read zero
