@@ -20,7 +20,7 @@ echo "========================================================================"
 mv /home/$(whoami)/.ssh/id_rsa.pub /home/$(whoami)/.ssh/id_rsa.pub_backup_$(date +%F_%T)
 echo "Редактировать публичный ключ (нажать Enter)"
 read zero
-vi /home/$(whoami)/.ssh/id_rsa.pud
+vi /home/$(whoami)/.ssh/id_rsa.pub
 echo "========================================================================"
 
 chmod 600 /home/$(whoami)/.ssh/id_rsa*
@@ -42,7 +42,7 @@ echo "========================================================================"
 
 git config --global user.name "Admin11SF"
 git config --global user.email "k-maksim@internet.ru"
-ssh-keyscan -H 140.82.121.4  >> ~/.ssh/known_hosts
+ssh-keyscan -H 140.82.121.3 >> ~/.ssh/known_hosts
 echo "Настроен Git"
 echo "========================================================================"
 

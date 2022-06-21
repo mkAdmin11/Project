@@ -12,7 +12,7 @@ echo "========================================================================"
 mv /home/$(whoami)/.ssh/id_rsa.pub /home/$(whoami)/.ssh/id_rsa.pub_backup_$(date +%F_%T)
 echo "Редактировать публичный ключ (нажать Enter)"
 read zero
-vi /home/$(whoami)/.ssh/id_rsa.pud
+vi /home/$(whoami)/.ssh/id_rsa.pub
 echo "========================================================================"
 
 chmod 600 /home/$(whoami)/.ssh/id_rsa*

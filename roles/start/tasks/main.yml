@@ -31,16 +31,17 @@
     mode: "0644"
     backup: yes
 
+- name: start - add bash source
+  lineinfile:
+    line: source .bashrc.local
+    path: /home/{{ ansible_user }}/.bashrc
+    backup: yes
+
 - name: start - config bash
-  block:
-    - lineinfile:
-        line: source .bashrc.local
-        path: /home/{{ ansible_user }}/.bashrc
-        backup: yes
-    - template:
-        src: bashrc.local
-        dest: /home/{{ ansible_user }}/.bashrc.local
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: "0600"
-        backup: yes
+  template:
+    src: "{{ ansible_hostname }}" 
+    dest: /home/{{ ansible_user }}/.bashrc.local
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0600"
+    backup: yes

@@ -34,3 +34,12 @@
     name: "{{ db.demo.name1 }}"
     state: restore
     target: /db_share/{{ unzip.files[0] }}
+
+- name: demo - user auth rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: host
+    users: "{{ db.demo.user }}"
+    databases: "{{ db.demo.name1 }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: md5

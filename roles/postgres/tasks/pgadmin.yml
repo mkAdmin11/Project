@@ -40,4 +40,4 @@
       (?i)Password: "{{ mail.pass4 }}"
       (?i)Retype password: "{{ mail.pass4 }}"
       (?i)Do you wish to continue(.*): "n"
-    timeout: 5
+  ignore_errors: yes
