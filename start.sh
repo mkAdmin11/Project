@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Приступаем"
+echo "Приступаем..."
 
 sudo apt-add-repository -y ppa:ansible/ansible > /dev/null 2>&1
 echo "Добавлен репозиторий Ansible"
@@ -25,7 +25,7 @@ read IP_1
 ssh-keyscan -H $IP_1 >> ~/.ssh/known_hosts  > /dev/null 2>&1
 
 echo "IP второго сервера:"
-read IP_3
+read IP_2
 ssh-keyscan -H $IP_2 >> ~/.ssh/known_hosts  > /dev/null 2>&1
 
 echo "IP третьего сервера:"
@@ -34,6 +34,7 @@ ssh-keyscan -H $IP_3 >> ~/.ssh/known_hosts  > /dev/null 2>&1
 
 git config --global user.name "Admin11SF"  > /dev/null 2>&1
 git config --global user.email "k-maksim@internet.ru"  > /dev/null 2>&1
+ssh-keyscan -H 140.82.121.4  >> ~/.ssh/known_hosts  > /dev/null 2>&1
 echo "Настроен Git"
 
 sudo mkdir /ansible  > /dev/null 2>&1
