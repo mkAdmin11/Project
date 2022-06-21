@@ -22,24 +22,24 @@ chmod 600 /home/$(whoami)/.ssh/id_rsa*
 
 echo "IP первого сервера:"
 read IP_1
-ssh-keyscan -H $IP_1 >> ~/.ssh/known_hosts  > /dev/null 2>&1
+ssh-keyscan -H $IP_1 >> ~/.ssh/known_hosts  2> /dev/null
 
 echo "IP второго сервера:"
 read IP_2
-ssh-keyscan -H $IP_2 >> ~/.ssh/known_hosts  > /dev/null 2>&1
+ssh-keyscan -H $IP_2 >> ~/.ssh/known_hosts  2> /dev/null
 
 echo "IP третьего сервера:"
 read IP_3
-ssh-keyscan -H $IP_3 >> ~/.ssh/known_hosts  > /dev/null 2>&1
+ssh-keyscan -H $IP_3 >> ~/.ssh/known_hosts  2> /dev/null
 
 git config --global user.name "Admin11SF"  > /dev/null 2>&1
 git config --global user.email "k-maksim@internet.ru"  > /dev/null 2>&1
-ssh-keyscan -H 140.82.121.4  >> ~/.ssh/known_hosts  > /dev/null 2>&1
+ssh-keyscan -H 140.82.121.4  >> ~/.ssh/known_hosts  2> /dev/null
 echo "Настроен Git"
 
 sudo mkdir /ansible  > /dev/null 2>&1
 sudo chown -R $(whoami):$(whoami) /ansible/   > /dev/null 2>&1
-git clone git@github.com:mkAdmin11/ansible.git /ansible/   > /dev/null 2>&1
+git clone git@github.com:mkAdmin11/ansible.git /ansible/  > /dev/null 2>&1
 echo "Склонирован Git репозиторий mkAdmin11/ansible"
 
 sudo mv /etc/ansible/roles/ /etc/ansible/roles_backup_$(date +%F_%T) 2> /dev/null
