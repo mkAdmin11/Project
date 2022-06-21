@@ -14,8 +14,8 @@ chmod 600 /home/$(whoami)/.ssh/id_rsa*
 
 echo "IP первого сервера:"
 read IP_1
-ssh-keyscan -H $IP_1 >> ~/.ssh/known_hosts  > /dev/null 2>&1
+ssh-keyscan -H $IP_1 >> ~/.ssh/known_hosts  2> /dev/null
 
 echo "IP третьего сервера:"
 read IP_3
-ssh-keyscan -H $IP_3 >> ~/.ssh/known_hosts  > /dev/null 2>&1
+ssh-keyscan -H $IP_3 >> ~/.ssh/known_hosts  2> /dev/null
