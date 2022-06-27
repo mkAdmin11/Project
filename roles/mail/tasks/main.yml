@@ -1,0 +1,13 @@
+---
+
+#- name: mail - install postfix
+#  include_tasks: postfix.yml
+#  when: ansible_hostname == server2.name|string
+
+#- name: mail - install dovecot
+#  include_tasks: dovecot.yml
+#  when: ansible_hostname == server2.name|string
+
+- name: mail - install roundcube
+  include_tasks: roundcube.yml
+  when: ansible_hostname == server2.name|string

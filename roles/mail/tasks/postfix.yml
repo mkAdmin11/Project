@@ -1,0 +1,59 @@
+---
+
+- name: postfix - set option hostname
+  debconf: 
+    name: postifx
+    question: postfix/mailname
+    value: "{{ domain.second }}{{ domain.top }}"
+    vtype: string
+
+- name: postfix - set option type as internet site
+  debconf: 
+    name: postfix
+    question: postfix/main_mailer_type
+    value: "'Internet Site'"
+    vtype: string
+
+- name: postfix - install
+  apt:
+    name: postfix
+    state: present
+
+- name: postfix - stop and enable
+  systemd:
+    name: postfix.service
+    enabled: yes
+    state: stopped
+
+- name: postfix - config
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+  - {src: 'main.cf',dest: '/etc/postfix/main.cf'}
+  - {src: 'virtual_mailbox_domains',dest: '/etc/postfix/virtual_mailbox_domains'}
+  - {src: 'master.cf',dest: '/etc/postfix/master.cf'}
+
+- name: postfix - lookup
+  shell: "postmap /etc/postfix/virtual_mailbox_domains"
+
+- name: postfix - add ufw rule
+  ufw:
+    rule: allow
+    proto: tcp
+    interface: "{{ ansible_facts.default_ipv4.interface }}"
+    direction: in
+    to_port: "{{ item }}"
+  loop:
+    - 25
+    - 587
+
+- name: postfix - reload ufw
+  ufw:
+    state: reloaded
+
+- name: postfix - stop and enable
+  systemd:
+    name: postfix.service
+    state: started

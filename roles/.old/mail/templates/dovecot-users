@@ -1,3 +1,0 @@
-{{ mail.user1 }}@{{ domain.second }}{{ domain.first }}:{{ mail.pass1 }}
-{{ mail.user2 }}@{{ domain.second }}{{ domain.first }}:{{ mail.pass2 }}
-{{ mail.user3 }}@{{ domain.second }}{{ domain.first }}:{{ mail.pass3 }}

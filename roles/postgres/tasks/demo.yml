@@ -29,6 +29,13 @@
     owner: "{{ db.demo.user }}"
     encoding: UTF-8
 
+- name: demo - grant privileges
+  postgresql_privs:
+    db: "{{ db.demo.name1 }}"
+    privs: ALL
+    type: database
+    role: "{{ db.demo.user }}"
+
 - name: demo - restore db
   postgresql_db:
     name: "{{ db.demo.name1 }}"

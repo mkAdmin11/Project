@@ -23,13 +23,13 @@ $_SERVER['SERVER_PORT'] = 443;
 
 // ** Параметры базы данных: Эту информацию можно получить у вашего хостинг-провайдера ** //
 /** Имя базы данных для WordPress */
-define( 'DB_NAME', '{{ db.wp.name }}' );
+define( 'DB_NAME', '{{ db.wordpress.name }}' );
 
 /** Имя пользователя базы данных */
-define( 'DB_USER', '{{ db.wp.user }}' );
+define( 'DB_USER', '{{ db.wordpress.user }}' );
 
 /** Пароль к базе данных */
-define( 'DB_PASSWORD', '{{ db.wp.pass }}' );
+define( 'DB_PASSWORD', '{{ db.wordpress.pass }}' );
 
 /** Имя сервера базы данных */
 define( 'DB_HOST', 'db.local' );
