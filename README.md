@@ -1,7 +1,8 @@
 # SKILLFACTORY FINAL PROJECT
 
-Сценарий для настройки финального проекта SkilFactory
+<br/> Сценарий для настройки финального проекта SkilFactory
 
+<br/> **Структура проекта**
 ![image](https://drive.google.com/uc?export=view&id=1SwpGuxXQPxs9iRIrIX-3RApTp2dNYcVY)
 
 ## Начало
