@@ -1,8 +1,6 @@
-<div style="text-align:center">
 # SKILLFACTORY FINAL PROJECT
-<div/>
  
-<br/> Сценарий для настройки финального проекта SkilFactory
+<br/> Сценарий для развертывания финального проекта SkilFactory
 
 <br/> **Структура проекта**
 
@@ -19,8 +17,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/sta
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start_ssh.sh)"
 ```
 
-## Внимание
-<br/> Перед началом требуется заполнить secret.yml, за основу взять secret_sample.yml.
+<br/> Перед прокаткой ролей требуется заполнить secret.yml, за основу взять secret_sample.yml.
 
 ## Start
 
