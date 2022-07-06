@@ -4,7 +4,9 @@
 
 <br/> **Структура проекта**
 ``
+
 ![image](https://drive.google.com/uc?export=view&id=1SwpGuxXQPxs9iRIrIX-3RApTp2dNYcVY)
+
 ``
 ## Начало
 
