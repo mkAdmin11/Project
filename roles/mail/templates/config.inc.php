@@ -25,7 +25,17 @@ $config = [];
 // For examples see http://pear.php.net/manual/en/package.database.mdb2.intro-dsn.php
 // NOTE: for SQLite use absolute path (Linux): 'sqlite:////full/path/to/sqlite.db?mode=0646'
 //       or (Windows): 'sqlite:///C:/full/path/to/sqlite.db'
-$config['db_dsnw'] = 'mysql://roundcube:pass@localhost/roundcubemail';
+// $config['db_dsnw'] = 'mysql://roundcube:pass@localhost/roundcubemail';
+$config['db_dsnw'] = 'pgsql://{{ db.roundcube.user }}:{{ db.roundcube.pass }}@pg.local/{{ db.roundcube.name }}';
+
+$config['enable_installer'] = false;
+
+$config['drafts_mbox'] = 'Drafts';
+$config['junk_mbox'] = 'Junk';
+$config['sent_mbox'] = 'Sent';
+$config['trash_mbox'] = 'Trash';
+$config['create_default_folders'] = true;
+
 
 // The IMAP host chosen to perform the log-in.
 // Leave blank to show a textbox at login, give a list of hosts
@@ -38,7 +48,7 @@ $config['db_dsnw'] = 'mysql://roundcube:pass@localhost/roundcubemail';
 // %d - domain (http hostname $_SERVER['HTTP_HOST'] without the first part)
 // %s - domain name after the '@' from e-mail address provided at login screen
 // For example %n = mail.domain.tld, %t = domain.tld
-$config['default_host'] = 'localhost';
+$config['default_host'] = '127.0.0.1';
 
 // SMTP server host (for sending mails).
 // Enter hostname with prefix ssl:// to use Implicit TLS, or use
@@ -52,10 +62,10 @@ $config['default_host'] = 'localhost';
 // For example %n = mail.domain.tld, %t = domain.tld
 // To specify different SMTP servers for different IMAP hosts provide an array
 // of IMAP host (no prefix or port) and SMTP server e.g. ['imap.example.com' => 'smtp.example.net']
-$config['smtp_server'] = 'localhost';
+$config['smtp_server'] = 'ssl://%t';
 
 // SMTP port. Use 25 for cleartext, 465 for Implicit TLS, or 587 for STARTTLS (default)
-$config['smtp_port'] = 587;
+$config['smtp_port'] = 465;
 
 // SMTP username (if required) if you use %u as the username Roundcube
 // will use the current username for login
@@ -70,19 +80,16 @@ $config['smtp_pass'] = '%p';
 $config['support_url'] = '';
 
 // Name your service. This is displayed on the login screen and in the window title
-$config['product_name'] = 'Roundcube Webmail';
+$config['product_name'] = 'Webmail {{ domain.second }}{{ domain.top }}';
 
 // This key is used to encrypt the users imap password which is stored
 // in the session record. For the default cipher method it must be
 // exactly 24 characters long.
 // YOUR KEY MUST BE DIFFERENT THAN THE SAMPLE VALUE FOR SECURITY REASONS
-$config['des_key'] = 'rcmail-!24ByteDESkey*Str';
+$config['des_key'] = '{{ mail.key }}';
 
 // List of active plugins (in plugins/ directory)
 $config['plugins'] = [
     'archive',
     'zipdownload',
 ];
-
-// skin name: folder from skins/
-$config['skin'] = 'elastic';

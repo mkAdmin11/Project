@@ -1,5 +1,24 @@
 ---
 
+- name: dbms - add postgresql repository key
+  apt_key:
+    id: B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
+# curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | tee | gpg --keyid-format long
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Add pgAdmin repositorylist
+  template:
+    src: pgdg.list 
+    dest: /etc/apt/sources.list.d/pgdg.list
+    owner: root
+    group: root
+    mode: 0644
+
+- name: dbms - update apt cache
+  apt:
+    update_cache: yes
+
 - name: dbms - install postgrsql
   apt:
     pkg:
@@ -18,14 +37,6 @@
   pip:
     name: psycopg2
     state: present
-
-- name: dbms - create db share
-  file:
-    path: /db_share
-    state: directory
-    owner: postgres
-    group: postgres
-    mode: 0755
 
 - name: dbms - stop and disable postgresql
   systemd:

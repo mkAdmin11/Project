@@ -1,0 +1,43 @@
+---
+
+- name: server - install zabbix psql server 
+  apt:
+    name: zabbix-server-pgsql
+    state: latest
+
+- name: server - stop and disable service
+  systemd:
+    name: zabbix-server.service
+    enabled: no
+    state: stopped
+
+- name: server - cron
+  cron:
+    name: start zabbix after reboot server
+    special_time: reboot
+    job: "/bin/sleep 45 && /bin/systemctl start zabbix-server.service"
+
+- name: Config server
+  template:
+    src: zabbix_server.conf
+    dest: "/etc/zabbix/zabbix_server.conf"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: server - add ufw rule
+  ufw:
+    rule: allow
+    port: 10051
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
+
+- name: server - reload ufw
+  ufw:
+    state: reloaded
+
+- name: zabbix - start service
+  systemd:
+    name: zabbix-server.service
+    state: started

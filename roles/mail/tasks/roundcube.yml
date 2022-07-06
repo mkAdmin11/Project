@@ -1,25 +1,26 @@
 ---
 
-#- name: roundcube - download roundcube
-#  get_url:
-#    url: https://github.com/roundcube/roundcubemail/releases/download/1.5.2/roundcubemail-1.5.2-complete.tar.gz
-#    dest: /web_share/roundcube.tar.gz
-#    mode: 0644
-#    owner: root
-#    group: root
-
 - name: roundcube - unzip roundcube.tar.gz
   unarchive:
-    src: /web_share/roundcube.tar.gz
-    dest: /web_share
-    remote_src: yes
+    src: /share/roundcube.tar.gz
+    dest: /tmp/
+    owner: root
+    group: root
     list_files: yes
   register: unzip
 
 - name: roundcube - move source dir
   copy:
-    src: /web_share/{{ unzip.files[0] }}
-    dest: /var/www/mail
+    src: /share/{{ unzip.files[0] }}
+    dest: /var/www/mail/
     owner: www-data
     group: www-data
-    remote_src: yes
+    remote_src: true
+
+- name: roundcube - copy config
+  template:
+    src: config.inc.php
+    dest: /var/www/mail/config/config.inc.php
+    mode: 0640
+    owner: www-data
+    group: www-data

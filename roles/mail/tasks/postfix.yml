@@ -12,7 +12,7 @@
     name: postfix
     question: postfix/main_mailer_type
     value: "'Internet Site'"
-    vtype: string
+    vtype: select
 
 - name: postfix - install
   apt:
@@ -48,12 +48,13 @@
   loop:
     - 25
     - 587
+    - 465
 
 - name: postfix - reload ufw
   ufw:
     state: reloaded
 
-- name: postfix - stop and enable
+- name: postfix - start service
   systemd:
     name: postfix.service
     state: started

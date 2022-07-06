@@ -1,20 +1,11 @@
 ---
 
-- name: demo - download demo dump
-  get_url:
-    url: https://edu.postgrespro.ru/demo-small.zip
-    dest: /db_share/demo.zip
-    mode: 0644
-    owner: postgres
-    group: postgres
-
 - name: demo - unzip demo dump
   unarchive:
-    src: /db_share/demo.zip
-    dest: /db_share/
+    src: /share/demo.zip
+    dest: /tmp/
     owner: postgres
     group: postgres
-    remote_src: yes
     list_files: yes
   register: unzip
 
@@ -40,7 +31,7 @@
   postgresql_db:
     name: "{{ db.demo.name1 }}"
     state: restore
-    target: /db_share/{{ unzip.files[0] }}
+    target: /tmp/{{ unzip.files[0] }}
 
 - name: demo - user auth rule
   postgresql_pg_hba:

@@ -1,0 +1,71 @@
+---
+
+- name: grafana - add repository key
+  apt_key:
+    id: CA6D481DBD044C76
+# curl -sL https://packages.grafana.com/gpg.key | tee | gpg --keyid-format long
+    url: https://packages.grafana.com/gpg.key
+    state: present
+
+- name: grafana - add repository list
+  template:
+    src: grafana.list
+    dest: /etc/apt/sources.list.d/grafana.list
+    owner: root
+    group: root
+    mode: 0644
+
+- name: grafana - update apt cache
+  apt:
+    update_cache: yes
+
+- name: grafana - install
+  apt:
+    name: grafana
+    state: latest
+
+- name: grafana - stop and disabled service
+  systemd:
+    name: grafana-server.service
+    enabled: no 
+    state: stopped
+
+- name: grafana - cron
+  cron:
+    name: start grafana after reboot server
+    special_time: reboot
+    job: "/bin/sleep 100 && /bin/systemctl start grafana-server.service"
+
+- name: Resolve plugin dependenc
+  import_tasks: plagins.yml
+
+#- name: Install plagins
+#  shell: "{{ item.shell }}"
+#  with_items:
+#  - {shell: 'grafana-cli plugins install alexanderzobnin-zabbix-app'}
+#  - {shell: 'grafana-cli plugins install grafana-image-renderer'}
+
+- name: Config Grafana
+  template:
+    src: grafana.ini
+    dest: "/etc/grafana/grafana.ini"
+    owner: root
+    group: grafana
+    mode: 0640
+
+- name: grafana - add ufw rule
+  ufw:
+    rule: allow
+    port: 3000
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+
+- name: grafana - reload ufw
+  ufw:
+    state: reloaded
+
+- name: grafana - start service
+  systemd:
+    name: grafana-server.service
+    state: started

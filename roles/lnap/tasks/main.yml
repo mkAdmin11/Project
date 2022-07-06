@@ -1,13 +1,5 @@
 ---
 
-- name: lnap - create web share
-  file:
-    path: /web_share
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
 - name: lnap - install php
   import_tasks: php.yml
 

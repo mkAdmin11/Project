@@ -22,9 +22,10 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [vpntest, dns]}
+    - {role: facts,       tags: [vpntest, dns, zabbix]}
     - {role: test,        tags: vpntest}
     - {role: dns,         tags: dns}
+    - {role: zabbix,      tags: zabbix}
   tags:
     - vpn 
 
@@ -35,13 +36,24 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [webtest, lnap, ssl, mail]}
+    - {role: facts,       tags: [webtest, lnap, ssl]}
     - {role: test,        tags: webtest}
     - {role: lnap,        tags: lnap}
     - {role: ssl,         tags: ssl}
-    - {role: mail,        tags: mail}
   tags:
     - web
+
+- hosts: db
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: dbtest}
+    - {role: test,        tags: dbtest}
+  tags:
+    - db
 
 - hosts: [web, db]
   become: true
@@ -50,14 +62,26 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [wwwtest, wordpress, postgres]}
+    - {role: facts,       tags: [wwwtest, wordpress, postgres, mail]}
     - {role: test,        tags: wwwtest}
     - {role: postgres,    tags: postgres}
     - {role: wordpress,   tags: wordpress}
+    - {role: mail,        tags: mail}
   tags:
     - www
 
+- hosts: [main, db]
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: [maintest, grafana]}
+    - {role: test,        tags: maintest}
+    - {role: grafana,     tags: grafana}
+  tags:
+    - main 
+
 #elastic elk
 #logs vpn
-#zabbix vpn
-#grafana grafana

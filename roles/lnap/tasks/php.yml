@@ -32,9 +32,15 @@
     - php7.4-xmlrpc
     - php7.4-zip
 
-- name: php - little change
+- name: php - app pgsql extension
   replace:
     path: /etc/php/7.4/apache2/php.ini
     regexp: '^;extension=pgsql$'
     replace: 'extension=pgsql'
     backup: yes
+
+- name: php - set php timezone
+  lineinfile:
+    path: /etc/php/7.4/apache2/php.ini
+    regexp: '^;date.timezone = '
+    line: 'date.timezone = "Europe/Moscow"'

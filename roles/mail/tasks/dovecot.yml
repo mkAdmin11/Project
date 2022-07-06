@@ -11,14 +11,8 @@
 - name: dovecot - stop and disable
   systemd:
     name: dovecot.service
-    enabled: no
+    enabled: yes
     state: stopped
-
-- name: dovecot - cron
-  cron:
-    name: start cron after reboot server
-    special_time: reboot
-    job: "/bin/sleep 30 && /bin/systemctl start apache2.service"
 
 - name: dovecot - add mail group
   group:
@@ -43,45 +37,37 @@
     group: vmail
     mode: 0770
 
-- name: dovecot - listen adress
-  lineinfile:
-    path: /etc/dovecot/dovecot.conf
-    regexp: '^#listen = '
-    line: 'listen = {{ ansible_facts.tun0.ipv4.address }}'
-
-- name: dovecot - imap only
-  lineinfile:
-    path: /etc/dovecot/dovecot.conf
-    regexp: '!include_try /usr/share/dovecot/protocols.d/'
-    line: '!include_try /usr/share/dovecot/protocols.d/imapd.protocol'
-
 - name: dovecot - copy config
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: 0644
   with_items:
-  - {src: '10-auth.conf',dest: '/etc/dovecot/conf.d/10-auth.conf'}
   - {src: '10-master.conf',dest: '/etc/dovecot/conf.d/10-master.conf'}
   - {src: 'auth-passwdfile.conf.ext',dest: '/etc/dovecot/conf.d/auth-passwdfile.conf.ext'}
-  - {src: '10-mail.conf',dest: '/etc/dovecot/conf.d/10-mail.conf'}
-  - {src: '10-ssl.conf',dest: '/etc/dovecot/conf.d/10-ssl.conf'}
   - {src: 'dovecot-users',dest: '/etc/dovecot/dovecot-users'}
+  - {src: 'dovecot.conf',dest: 'dovecot.conf'}
 
-- name: dovecot - add ufw rule
-  ufw:
-    rule: allow
-    proto: tcp
-    interface: "{{ ansible_facts.tun0.device }}"
-    direction: in
-    to_port: "{{ item }}"
-  loop:
-    - 143
-    - 993
+- name: dovecot - authentication processes
+  replace:
+    path: /etc/dovecot/conf.d/10-auth.conf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  with_items:
+    - {regexp: '^!include auth-system.conf.ext', replace: '#!include auth-system.conf.ext'}
+    - {regexp: '^#!include auth-passwdfile.conf.ext', replace: '!include auth-passwdfile.conf.ext'}
 
-- name: dovecot - reload ufw
-  ufw:
-    state: reloaded
+- name: dovecot - mail location
+  replace:
+    path: /etc/dovecot/conf.d/10-mail.conf
+    regexp: '^mail_location = mbox:~/mail:INBOX=/var/mail/%u'
+    replace: 'mail_location = maildir:/var/mail/vhosts/%d/%n'
+
+- name: dovecot - ssl
+  replace:
+    path: /etc/dovecot/conf.d/10-ssl.conf
+    regexp: '^ssl = yes'
+    replace: 'ssl = no'
 
 - name: dovecot - start service
   systemd:

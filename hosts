@@ -18,10 +18,7 @@ server1.vpn
 server2.vpn
 server3.vpn
 
-[zabbix]
-server1.vpn
-
-[grafana]
+[main]
 server1.vpn
 
 [web]
