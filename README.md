@@ -3,13 +3,13 @@
 Сценарий для настройки финального проекта SkilFactory
 
 ## Скрипт для начальной настройки
-<br/> Настройка DMZ сервера
+<br/> Настройка DMZ сервера:
 <br/> sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start.sh)"
-<br/> Настройка main сервера
+<br/> Настройка main сервера:
 <br/> sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start_ssh.sh)"
 
 ## Внимание
-Перед началом требуется заполнить secret.yml, за основу взять secret_sample.yml
+<br/> Перед началом требуется заполнить secret.yml, за основу взять secret_sample.yml.
 
 ## Start
 
