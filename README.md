@@ -2,7 +2,7 @@
 
 Сценарий для настройки финального проекта SkilFactory
 
-![](https://drive.google.com/uc?export=view&id=1SqFtwD1nilfvlogBZiKhoJD998S-HxQp)
+![image](https://drive.google.com/uc?export=view&id=1SwpGuxXQPxs9iRIrIX-3RApTp2dNYcVY)
 
 ## Начало
 
