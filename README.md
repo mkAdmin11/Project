@@ -1,5 +1,7 @@
+<div style="text-align:center">
 # SKILLFACTORY FINAL PROJECT
-
+<div/>
+ 
 <br/> Сценарий для настройки финального проекта SkilFactory
 
 <br/> **Структура проекта**
