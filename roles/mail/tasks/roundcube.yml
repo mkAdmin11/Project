@@ -1,0 +1,26 @@
+---
+
+- name: roundcube - unzip roundcube.tar.gz
+  unarchive:
+    src: /share/roundcube.tar.gz
+    dest: /tmp/
+    owner: root
+    group: root
+    list_files: yes
+  register: unzip
+
+- name: roundcube - move source dir
+  copy:
+    src: /share/{{ unzip.files[0] }}
+    dest: /var/www/mail/
+    owner: www-data
+    group: www-data
+    remote_src: true
+
+- name: roundcube - copy config
+  template:
+    src: config.inc.php
+    dest: /var/www/mail/config/config.inc.php
+    mode: 0640
+    owner: www-data
+    group: www-data

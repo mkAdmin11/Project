@@ -1,7 +1,0 @@
----
-
-- name: Rsync
-  shell: "{{ item.shell }}"
-  with_items:
-  - {shell: 'rsync -avzhe ssh /share/* mk-adm2@mk-server2.local:/share/'}
-  - {shell: 'rsync -avzhe ssh /share/* mk-adm3@mk-server3.local:/share/'}

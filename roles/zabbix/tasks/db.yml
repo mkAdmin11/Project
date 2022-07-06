@@ -1,0 +1,53 @@
+---
+
+- name: db - create user
+  postgresql_user:
+    name: "{{ db.zabbix.user }}"
+    password: "{{ db.zabbix.pass }}"
+    role_attr_flags: SUPERUSER
+
+- name: db - create db
+  postgresql_db:
+    name: "{{ db.zabbix.name }}"
+    owner: "{{ db.zabbix.user }}"
+    encoding: UTF-8
+
+- name: db - grant privileges
+  postgresql_privs:
+    db: "{{ db.zabbix.name }}"
+    privs: ALL
+    type: database
+    role: "{{ db.zabbix.user }}"
+
+- name: db - restore db
+  postgresql_db:
+    name: "{{ db.zabbix.name }}"
+    state: restore
+    target: /usr/share/doc/zabbix-sql-scripts/postgresql/server.sql.gz
+    target_opts: pg_restore
+
+- name: db - user auth conf
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: host
+    users: "{{ db.zabbix.user }}"
+    databases: "{{ db.zabbix.name }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: md5
+
+- name: db - add monitoring user
+  postgresql_user:
+    db: "{{ db.zabbix.name }}"
+    name: "{{ db.monidoring.user }}"
+    password: "{{ db.monidoring.pass }}"
+    priv: ALL
+    role_attr_flags: INHERIT
+
+- name: db - monitoring user auth conf
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: host
+    users: "{{ db.monidoring.user }}"
+    databases: "{{ db.zabbix.name }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: md5

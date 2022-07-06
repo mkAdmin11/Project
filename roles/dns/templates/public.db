@@ -1,0 +1,21 @@
+$TTL 30m
+
+@ IN SOA ns.{{ domain.second }}{{ domain.top }}. admin.{{ domain.second }}{{ domain.top }}. (
+        1 ; serial
+        5h ; renew period
+        5m ; retry
+        1w ; expire
+        30m ); denial cache;
+
+{{ domain.second }}{{ domain.top }}.     IN      MX      0 mail.{{ domain.second }}{{ domain.top }}.
+{{ domain.second }}{{ domain.top }}.     IN      TXT     "v=spf1 ip4:{{ domain.IP }}/32 mx ptr mx:mail.{{ domain.second }}{{ domain.top }} ~all"
+{{ domain.second }}{{ domain.top }}.     IN      NS      ns.{{ domain.second }}{{ domain.top }}.
+
+_dmarc.{{ domain.second }}{{ domain.top }}. 3600 IN TXT "v=DMARC1; p=quarantine; sp=none; pct=100; fo=0; rua=mailto:admin@{{ domain.second }}{{ domain.top }}"
+
+{{ domain.second }}{{ domain.top }}.     IN      A       {{ domain.IP }}
+ns              IN      A       {{ domain.IP }}
+mail            IN      A       {{ domain.IP }}
+forcustomer     IN      A       {{ domain.IP }}
+
+www IN CNAME {{ domain.second }}{{ domain.top }}.

@@ -1,0 +1,46 @@
+---
+
+- name: php - install PHP
+  apt:
+    pkg:
+    - php7.4
+    - php-auth-sasl
+    - php7.4-bcmath
+    - php7.4-cli
+    - php7.4-common
+    - php7.4-curl
+    - php7.4-gd
+    - php-getid3
+    - php-imagick
+    - php7.4-intl
+    - php7.4-json
+    - php-ldap
+    - php7.4-ldap
+    - php-mail-mime
+    - php-masterminds-html5
+    - php7.4-mbstring
+    - php7.4-opcache
+    - php-net-sieve
+    - php-net-smtp
+    - php-net-socket
+    - php-pear
+    - php7.4-pgsql
+    - php7.4-pspell
+    - php7.4-readline
+    - php7.4-soap
+    - php7.4-xml
+    - php7.4-xmlrpc
+    - php7.4-zip
+
+- name: php - app pgsql extension
+  replace:
+    path: /etc/php/7.4/apache2/php.ini
+    regexp: '^;extension=pgsql$'
+    replace: 'extension=pgsql'
+    backup: yes
+
+- name: php - set php timezone
+  lineinfile:
+    path: /etc/php/7.4/apache2/php.ini
+    regexp: '^;date.timezone = '
+    line: 'date.timezone = "Europe/Moscow"'

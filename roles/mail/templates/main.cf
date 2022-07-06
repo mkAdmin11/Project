@@ -22,8 +22,8 @@ readme_directory = no
 compatibility_level = 2
 
 # TLS parameters
-smtpd_tls_cert_file=/etc/letsencrypt/live/{{ domain.second }}{{ domain.first }}/fullchain.pem
-smtpd_tls_key_file=/etc/letsencrypt/live/{{ domain.second }}{{ domain.first }}/privkey.pem
+smtpd_tls_cert_file=/etc/letsencrypt/live/{{ domain.second }}{{ domain.top }}/fullchain.pem
+smtpd_tls_key_file=/etc/letsencrypt/live/{{ domain.second }}{{ domain.top }}/privkey.pem
 smtpd_tls_security_level=may
 
 smtp_tls_CApath=/etc/ssl/certs
@@ -44,11 +44,12 @@ smtpd_sasl_path = private/auth
 
 virtual_transport = dovecot
 virtual_mailbox_domains = /etc/postfix/virtual_mailbox_domains
+dovecot_destination_recipient_limit = 1
 
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
 
-myhostname = mail.{{ domain.second }}{{ domain.first }}
-mydomain = {{ domain.second }}{{ domain.first }}
+myhostname = mail.{{ domain.second }}{{ domain.top }}
+mydomain = {{ domain.second }}{{ domain.top }}
 myorigin = $myhostname
 
 alias_maps = hash:/etc/aliases
@@ -57,8 +58,8 @@ alias_database = hash:/etc/aliases
 mydestination = localhost.$mydomain, localhost, localhost.localdomain
 
 relayhost=
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mynetworks = 127.0.0.0/8
 mailbox_size_limit = 0
 recipient_delimiter = +
-inet_interfaces = all
+inet_interfaces = {{ ansible_facts.default_ipv4.address }}
 inet_protocols = ipv4

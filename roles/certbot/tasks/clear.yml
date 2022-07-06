@@ -1,9 +1,0 @@
----
-
-- name: Remove html dir
-  file:
-    path: /var/www/html
-    state: absent
-
-- name: Make html
-  shell: cp -r /usr/share/nginx/html /var/www/html

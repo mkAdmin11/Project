@@ -1,6 +1,6 @@
 ---
 
-- name: Resolve plugin dependenc
+- name: grafana - rsolve plugin dependent
   apt:
     pkg:
     - libx11-6

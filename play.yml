@@ -1,25 +1,87 @@
 ---
 
-- name: SkillFactory final project playbook
-  hosts: server1.novpn
-  gather_facts: yes
+- hosts: novpn
   become: true
   become_user: root
+  become_method: sudo
   vars_files:
-  - secret.yml
+    - secret.yml
   roles:
-  - {role: test, tags: test}
+    - {role: facts,       tags: [test, start, openvpn, security]}
+    - {role: test,        tags: test}
+    - {role: start,       tags: start}
+    - {role: openvpn,     tags: openvpn}
+    - {role: security,    tags: security}
+  tags:
+    - novpn
 
-#start novpn
-#openvpn novpn
-#bind9 novpn
-#postgreslq db
-#web web
-#certbot web
-#www web
-#mail web
-#pgadmin web
+- hosts: vpn 
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: [vpntest, dns, zabbix]}
+    - {role: test,        tags: vpntest}
+    - {role: dns,         tags: dns}
+    - {role: zabbix,      tags: zabbix}
+  tags:
+    - vpn 
+
+- hosts: web 
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: [webtest, lnap, ssl]}
+    - {role: test,        tags: webtest}
+    - {role: lnap,        tags: lnap}
+    - {role: ssl,         tags: ssl}
+  tags:
+    - web
+
+- hosts: db
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: dbtest}
+    - {role: test,        tags: dbtest}
+  tags:
+    - db
+
+- hosts: [web, db]
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: [wwwtest, wordpress, postgres, mail]}
+    - {role: test,        tags: wwwtest}
+    - {role: postgres,    tags: postgres}
+    - {role: wordpress,   tags: wordpress}
+    - {role: mail,        tags: mail}
+  tags:
+    - www
+
+- hosts: [main, db]
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: [maintest, grafana]}
+    - {role: test,        tags: maintest}
+    - {role: grafana,     tags: grafana}
+  tags:
+    - main 
+
 #elastic elk
 #logs vpn
-#zabbix vpn
-#grafana grafana

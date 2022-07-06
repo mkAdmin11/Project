@@ -1,0 +1,41 @@
+---
+
+- name: agent - install
+  apt:
+    name: zabbix-agent
+    state: latest
+
+- name: agent - stop and disable service
+  systemd:
+    name: zabbix-agent.service
+    enabled: no
+    state: stopped
+
+- name: agent - cron
+  cron:
+    name: start zabbix agent after reboot server
+    special_time: reboot
+    job: "/bin/sleep 55 && /bin/systemctl start zabbix-agent.service"
+
+- name: agent - copy agent
+  template:
+    src: zabbix_agentd.conf
+    dest: /etc/zabbix/zabbix_agentd.conf
+    mode: 0644
+
+- name: agent - add ufw rule
+  ufw:
+    rule: allow
+    port: 10050
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
+
+- name: agent - reload ufw
+  ufw:
+    state: reloaded
+
+- name: agent - start service
+  systemd:
+    name: zabbix-agent.service
+    state: started

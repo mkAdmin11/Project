@@ -1,0 +1,43 @@
+---
+
+- name: pgadmin - add pgadmin repository key
+  apt_key:
+    id: E8697E2EEF76C02D3A6332778881B2A8210976F2
+    # curl -sL https://www.pgadmin.org/static/packages_pgadmin_org.pub | tee | gpg --keyid-format long
+    url: "https://www.pgadmin.org/static/packages_pgadmin_org.pub"
+    state: present
+
+- name: pgadmin - add pgadmin repository list
+  template:
+    src: pgadmin4.list
+    dest: "/etc/apt/sources.list.d/pgadmin4.list"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: pgadmin - install pgadmin
+  apt:
+    update_cache: yes
+    name: pgadmin4
+    state: latest
+
+- name: pgadmin - install python3 and ower pkg
+  apt:
+    pkg:
+    - python3-pip
+    - python3-dev
+
+- name: dbms - install python lib
+  pip:
+    name: pexpect
+    state: present
+
+- name: pgadmin - script
+  expect:
+    command: /usr/pgadmin4/bin/setup-web.sh
+    responses:
+      (?i)Email address: "{{ mail.user4 }}@{{ domain.second }}{{ domain.top }}"
+      (?i)Password: "{{ mail.pass4 }}"
+      (?i)Retype password: "{{ mail.pass4 }}"
+      (?i)Do you wish to continue(.*): "n"
+  ignore_errors: yes

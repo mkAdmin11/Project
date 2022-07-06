@@ -1,0 +1,58 @@
+---
+
+- name: nginx - install
+  apt:
+    name: nginx
+    state: latest
+
+- name: nginx - stop and disabled
+  systemd:
+    name: nginx.service
+    enabled: no
+    state: stopped
+
+- name: nginx - cron
+  cron:
+    name: start nginx after reboot server
+    special_time: reboot
+    job: "/bin/sleep 50 && /bin/systemctl start nginx.service"
+
+- name: nginx - find enabled configs
+  find:
+    path: /etc/nginx/sites-enabled/
+    file_type: any
+  register: nginx_conf
+
+- name: nginx - remove enabled config
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ nginx_conf.files }}"
+
+- name: nginx - copy config
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/nginx.conf 
+    mode: 0644
+
+- name: nginx - enabled config
+  file:
+    src: /etc/nginx/sites-available/nginx.conf
+    dest: /etc/nginx/sites-enabled/nginx.conf
+    owner: root
+    group: root
+    state: link
+
+- name: nginx - add ufw rule
+  ufw:
+    rule: allow
+    name: Nginx Full
+
+- name: nginx - reload ufw
+  ufw:
+    state: reloaded
+
+- name: nginx - started service
+  systemd:
+    name: nginx.service
+    state: started

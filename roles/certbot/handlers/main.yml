@@ -1,6 +1,0 @@
----
-
-- name: handler_restart_nginx
-  systemd:
-    name: nginx.service
-    state: restarted

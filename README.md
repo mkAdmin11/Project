@@ -17,7 +17,8 @@
 13. *Grafana*
 
 
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/master/start.sh)"
+<br/> sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start.sh)"
+<br/> sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start_ssh.sh)"
 
 ## Внимание
 При необходимости выполнения действий помимо представленных ролей, они выделены **!!! данным образом !!!**

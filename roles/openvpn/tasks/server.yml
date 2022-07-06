@@ -1,37 +1,41 @@
 ---
 
-- name: Get source stats
-  stat:
-    path: /etc/openvpn/ccd
-  register: source
-
-- name: Make source
+- name: server - make server source
   file:
     path: "{{ item.path }}"
     state: "{{ item.state }}"
     mode: "{{ item.mode }}"
   with_items:
-  - {path: '/etc/openvpn/client.list',state: 'touch',mode: '0640'}
-  - {path: '/etc/openvpn/ccd',state: 'directory',mode: '0750'}
-  - {path: '/etc/openvpn/ccd/client1vpn',state: 'touch',mode: '0640'}
-  - {path: '/etc/openvpn/ccd/client2vpn',state: 'touch',mode: '0640'}
-  when: source.stat.isdir is not defined
+  - {path: '/etc/openvpn/client.list', state: 'touch', mode: '0640'}
+  - {path: '/etc/openvpn/ccd', state: 'directory' ,mode: '0750'}
 
-- name: Set Client IP
-  shell: "{{ item.shell }}"
+- name: server - make client config file
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0640
+    backup: yes
   with_items:
-  - {shell 'echo "ifconfig-push {{ server2.vpn_ip }} {{ vpn.mask }}" > /etc/openvpn/ccd/client1vpn'}
-  - {shell 'echo "ifconfig-push {{ server3.vpn_ip }} {{ vpn.mask }}" > /etc/openvpn/ccd/client2vpn'}
+  - {src: 'client1vpn', dest: '/etc/openvpn/ccd/client1vpn'}
+  - {src: 'client2vpn', dest: '/etc/openvpn/ccd/client2vpn'}
 
-- name: Config server
+- name: server - config server
   template:
     src: "{{ ansible_hostname }}"
     dest: /etc/openvpn/servervpn.conf
     mode: 0600
+    backup: yes
 
-- name: Start server
+- name: server - start server
   systemd:
     daemon_reload: yes
     name: openvpn@servervpn.service
     enabled: yes
     state: started
+  register: server_started
+
+- name: server - reload server
+  systemd:
+    name: openvpn@servervpn.service
+    state: restarted
+  when:  server_started is not changed

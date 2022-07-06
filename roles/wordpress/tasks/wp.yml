@@ -1,0 +1,32 @@
+--- 
+
+- name: wp - unzip wordpress.zip
+  unarchive:
+    src: /share/wordpress.zip 
+    dest: /var/www/ 
+    owner: www-data
+    group: www-data
+
+- name: wp - config wordpress
+  template:
+    src: 'wp-config.php'
+    dest: '/var/www/wordpress/wp-config.php'
+    mode: 0644
+    owner: www-data
+    group: www-data
+
+- name: wp - unzip pg4wp.zip
+  unarchive:
+    src: /share/pg4wp.zip
+    dest:  /tmp
+
+- name: wp - copy pg4wp
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: www-data
+    group: www-data
+    remote_src: yes
+  with_items:
+    - {src: /tmp/postgresql-for-wordpress-wordpress4-compat/pg4wp/, dest: /var/www/wordpress/wp-content/pg4wp/}
+    - {src: /var/www/wordpress/wp-content/pg4wp/db.php, dest: /var/www/wordpress/wp-content/db.php}

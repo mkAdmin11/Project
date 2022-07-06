@@ -1,48 +1,17 @@
 ---
 
-- name: Add Grafana repository key
-  apt_key:
-    id: CA6D481DBD044C76  # curl -sL https://packages.grafana.com/gpg.key | tee | gpg --keyid-format long
-    url: "https://packages.grafana.com/gpg.key"
-    state: present
+- name: grafana - config db
+  include_tasks: db.yml
+  vars:
+    ansible_become_user: postgres
+  when: ansible_hostname == server3.name|string
 
-- name: Add Grafana repository list
-  template:
-    src: grafana.list
-    dest: "/etc/apt/sources.list.d/grafana.list"
-    owner: root
-    group: root
-    mode: 0644
-
-- name: apt update
-  apt:
-    update_cache: yes
-
-- name: Install Grafana
-  apt:
-    name: grafana
-    state: latest
-
-- name: Start Grafana server
+- name: grafana - reload postgresql
   systemd:
-    daemon_reload: yes
-    name: grafana-server.service
-    enabled: yes
-    state: started
+    name: postgresql.service
+    state: reloaded
+  when: ansible_hostname == server3.name|string
 
-- name: Resolve plugin dependenc
-  import_tasks: plagins.yml
-
-- name: Install plagins
-  shell: "{{ item.shell }}"
-  with_items:
-  - {shell: 'grafana-cli plugins install alexanderzobnin-zabbix-app'}
-  - {shell: 'grafana-cli plugins install grafana-image-renderer'}
-
-- name: Config Grafana
-  template:
-    src: grafana.ini
-    dest: "/etc/grafana/grafana.ini"
-    mode: 0644
-  notify:
-    handler_restart_grafana
+- name: grafana - setup grafana
+  include_tasks: install.yml
+  when: ansible_hostname == server1.name|string

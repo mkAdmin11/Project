@@ -1,0 +1,43 @@
+---
+
+- name: demo - unzip demo dump
+  unarchive:
+    src: /share/demo.zip
+    dest: /tmp/
+    owner: postgres
+    group: postgres
+    list_files: yes
+  register: unzip
+
+- name: demo - create user
+  postgresql_user:
+    name: "{{ db.demo.user }}"
+    password: "{{ db.demo.pass }}"
+
+- name: demo - create db
+  postgresql_db:
+    name: "{{ db.demo.name1 }}"
+    owner: "{{ db.demo.user }}"
+    encoding: UTF-8
+
+- name: demo - grant privileges
+  postgresql_privs:
+    db: "{{ db.demo.name1 }}"
+    privs: ALL
+    type: database
+    role: "{{ db.demo.user }}"
+
+- name: demo - restore db
+  postgresql_db:
+    name: "{{ db.demo.name1 }}"
+    state: restore
+    target: /tmp/{{ unzip.files[0] }}
+
+- name: demo - user auth rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: host
+    users: "{{ db.demo.user }}"
+    databases: "{{ db.demo.name1 }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: md5

@@ -1,14 +1,14 @@
 ---
 
-- name: Update pkg
+- name: start - update cache
   apt:
     update_cache: yes
 
-- name: Upgrade pkg
+- name: start - safe upgrade
   apt:
-    only_upgrade: yes
+    upgrade: safe
 
-- name: Install some pkg
+- name: start - install few packages
   apt:
     pkg:
     - net-tools
@@ -18,21 +18,34 @@
     - unzip
     - zip
 
-- name: Set timezone 
+- name: start - set timezone 
   timezone:
     name: Europe/Moscow
 
-- name: Make share
-  import_tasks: dir.yml
-  when: ansible_hostname != 'mk-server1'
+- name: start - create share
+  include_tasks: share.yml
+  when: ansible_hostname == server1.name|string
 
-- name: Set permissions
-  import_tasks: perm.yml
+- name: start - config vim
+  template:
+    src: vimrc.local
+    dest: /etc/vim/vimrc.local
+    owner: root
+    group: root
+    mode: "0644"
+    backup: yes
 
-- name: Sync share
-  import_tasks: rsync.yml
-  when: ansible_hostname == 'mk-server1'
+- name: start - add bash source
+  lineinfile:
+    line: source .bashrc.local
+    path: /home/{{ ansible_user }}/.bashrc
+    backup: yes
 
-- name: Cron
-  import_tasks: cron.yml
-  when: ansible_hostname == 'mk-server1'
+- name: start - config bash
+  template:
+    src: "{{ ansible_hostname }}" 
+    dest: /home/{{ ansible_user }}/.bashrc.local
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0600"
+    backup: yes
