@@ -4,9 +4,13 @@
 
 ## Скрипт для начальной настройки
 <br/> Настройка DMZ сервера:
-<br/> sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start.sh)"
+```
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start.sh)"
+```
 <br/> Настройка main сервера:
-<br/> sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start_ssh.sh)"
+```
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start_ssh.sh)"
+```
 
 ## Внимание
 <br/> Перед началом требуется заполнить secret.yml, за основу взять secret_sample.yml.
