@@ -1,27 +1,15 @@
-# PROJECT
+# SKILLFACTORY FINAL PROJECT
 
-## Список *playbook*:
+Сценарий для настройки финального проекта SkilFactory
 
-1. *Start*
-2. *OpenVPN*
-3. *Bind9*
-4. *PostgreSQL*
-5. *WEB*
-6. *Certbot*
-7. *WWW*
-8. *Mail*
-9. *pgAmin*
-10. *Elastic*
-11. *Logs*
-12. *Zabbix*
-13. *Grafana*
-
-
+## Скрипт для начальной настройки
+<br/> Настройка DMZ сервера
 <br/> sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start.sh)"
+<br/> Настройка main сервера
 <br/> sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start_ssh.sh)"
 
 ## Внимание
-При необходимости выполнения действий помимо представленных ролей, они выделены **!!! данным образом !!!**
+Перед началом требуется заполнить secret.yml, за основу взять secret_sample.yml
 
 ## Start
 
