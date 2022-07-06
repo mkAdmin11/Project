@@ -2,7 +2,12 @@
 
 Сценарий для настройки финального проекта SkilFactory
 
-## Скрипт для начальной настройки
+
+![Alt-текст](https://drive.google.com/file/d/1TEWfnY3modqZk4HWJz1F0m0GBLH0rAm9/view?usp=sharing "1")
+
+
+## Начало
+
 <br/> Настройка DMZ сервера:
 ```
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/test/start.sh)"
