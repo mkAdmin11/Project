@@ -4,6 +4,8 @@
 
 <br/> **Структура проекта**
 
+![Screenshot](project_page_1.png)
+
 ![image](https://drive.google.com/uc?export=view&id=1SwpGuxXQPxs9iRIrIX-3RApTp2dNYcVY)
 
 ## Начало
