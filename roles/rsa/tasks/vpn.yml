@@ -1,0 +1,31 @@
+---
+
+- name: vpn - build vpn server cert
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/vpn-{{ server1.name }}.req
+    command: /share/easy_rsa/easyrsa build-server-full vpn-{{ server1.name }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: vpn - build vpn client cert - 1
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/vpn-{{ server2.name }}.req
+    command: /share/easy_rsa/easyrsa build-client-full vpn-{{ server2.name }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: vpn - build vpn client cert - 2
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/vpn-{{ server3.name }}.req
+    command: /share/easy_rsa/easyrsa build-client-full vpn-{{ server3.name }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/

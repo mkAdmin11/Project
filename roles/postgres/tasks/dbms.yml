@@ -25,18 +25,16 @@
     - postgresql-{{ db.ver }}
     - postgresql-contrib-{{ db.ver }}
 
-- name: dbms - install python3 and ower pkg
+- name: dbms - install few pkg
   apt:
     pkg:
-    - python3-pip
-    - python3-dev
     - libpq-dev
     - acl
 
 - name: dbms - install python lib
   pip:
     name: psycopg2
-    state: present
+    state: latest
 
 - name: dbms - stop and disable postgresql
   systemd:

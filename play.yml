@@ -22,12 +22,26 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [vpntest, dns, zabbix]}
+    - {role: facts,       tags: [vpntest, dns, zabbix, logs]}
     - {role: test,        tags: vpntest}
     - {role: dns,         tags: dns}
     - {role: zabbix,      tags: zabbix}
+    - {role: logs,        tags: logs}
   tags:
     - vpn 
+
+- hosts: main
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: facts,       tags: [maintest, rsa]}
+    - {role: test,        tags: maintest}
+    - {role: rsa,         tags: rsa}
+  tags:
+    - main
 
 - hosts: web 
   become: true
@@ -50,8 +64,9 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: dbtest}
+    - {role: facts,       tags: [dbtest, elk]}
     - {role: test,        tags: dbtest}
+    - {role: elk,         tags: elk}
   tags:
     - db
 
@@ -82,6 +97,3 @@
     - {role: grafana,     tags: grafana}
   tags:
     - main 
-
-#elastic elk
-#logs vpn

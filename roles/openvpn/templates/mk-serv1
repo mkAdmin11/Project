@@ -1,0 +1,45 @@
+local {{ server1.novpn_ip }} 
+port 1194
+proto udp
+dev tun
+server {{ vpn.gate }} {{ vpn.mask }}
+push "dhcp-option DNS 77.88.8.8"
+client-config-dir /etc/openvpn/ccd
+ifconfig-pool-persist /etc/openvpn/client.list
+client-to-client
+keepalive 10 120
+cipher DES-CBC
+comp-lzo
+max-clients 10
+persist-key
+persist-tun
+status /var/log/openvpn/openvpn-status.log
+
+ca cert/ca.crt
+cert cert/vpn-{{ server1.name }}.crt
+key cert/vpn-{{ server1.name }}.key
+dh cert/dh.pem
+
+#<ca>
+#-----BEGIN CERTIFICATE-----
+#{{ vpn.ca }}
+#-----END CERTIFICATE-----
+#</ca>
+#
+#<dh>
+#-----BEGIN DH PARAMETERS-----
+#{{ vpn.dh }}
+#-----END DH PARAMETERS-----
+#</dh>
+#
+#<cert>
+#-----BEGIN CERTIFICATE-----
+#{{ server1.vpn_cert }}
+#-----END CERTIFICATE-----
+#</cert>
+#
+#<key>
+#-----BEGIN PRIVATE KEY-----
+#{{ server1.vpn_key }}
+#-----END PRIVATE KEY-----
+#</key>

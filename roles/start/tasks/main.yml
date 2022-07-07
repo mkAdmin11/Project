@@ -17,6 +17,13 @@
     - apt-transport-https
     - unzip
     - zip
+    - python3-pip
+    - python3-dev
+
+- name: start - install python lib
+  pip:
+    name: pexpect
+    state: latest
 
 - name: start - set timezone 
   timezone:

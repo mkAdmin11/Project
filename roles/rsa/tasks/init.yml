@@ -1,0 +1,27 @@
+---
+
+- name: init - init pki
+  become_user: "{{ ansible_user }}"
+  command:
+    chdir: /share/easy_rsa/
+    creates: /share/easy_rsa/pki/
+    cmd: /share/easy_rsa/easyrsa init-pki
+
+- name: init - build ca
+  become_user: "{{ ansible_user }}"
+  expect:
+    command: /share/easy_rsa/easyrsa build-ca
+    responses:
+      (?i)Enter New CA Key Passphrase: "{{ ca.pass }}"
+      (?i)Re-Enter New CA Key Passphrase: "{{ ca.pass }}"
+      (?i)Common Name (.*): "{{ ca.name }}"
+    creates: /share/easy_rsa/pki/ca.crt
+  args:
+    chdir: /share/easy_rsa/
+
+- name: init - gen dh
+  become_user: "{{ ansible_user }}"
+  command:
+    chdir: /share/easy_rsa/
+    creates: /share/easy_rsa/pki/dh.pem
+    cmd: /share/easy_rsa/easyrsa gen-dh

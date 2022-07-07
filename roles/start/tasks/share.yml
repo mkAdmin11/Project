@@ -8,6 +8,14 @@
     group: root
     mode: 0775
 
+- name: share - download easy-rsa
+  get_url:
+    url: https://github.com/OpenVPN/easy-rsa/archive/refs/heads/release/3.0.zip
+    dest: /share/easy_rsa.zip
+    owner: root
+    group: root
+    mode: 0664
+
 - name: share - download wordpress
   get_url:
     url: https://ru.wordpress.org/latest-ru_RU.zip

@@ -27,11 +27,6 @@
     - python3-pip
     - python3-dev
 
-- name: dbms - install python lib
-  pip:
-    name: pexpect
-    state: present
-
 - name: pgadmin - script
   expect:
     command: /usr/pgadmin4/bin/setup-web.sh

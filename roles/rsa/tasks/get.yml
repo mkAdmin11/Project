@@ -1,0 +1,24 @@
+---
+
+- name: get - unzip easy_rsa.zip
+  unarchive:
+    src: /share/easy_rsa.zip
+    dest: /tmp/
+    list_files: yes
+    remote_src: yes
+  register: unzip
+
+- name: get - copy directory
+  copy:
+    src: /tmp/{{ unzip.files[0] }}/easyrsa3/
+    dest: /share/easy_rsa
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    remote_src: yes
+
+- name: get - remove tmp file
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/{{ unzip.files[0] }}
