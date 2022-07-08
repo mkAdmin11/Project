@@ -2,7 +2,7 @@
 
 echo "Приступаем..."
 
-mv /home/$(whoami)/.ssh/known_hosts /home/$(whoami)/.ssh/known_hosts_backup_$(date +%F_%T)
+cp /home/$(whoami)/.ssh/known_hosts /home/$(whoami)/.ssh/known_hosts_backup_$(date +%F_%T)
 echo "" > /home/$(whoami)/.ssh/known_hosts
 
 echo "========================================================================"
