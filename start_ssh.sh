@@ -1,28 +1,48 @@
 #!/bin/bash
 
 echo "Приступаем..."
+
+mv /home/$(whoami)/.ssh/known_hosts /home/$(whoami)/.ssh/known_hosts_backup_$(date +%F_%T)
+echo "" > /home/$(whoami)/.ssh/known_hosts
+
 echo "========================================================================"
 
-mv /home/$(whoami)/.ssh/id_rsa /home/$(whoami)/.ssh/id_rsa_backup_$(date +%F_%T)
-echo "Редактировать приватный ключ (нажать Enter)"
+echo  -n "Введите hostname первого сервера: "
+read HN1
+
+echo -n "Введите username первого сервера: "
+read UN1
+
+echo -n "Введите IP первого сервера:"
+read IP1
+ssh-keyscan -H $IP1 >> /home/$(whoami)/.ssh/known_hosts
+
+echo -n "Добавьте ключ первого сервера. Нажмите любую кнопку..."
 read zero
-vi /home/$(whoami)/.ssh/id_rsa
+vi /home/$(whoami)/.ssh/$HN1
+chmod 600 /home/$(whoami)/.ssh/$HN1
+
 echo "========================================================================"
 
-mv /home/$(whoami)/.ssh/id_rsa.pub /home/$(whoami)/.ssh/id_rsa.pub_backup_$(date +%F_%T)
-echo "Редактировать публичный ключ (нажать Enter)"
+echo "Введите hostname третьего сервера: "
+read HN3
+
+echo "Введите username третьего сервера: "
+read UN3
+
+echo "Введите IP третьего сервера:"
+read IP3
+ssh-keyscan -H $IP3 >> /home/$(whoami)/.ssh/known_hosts
+
+echo "Добавьте ключ  третьего сервера. Нажмите любую кнопку..."
 read zero
-vi /home/$(whoami)/.ssh/id_rsa.pub
+vi /home/$(whoami)/.ssh/$HN3
+chmod 600 /home/$(whoami)/.ssh/$HN3
+
 echo "========================================================================"
 
-chmod 600 /home/$(whoami)/.ssh/id_rsa*
+echo "Готово!"
+echo "Для подключения к первому серверу используйте команду: ssh -i ~/.ssh/$HN1 $UN1@$IP1"
+echo "Для подключения к третьему серверу используйте команду: ssh -i ~/.ssh/$HN3 $UN3@$IP3"
 
-echo "IP первого сервера:"
-read IP_1
-ssh-keyscan -H $IP_1 >> ~/.ssh/known_hosts
-echo "========================================================================"
 
-echo "IP третьего сервера:"
-read IP_3
-ssh-keyscan -H $IP_3 >> ~/.ssh/known_hosts
-echo "========================================================================"
