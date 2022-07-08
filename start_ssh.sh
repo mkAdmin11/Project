@@ -17,7 +17,7 @@ echo -n "Введите IP первого сервера: "
 read IP1
 ssh-keyscan -t rsa $IP1 >> /home/$(whoami)/.ssh/known_hosts 2> /dev/null
 
-echo -n "Добавьте ключ первого сервера. Нажмите любую кнопку... "
+echo -n "Добавьте ключ первого сервера. Нажмите Enter... "
 read zero
 vi /home/$(whoami)/.ssh/$HN1
 chmod 600 /home/$(whoami)/.ssh/$HN1
@@ -34,7 +34,7 @@ echo -n "Введите IP третьего сервера: "
 read IP3
 ssh-keyscan -t rsa $IP3 >> /home/$(whoami)/.ssh/known_hosts 2> /dev/null
 
-echo -n "Добавьте ключ  третьего сервера. Нажмите любую кнопку... "
+echo -n "Добавьте ключ третьего сервера. Нажмите Enter... "
 read zero
 vi /home/$(whoami)/.ssh/$HN3
 chmod 600 /home/$(whoami)/.ssh/$HN3
