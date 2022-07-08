@@ -10,11 +10,11 @@
 
 <br/> Настройка DMZ сервера:
 ```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/master/start.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/master/start_ssh.sh)"
 ```
 <br/> Настройка main сервера:
 ```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/master/start_ssh.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/ansible/master/start.sh)"
 ```
 
 <br/> Перед прокаткой ролей требуется заполнить secret.yml, за основу взять secret_sample.yml.
