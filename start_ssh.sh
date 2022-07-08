@@ -15,7 +15,7 @@ read UN1
 
 echo -n "Введите IP первого сервера:"
 read IP1
-ssh-keyscan -H $IP1 >> /home/$(whoami)/.ssh/known_hosts
+ssh-keyscan -t rsa $IP1 >> /home/$(whoami)/.ssh/known_hosts
 
 echo -n "Добавьте ключ первого сервера. Нажмите любую кнопку..."
 read zero
@@ -32,7 +32,7 @@ read UN3
 
 echo -n "Введите IP третьего сервера:"
 read IP3
-ssh-keyscan -H $IP3 >> /home/$(whoami)/.ssh/known_hosts
+ssh-keyscan -t rsa $IP3 >> /home/$(whoami)/.ssh/known_hosts
 
 echo -n "Добавьте ключ  третьего сервера. Нажмите любую кнопку..."
 read zero
