@@ -2,7 +2,7 @@
 
 echo "Приступаем..."
 
-cp /home/$(whoami)/.ssh/known_hosts /home/$(whoami)/.ssh/known_hosts_backup_$(date +%F_%T)
+cp /home/$(whoami)/.ssh/known_hosts /home/$(whoami)/.ssh/known_hosts_backup_$(date +%F_%T) 2> /dev/null
 echo "" > /home/$(whoami)/.ssh/known_hosts
 
 echo "========================================================================"
