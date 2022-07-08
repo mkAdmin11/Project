@@ -24,17 +24,17 @@ chmod 600 /home/$(whoami)/.ssh/$HN1
 
 echo "========================================================================"
 
-echo "Введите hostname третьего сервера: "
+echo -n "Введите hostname третьего сервера: "
 read HN3
 
-echo "Введите username третьего сервера: "
+echo -n "Введите username третьего сервера: "
 read UN3
 
-echo "Введите IP третьего сервера:"
+echo -n "Введите IP третьего сервера:"
 read IP3
 ssh-keyscan -H $IP3 >> /home/$(whoami)/.ssh/known_hosts
 
-echo "Добавьте ключ  третьего сервера. Нажмите любую кнопку..."
+echo -n "Добавьте ключ  третьего сервера. Нажмите любую кнопку..."
 read zero
 vi /home/$(whoami)/.ssh/$HN3
 chmod 600 /home/$(whoami)/.ssh/$HN3
