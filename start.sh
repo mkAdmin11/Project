@@ -1,55 +1,78 @@
 #!/bin/bash
 
 echo "Приступаем..."
+
+cp /home/$(whoami)/.ssh/known_hosts /home/$(whoami)/.ssh/known_hosts_backup_$(date +%F_%T) 2> /dev/null
+echo "" > /home/$(whoami)/.ssh/known_hosts
+
 echo "========================================================================"
 
-sudo apt-add-repository -y ppa:ansible/ansible
+sudo apt-add-repository -y ppa:ansible/ansible &> /dev/null
 echo "Добавлен репозиторий Ansible"
+
 echo "========================================================================"
 
-sudo apt install -y ansible git
+sudo apt install -y ansible git &> /dev/null
 echo "Установлен Ansible и Git"
+
 echo "========================================================================"
 
-mv /home/$(whoami)/.ssh/id_rsa /home/$(whoami)/.ssh/id_rsa_backup_$(date +%F_%T)
-echo "Редактировать приватный ключ (нажать Enter)"
+echo  -n "Введите hostname второго сервера: "
+read HN1
+
+echo -n "Введите username второго сервера: "
+read UN1
+
+echo -n "Введите IP второго сервера: "
+read IP1
+ssh-keyscan -t rsa $IP1 >> /home/$(whoami)/.ssh/known_hosts 2> /dev/null
+
+echo -n "Добавьте ключ первого сервера. Нажмите Enter... "
+read zero
+vi /home/$(whoami)/.ssh/$HN1
+chmod 600 /home/$(whoami)/.ssh/$HN1
+
+echo "========================================================================"
+
+echo -n "Введите hostname третьего сервера: "
+read HN3
+
+echo -n "Введите username третьего сервера: "
+read UN3
+
+echo -n "Введите IP третьего сервера: "
+read IP3
+ssh-keyscan -t rsa $IP3 >> /home/$(whoami)/.ssh/known_hosts 2> /dev/null
+
+echo -n "Добавьте ключ третьего сервера. Нажмите Enter... "
+read zero
+vi /home/$(whoami)/.ssh/$HN3
+chmod 600 /home/$(whoami)/.ssh/$HN3
+
+echo "========================================================================"
+
+echo -n "Введите имя пользователя GinHub: "
+read GHUN
+git config --global user.name "$GHUN"
+
+echo -n "Введите почту пользователя GinHub: "
+read GHUM
+git config --global user.email "$GHUM"
+
+echo -n "Добавьте SSH Key пользователя GitHub. Нажмите Enter... "
 read zero
 vi /home/$(whoami)/.ssh/id_rsa
-echo "========================================================================"
+chmod 600 /home/$(whoami)/.ssh/id_rsa
 
-mv /home/$(whoami)/.ssh/id_rsa.pub /home/$(whoami)/.ssh/id_rsa.pub_backup_$(date +%F_%T)
-echo "Редактировать публичный ключ (нажать Enter)"
-read zero
-vi /home/$(whoami)/.ssh/id_rsa.pub
-echo "========================================================================"
+ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2> /dev/null
 
-chmod 600 /home/$(whoami)/.ssh/id_rsa*
-
-echo "IP первого сервера:"
-read IP_1
-ssh-keyscan -H $IP_1 >> ~/.ssh/known_hosts
-echo "========================================================================"
-
-echo "IP второго сервера:"
-read IP_2
-ssh-keyscan -H $IP_2 >> ~/.ssh/known_hosts
-echo "========================================================================"
-
-echo "IP третьего сервера:"
-read IP_3
-ssh-keyscan -H $IP_3 >> ~/.ssh/known_hosts
-echo "========================================================================"
-
-git config --global user.name "Admin11SF"
-git config --global user.email "k-maksim@internet.ru"
-ssh-keyscan -H 140.82.121.3 >> ~/.ssh/known_hosts
-echo "Настроен Git"
 echo "========================================================================"
 
 sudo mkdir /ansible
 sudo chown -R $(whoami):$(whoami) /ansible/
-git clone git@github.com:mkAdmin11/ansible.git /ansible/
+git clone git@github.com:mkAdmin11/ansible.git /ansible/ &> /dev/null
 echo "Склонирован Git репозиторий mkAdmin11/ansible"
+
 echo "========================================================================"
 
 sudo mv /etc/ansible/roles/ /etc/ansible/roles_backup_$(date +%F_%T)
@@ -57,7 +80,8 @@ sudo ln -s /ansible/roles/ /etc/ansible/
 sudo mv /etc/ansible/hosts /etc/ansible/hosts_backup_$(date +%F_%T)
 sudo ln -s /ansible/hosts /etc/ansible/
 echo "Настроен Ansible"
+
 echo "========================================================================"
 
-echo "Не забудьте отредактировать файл /ansible/hosts"
+echo "Не забудьте отредактировать файл /ansible/hosts, смотрите INI и YAML примеры в директории /ansible/"
 echo "Также требуется сделать файл secret.yml, используйте /ansible/secret_sample.yml"
