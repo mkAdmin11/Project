@@ -70,7 +70,7 @@ echo "========================================================================"
 
 sudo mkdir /ansible
 sudo chown -R $(whoami):$(whoami) /ansible/
-git clone git@github.com:mkAdmin11/ansible.git /ansible/ &> /dev/null
+git clone git@github.com:mkAdmin11/ansible.git /ansible/
 echo "Склонирован Git репозиторий mkAdmin11/ansible"
 
 echo "========================================================================"
