@@ -17,11 +17,11 @@
     - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/openvpn/cert/ca.crt'}
     - {src: '/share/easy_rsa/pki/dh.pem', dest: '/etc/openvpn/cert/dh.pem'}
     - {src: '/share/easy_rsa/pki/issued/vpn-{{ ansible_hostname }}.crt', dest: '/etc/openvpn/cert/vpn-{{ ansible_hostname }}.crt'}
-    - {src: '/share/easy_rsa/pki/private/vpn-{{ ansible_hostname }}.key', dest: '/etc/openvpn/cert/vpn-{{ server1.name }}.key'}
+    - {src: '/share/easy_rsa/pki/private/vpn-{{ ansible_hostname }}.key', dest: '/etc/openvpn/cert/vpn-{{ ansible_hostname }}.key'}
 
 - name: client - config client
   template:
-    src: "{{ ansible_hostname }}"
+    src: /share/vpn_conf/{{ ansible_hostname }}
     dest: /etc/openvpn/vpn-{{ ansible_hostname }}.conf
     mode: 0640
     backup: yes

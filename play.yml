@@ -7,11 +7,11 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [test, init_all, openvpn, security]}
-    - {role: test,        tags: test}
+    - {role: facts,       tags: [test_novpn, init_all, openvpn, init_sec]}
+    - {role: test,        tags: test_novpn}
     - {role: init_all,    tags: init_all}
     - {role: openvpn,     tags: openvpn}
-    - {role: security,    tags: security}
+    - {role: init_sec,    tags: init_sec}
   tags:
     - novpn
 
@@ -30,70 +30,65 @@
   tags:
     - vpn 
 
-- hosts: main
+- hosts: server1.novpn
   become: true
   become_user: root
   become_method: sudo
+  gather_facts: yes
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [test_main, rsa]}
-    - {role: test,        tags: test_main}
-    - {role: rsa,         tags: rsa}
+    - init_main
   tags:
-    - main
+    - init_main
 
-- hosts: publick 
+- hosts: server2.vpn
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [test_publick, lnap, ssl]}
-    - {role: test,        tags: test_publick}
+    - {role: facts,       tags: [lnap, ssl]}
     - {role: lnap,        tags: lnap}
     - {role: ssl,         tags: ssl}
   tags:
-    - publick
+    - server2.vpn
 
-- hosts: db_elk
+- hosts: server3.vpn 
   become: true
   become_user: root
   become_method: sudo
+  gather_facts: yes
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [test_db, elk]}
-    - {role: test,        tags: test_db}
-    - {role: elk,         tags: elk}
+    - elk
   tags:
-    - db_elk
+    - elk
 
-- hosts: [publick, db_elk]
+- hosts: [server2.vpn, server3.vpn]
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [test_www, wordpress, postgres, mail]}
-    - {role: test,        tags: test_www}
+    - {role: facts,       tags: [wordpress, postgres, mail]}
     - {role: postgres,    tags: postgres}
     - {role: wordpress,   tags: wordpress}
     - {role: mail,        tags: mail}
   tags:
     - www
 
-- hosts: [main, db_elk]
+- hosts: [server1.vpn, server3.vpn]
   become: true
   become_user: root
   become_method: sudo
+  gather_facts: yes
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [test_o, grafana]}
-    - {role: test,        tags: test_o}
-    - {role: grafana,     tags: grafana}
+    - grafana
   tags:
-    - o
+    - grafana

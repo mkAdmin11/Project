@@ -29,3 +29,25 @@
       (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
   args:
     chdir: /share/easy_rsa/
+
+- name: vpn - make config dir
+  file:
+    path: /share/vpn_conf/
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0750
+
+- name: vpn - prepare config
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640
+  with_items:
+    - {src: '/ansible/roles/openvpn/templates/server1', dest: '/share/vpn_conf/{{ server1.name }}'}
+    - {src: '/ansible/roles/openvpn/templates/server2', dest: '/share/vpn_conf/{{ server2.name }}'}
+    - {src: '/ansible/roles/openvpn/templates/server3', dest: '/share/vpn_conf/{{ server3.name }}'}
+    - {src: '/ansible/roles/openvpn/templates/vpn-server2', dest: '/share/vpn_conf/vpn-{{ server2.name }}'}
+    - {src: '/ansible/roles/openvpn/templates/vpn-server3', dest: '/share/vpn_conf/vpn-{{ server3.name }}'}

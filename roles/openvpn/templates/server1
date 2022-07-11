@@ -19,27 +19,3 @@ ca cert/ca.crt
 cert cert/vpn-{{ server1.name }}.crt
 key cert/vpn-{{ server1.name }}.key
 dh cert/dh.pem
-
-#<ca>
-#-----BEGIN CERTIFICATE-----
-#{{ vpn.ca }}
-#-----END CERTIFICATE-----
-#</ca>
-#
-#<dh>
-#-----BEGIN DH PARAMETERS-----
-#{{ vpn.dh }}
-#-----END DH PARAMETERS-----
-#</dh>
-#
-#<cert>
-#-----BEGIN CERTIFICATE-----
-#{{ server1.vpn_cert }}
-#-----END CERTIFICATE-----
-#</cert>
-#
-#<key>
-#-----BEGIN PRIVATE KEY-----
-#{{ server1.vpn_key }}
-#-----END PRIVATE KEY-----
-#</key>

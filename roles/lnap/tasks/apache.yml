@@ -47,6 +47,8 @@
   template:
     src: apache.conf
     dest: /etc/apache2/sites-available/apache.conf
+    owner: root
+    group: root
     mode: 0644
     backup: yes
 

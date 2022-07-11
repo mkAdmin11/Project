@@ -1,14 +1,14 @@
 ---
 
-- name: start - update cache
+- name: init_all - update cache
   apt:
     update_cache: yes
 
-- name: start - safe upgrade
+- name: init_all - safe upgrade
   apt:
     upgrade: safe
 
-- name: start - install few packages
+- name: init_all - install few packages
   apt:
     pkg:
     - net-tools
@@ -20,16 +20,16 @@
     - python3-pip
     - python3-dev
 
-- name: start - install python lib
+- name: init_all - install python lib
   pip:
     name: pexpect
     state: latest
 
-- name: start - set timezone 
+- name: init_all - set timezone 
   timezone:
     name: Europe/Moscow
 
-- name: start - config vim
+- name: init_all - config vim
   template:
     src: vimrc.local
     dest: /etc/vim/vimrc.local
@@ -38,13 +38,13 @@
     mode: "0644"
     backup: yes
 
-- name: start - add bash source
+- name: init_all - add bash source
   lineinfile:
     line: source .bashrc.local
     path: /home/{{ ansible_user }}/.bashrc
     backup: yes
 
-- name: start - config bash
+- name: init_all - config bash
   template:
     src: "{{ ansible_hostname }}" 
     dest: /home/{{ ansible_user }}/.bashrc.local

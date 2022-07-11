@@ -32,7 +32,7 @@
     interface: "{{ ansible_facts.default_ipv4.interface }}"
     direction: in
     to_port: 22
-    src: '{{ item }}'
+    src: "{{ item }}"
   loop:
     - "{{ server1.novpn_ip }}"
     - "{{ server2.novpn_ip }}"
@@ -45,7 +45,7 @@
     port: 22
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
-    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+    from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
   when: ansible_hostname != server2.name|string
 
 - name: ufw - add openvpn ufw rule

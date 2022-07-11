@@ -1,0 +1,13 @@
+---
+
+- name: init_main - create share
+  include_tasks: share.yml
+
+- name: init_main - prepare easy-rsa
+  include_tasks: easy_rsa.yml
+
+- name: init_main - init pki
+  include_tasks: init_pki.yml
+
+- name: init_main - prepare vpn source
+  include_tasks: vpn.yml

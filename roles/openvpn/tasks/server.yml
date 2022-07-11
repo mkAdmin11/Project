@@ -17,8 +17,8 @@
     mode: 0640
     backup: yes
   with_items:
-  - {src: 'vpn-{{ server2.name }}', dest: '/etc/openvpn/ccd/vpn-{{ server3.name }}'}
-  - {src: 'vpn-{{ server3.name }}', dest: '/etc/openvpn/ccd/vpn-{{ server3.name }}'}
+  - {src: '/share/vpn_conf/vpn-{{ server2.name }}', dest: '/etc/openvpn/ccd/vpn-{{ server2.name }}'}
+  - {src: '/share/vpn_conf/vpn-{{ server3.name }}', dest: '/etc/openvpn/ccd/vpn-{{ server3.name }}'}
 
 - name: server - copy cert
   copy:
@@ -35,9 +35,9 @@
 
 - name: server - config server
   template:
-    src: "{{ ansible_hostname }}"
+    src: /share/vpn_conf/{{ ansible_hostname }}
     dest: /etc/openvpn/vpn-{{ ansible_hostname }}.conf
-    mode: 0600
+    mode: 0640
     backup: yes
 
 - name: server - start openvpn server service
@@ -50,6 +50,6 @@
 
 - name: server - reload openvpn server service
   systemd:
-    name: openvpn@servervpn.service
+    name: openvpn@vpn-{{ ansible_hostname }}.service
     state: restarted
   when:  server_started is not changed

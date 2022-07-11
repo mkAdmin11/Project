@@ -1,0 +1,6 @@
+---
+
+- name: handlers - reload nginx service
+  systemd:
+    name: nginx.service
+    state: reloaded

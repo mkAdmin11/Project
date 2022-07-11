@@ -1,13 +1,13 @@
 ---
 
-- name: init - init pki
+- name: init_pki - init pki
   become_user: "{{ ansible_user }}"
   command:
     chdir: /share/easy_rsa/
     creates: /share/easy_rsa/pki/
     cmd: /share/easy_rsa/easyrsa init-pki
 
-- name: init - build ca
+- name: init_pki - build ca
   become_user: "{{ ansible_user }}"
   expect:
     command: /share/easy_rsa/easyrsa build-ca
@@ -19,7 +19,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: init - gen dh
+- name: init_pki - gen dh
   become_user: "{{ ansible_user }}"
   command:
     chdir: /share/easy_rsa/

@@ -14,9 +14,6 @@ sh -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_publ
 ```
 <br/> Настройка main сервера:
 ```
-sh -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_main_install)"
-```
-```
 sh -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_main_config.sh)"
 ```
 

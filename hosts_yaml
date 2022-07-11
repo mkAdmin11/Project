@@ -4,37 +4,31 @@ all:
     server1.novpn:
       ansible_host: "{{ server1.novpn_ip }}"
       ansible_user: "{{ server1.user }}"
-      ansible_port: 22
       ansible_ssh_private_key_file: "~/.ssh/{{ server1.name }}"
 
     server2.novpn:
       ansible_host: "{{ server2.novpn_ip }}"
       ansible_user: "{{ server2.user }}"
-      ansible_port: 22
       ansible_ssh_private_key_file: "~/.ssh/{{ server2.name }}"
 
     server3.novpn:
       ansible_host: "{{ server3.novpn_ip }}"
       ansible_user: "{{ server3.user }}"
-      ansible_port: 22
       ansible_ssh_private_key_file: "~/.ssh/{{ server3.name }}"
 
     server1.vpn:
       ansible_host: "{{ server1.vpn_ip }}"
       ansible_user: "{{ server1.user }}"
-      ansible_port: 22
       ansible_ssh_private_key_file: "~/.ssh/{{ server1.name }}"
 
     server2.vpn:
       ansible_host: "{{ server2.vpn_ip }}"
       ansible_user: "{{ server2.user }}"
-      ansible_port: 22
       ansible_ssh_private_key_file: "~/.ssh/{{ server2.name }}"
 
     server3.vpn:
       ansible_host: "{{ server3.vpn_ip }}"
       ansible_user: "{{ server3.user }}"
-      ansible_port: 22
       ansible_ssh_private_key_file: "~/.ssh/{{ server3.name }}"
 
   children:
@@ -49,16 +43,4 @@ all:
       hosts:
         server1.vpn:
         server2.vpn:
-        server3.vpn:
-
-    main:
-      hosts:
-        server1.vpn:
-
-    publick:
-      hosts:
-        server2.vpn:
-    
-    db_elk:
-      hosts:
         server3.vpn:

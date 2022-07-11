@@ -15,31 +15,24 @@
     - libffi-dev
     - ca-certificates
 
-- name: ssl - get cert stat
-  stat:
-    path: /etc/letsencrypt/live/{{ domain.second }}{{ domain.top }}/privkey.pem
-  register: cert
-
-- name: ssl - get dh stat
-  stat:
-    path: /etc/letsencrypt/ssl-dhparams.pem
-  register: dh
-
 - name: ssl - generate cert
-  shell: letsencrypt certonly --webroot --agree-tos -w /var/www/html -m admin@{{ domain.second }}{{ domain.top }} -d {{ domain.second }}{{ domain.top }}
-  when: cert.stat.isdir is not defined
+  command:
+    creates: /etc/letsencrypt/live/{{ domain.second }}{{ domain.top }}/privkey.pem
+    cmd: letsencrypt certonly --webroot --agree-tos -w /var/www/html -m admin@{{ domain.second }}{{ domain.top }} -d {{ domain.second }}{{ domain.top }}
+  notify:
+    - handlers - reload nginx service
 
 - name: ssl - generate dh
-  shell: openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
-  when: dh.stat.isreg is not defined
+  command:
+    creates: /etc/letsencrypt/ssl-dhparams.pem
+    cmd: openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
+  notify:
+    - handlers - reload nginx service
 
 - name: ssl - config nginx
   template:
     src: nginx.conf
     dest: /etc/nginx/sites-available/nginx.conf
     mode: 0644
-
-- name: ssl - reload nginx service
-  systemd:
-    name: nginx.service
-    state: reloaded
+  notify:
+    - handlers - reload nginx service
