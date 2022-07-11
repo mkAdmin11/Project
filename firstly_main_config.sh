@@ -17,13 +17,13 @@ echo "Установлен Ansible и Git"
 
 echo "========================================================================"
 
-echo  -n "Введите hostname второго сервера: "
+echo  -n "Введите hostname первого сервера: "
 read HN1
 
-echo -n "Введите username второго сервера: "
+echo -n "Введите username первого сервера: "
 read UN1
 
-echo -n "Введите IP второго сервера: "
+echo -n "Введите IP первого сервера: "
 read IP1
 ssh-keyscan -t rsa $IP1 >> /home/$(whoami)/.ssh/known_hosts 2> /dev/null
 
@@ -31,6 +31,23 @@ echo -n "Добавьте ключ первого сервера. Нажмите
 read zero
 vi /home/$(whoami)/.ssh/$HN1
 chmod 600 /home/$(whoami)/.ssh/$HN1
+
+echo "========================================================================"
+
+echo  -n "Введите hostname второго сервера: "
+read HN2
+
+echo -n "Введите username второго сервера: "
+read UN2
+
+echo -n "Введите IP второго сервера: "
+read IP2
+ssh-keyscan -t rsa $IP2 >> /home/$(whoami)/.ssh/known_hosts 2> /dev/null
+
+echo -n "Добавьте ключ первого сервера. Нажмите Enter... "
+read zero
+vi /home/$(whoami)/.ssh/$HN2
+chmod 600 /home/$(whoami)/.ssh/$HN2
 
 echo "========================================================================"
 

@@ -25,8 +25,8 @@ server3.vpn
 [main]
 server1.vpn
 
-[web]
+[publick]
 server2.vpn
 
-[db]
+[db_elk]
 server3.vpn

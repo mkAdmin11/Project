@@ -55,10 +55,10 @@ all:
       hosts:
         server1.vpn:
 
-    web:
+    publick:
       hosts:
         server2.vpn:
     
-    db:
+    db_elk:
       hosts:
         server3.vpn:

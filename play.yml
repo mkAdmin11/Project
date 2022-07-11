@@ -7,9 +7,9 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [test, start, openvpn, security]}
+    - {role: facts,       tags: [test, init_all, openvpn, security]}
     - {role: test,        tags: test}
-    - {role: start,       tags: start}
+    - {role: init_all,    tags: init_all}
     - {role: openvpn,     tags: openvpn}
     - {role: security,    tags: security}
   tags:
@@ -22,8 +22,8 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [vpntest, dns, zabbix, logs]}
-    - {role: test,        tags: vpntest}
+    - {role: facts,       tags: [test_vpn, dns, zabbix, logs]}
+    - {role: test,        tags: test_vpn}
     - {role: dns,         tags: dns}
     - {role: zabbix,      tags: zabbix}
     - {role: logs,        tags: logs}
@@ -37,63 +37,63 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [maintest, rsa]}
-    - {role: test,        tags: maintest}
+    - {role: facts,       tags: [test_main, rsa]}
+    - {role: test,        tags: test_main}
     - {role: rsa,         tags: rsa}
   tags:
     - main
 
-- hosts: web 
+- hosts: publick 
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [webtest, lnap, ssl]}
-    - {role: test,        tags: webtest}
+    - {role: facts,       tags: [test_publick, lnap, ssl]}
+    - {role: test,        tags: test_publick}
     - {role: lnap,        tags: lnap}
     - {role: ssl,         tags: ssl}
   tags:
-    - web
+    - publick
 
-- hosts: db
+- hosts: db_elk
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [dbtest, elk]}
-    - {role: test,        tags: dbtest}
+    - {role: facts,       tags: [test_db, elk]}
+    - {role: test,        tags: test_db}
     - {role: elk,         tags: elk}
   tags:
-    - db
+    - db_elk
 
-- hosts: [web, db]
+- hosts: [publick, db_elk]
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [wwwtest, wordpress, postgres, mail]}
-    - {role: test,        tags: wwwtest}
+    - {role: facts,       tags: [test_www, wordpress, postgres, mail]}
+    - {role: test,        tags: test_www}
     - {role: postgres,    tags: postgres}
     - {role: wordpress,   tags: wordpress}
     - {role: mail,        tags: mail}
   tags:
     - www
 
-- hosts: [main, db]
+- hosts: [main, db_elk]
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [maintest, grafana]}
-    - {role: test,        tags: maintest}
+    - {role: facts,       tags: [test_o, grafana]}
+    - {role: test,        tags: test_o}
     - {role: grafana,     tags: grafana}
   tags:
-    - main 
+    - o
