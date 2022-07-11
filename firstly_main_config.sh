@@ -7,6 +7,16 @@ echo "" > /home/$(whoami)/.ssh/known_hosts
 
 echo "========================================================================"
 
+sudo apt-add-repository -y ppa:ansible/ansible
+echo "Добавлен репозиторий Ansible"
+
+echo "========================================================================"
+
+sudo apt install -y ansible git
+echo "Установлен Ansible и Git"
+
+echo "========================================================================"
+
 echo  -n "Введите hostname второго сервера: "
 read HN1
 
