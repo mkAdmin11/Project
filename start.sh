@@ -12,7 +12,7 @@ echo "Добавлен репозиторий Ansible"
 
 echo "========================================================================"
 
-sudo apt -qqq install -y ansible git &> /dev/null
+sudo apt -qqqq install -y ansible git
 echo "Установлен Ansible и Git"
 
 echo "========================================================================"
