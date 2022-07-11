@@ -8,7 +8,7 @@
 
 ## Начало
 
-<br/> Настройка DMZ сервера:
+<br/> Настройка publick сервера:
 ```
 sh -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_publick_config.sh)"
 ```
