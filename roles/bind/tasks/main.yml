@@ -1,21 +1,18 @@
 ---
 
-- name: dns - install and config bind9
-  import_tasks: bind.yml
+- name: bind - install and config bind9
+  import_tasks: install.yml
   when: ansible_hostname == server2.name|string
 
-- name: dns - config systemd-resolved
+- name: bind - config systemd-resolved
   template:
     src: resolved.conf
     dest: "/etc/systemd/resolved.conf"
     mode: 0644
+  notify:
+    - handlers - restarted systemd-resolved
 
-- name: dns - restart systemd-resolved
-  systemd:
-    name: systemd-resolved
-    state: restarted
-
-- name: dns - cron 
+- name: bind - add cron job
   cron:
     name: restart systemd-resolved after reboot server
     special_time: reboot

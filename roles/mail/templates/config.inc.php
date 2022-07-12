@@ -86,7 +86,7 @@ $config['product_name'] = 'Webmail {{ domain.second }}{{ domain.top }}';
 // in the session record. For the default cipher method it must be
 // exactly 24 characters long.
 // YOUR KEY MUST BE DIFFERENT THAN THE SAMPLE VALUE FOR SECURITY REASONS
-$config['des_key'] = '{{ mail.key }}';
+$config['des_key'] = '{{ roundcude_key_gen }}';
 
 // List of active plugins (in plugins/ directory)
 $config['plugins'] = [

@@ -46,7 +46,7 @@
 
 - name: init_all - config bash
   template:
-    src: "{{ ansible_hostname }}" 
+    src: /share/bash_conf/{{ ansible_hostname }}
     dest: /home/{{ ansible_user }}/.bashrc.local
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

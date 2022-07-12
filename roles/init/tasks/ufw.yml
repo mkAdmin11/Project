@@ -38,31 +38,6 @@
     - "{{ server2.novpn_ip }}"
   when: ansible_hostname != server2.name|string
 
-- name: ufw - allow ssh on other servers (vpn)
-  ufw:
-    rule: allow
-    proto: tcp
-    port: 22
-    direction: in
-    interface: "{{ ansible_facts.tun0.device }}"
-    from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
-  when: ansible_hostname != server2.name|string
-
-- name: ufw - add openvpn ufw rule
-  ufw:
-    rule: allow
-    proto: udp
-    port: 1194
-    direction: in
-    interface: "{{ ansible_facts.default_ipv4.interface }}"
-  when: ansible_hostname == server1.name|string
-
 - name: ufw - enable
   ufw:
     state: enabled
-  register: ufw_enabled
-
-- name: ufw - reload
-  ufw:
-    state: reloaded
-  when: ufw_enabled is not changed

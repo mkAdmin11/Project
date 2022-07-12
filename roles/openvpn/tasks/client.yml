@@ -26,7 +26,7 @@
     mode: 0640
     backup: yes
 
-- name: client - start openvpn client service
+- name: client - start openvpn-client service
   systemd:
     daemon_reload: yes
     name: openvpn@vpn-{{ ansible_hostname }}.service
@@ -34,7 +34,7 @@
     state: started
   register: client_started
 
-- name: client - reload openvpn client service
+- name: client - reload openvpn-client service
   systemd:
     name: openvpn@vpn-{{ ansible_hostname }}.service
     state: restarted

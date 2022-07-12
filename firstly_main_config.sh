@@ -93,9 +93,9 @@ echo "Склонирован Git репозиторий mkAdmin11/ansible"
 echo "========================================================================"
 
 sudo mv /etc/ansible/roles/ /etc/ansible/roles_backup_$(date +%F_%T)
-sudo ln -s /ansible/roles/ /etc/ansible/
+sudo ln -s /ansible/roles/ /etc/ansible/roles
 sudo mv /etc/ansible/hosts /etc/ansible/hosts_backup_$(date +%F_%T)
-sudo ln -s /ansible/hosts /etc/ansible/
+sudo ln -s /ansible/hosts.yml /etc/ansible/hosts
 echo "Настроен Ansible"
 
 echo "========================================================================"

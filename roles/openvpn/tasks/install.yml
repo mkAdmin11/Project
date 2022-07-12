@@ -1,0 +1,12 @@
+---
+
+- name: install - install openvpn
+  apt:
+    name: openvpn
+    state: latest
+
+- name: install - start openvpn service
+  systemd:
+    name: openvpn.service
+    enabled: yes
+    state: started

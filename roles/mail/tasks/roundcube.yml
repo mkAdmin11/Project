@@ -11,11 +11,15 @@
 
 - name: roundcube - move source dir
   copy:
-    src: /share/{{ unzip.files[0] }}
+    src: /tmp/{{ unzip.files[0] }}
     dest: /var/www/mail/
     owner: www-data
     group: www-data
     remote_src: true
+
+- name: roundcube - gen key
+  set_fact:
+    roundcude_key_gen: "{{ lookup('password', '/dev/null length=24 seed=inventory_hostname chars=ascii_letters,digits') }}"
 
 - name: roundcube - copy config
   template:

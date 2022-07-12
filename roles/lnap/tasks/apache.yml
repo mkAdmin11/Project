@@ -5,19 +5,19 @@
     name: apache2
     state: latest
 
-- name: apache - stop and disable
+- name: apache - stop and disable apache service
   systemd:
     name: apache2.service
     enabled: no
     state: stopped
 
-- name: apache - cron
+- name: apache - add cron job
   cron:
     name: start apache after reboot server
     special_time: reboot 
-    job: "/bin/sleep 45 && /bin/systemctl start apache2.service"
+    job: "/bin/sleep 40 && /bin/systemctl start apache2.service"
 
-- name: apache - install mod
+- name: apache - install mods
   apt:
     pkg:
     - libapache2-mod-php
@@ -67,10 +67,12 @@
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  register: ufw_changed
 
 - name: apache - reload ufw
   ufw:
     state: reloaded
+  when: ufw_changed is changed
 
 - name: apache - start service
   systemd:

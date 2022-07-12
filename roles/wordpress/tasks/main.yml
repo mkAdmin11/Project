@@ -14,12 +14,6 @@
     ansible_become_user: postgres
   when: ansible_hostname == server3.name|string
 
-- name: wordpress - reload postgres service
-  systemd:
-    name: postgresql.service
-    state: reloaded
-  when: ansible_hostname == server3.name|string
-
 - name: wordpress - config apache
   include_tasks: apache.yml
   when: ansible_hostname == server2.name|string

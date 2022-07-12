@@ -1,32 +1,15 @@
 ---
 
-- name: openvpn - install
-  apt:
-    name: openvpn
-    state: latest
+- name: openvpn - install openvpn
+  import_tasks: install.yml
 
-- name: openvpn - start
-  systemd:
-    name: openvpn.service
-    enabled: yes
-    state: started
-
-- name: openvpn - config server
+- name: openvpn - config openvpn-server
   import_tasks: server.yml
   when: ansible_hostname == server1.name|string
 
-- name: openvpn - config clients
+- name: openvpn - config openvpn-clients
   import_tasks: client.yml
   when: ansible_hostname != server1.name|string
 
-- name: openvpn - add know hosts
-  known_hosts:
-    path: /home/{{ ansible_user }}/.ssh/known_hosts
-    name: "{{ item }}"
-    state: present
-    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa {{ item }}') }}"
-  loop:
-    - "{{ server1.vpn_ip }}"
-    - "{{ server2.vpn_ip }}"
-    - "{{ server3.vpn_ip }}"
-  when: ansible_hostname == server1.name|string
+- name: openvpn - config ssh
+  import_tasks: ssh.yml

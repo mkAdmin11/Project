@@ -1,7 +1,0 @@
----
-
-- name: init_sec - config sshd
-  include_tasks: sshd.yml
-
-- name: init_sec - config ufw
-  include_tasks: ufw.yml

@@ -1,21 +1,21 @@
 ---
 
-- name: nginx - install
+- name: nginx - install nginx
   apt:
     name: nginx
     state: latest
 
-- name: nginx - stop and disabled
+- name: nginx - stop and disabled nginx service
   systemd:
     name: nginx.service
     enabled: no
     state: stopped
 
-- name: nginx - cron
+- name: nginx - add cron job
   cron:
     name: start nginx after reboot server
     special_time: reboot
-    job: "/bin/sleep 50 && /bin/systemctl start nginx.service"
+    job: "/bin/sleep 45 && /bin/systemctl start nginx.service"
 
 - name: nginx - find enabled configs
   find:
@@ -47,10 +47,12 @@
   ufw:
     rule: allow
     name: Nginx Full
+  register: ufw_changed
 
 - name: nginx - reload ufw
   ufw:
     state: reloaded
+  when: ufw_changed is changed
 
 - name: nginx - started service
   systemd:

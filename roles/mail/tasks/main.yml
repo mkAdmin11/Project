@@ -21,9 +21,3 @@
   vars:
     ansible_become_user: postgres
   when: ansible_hostname == server3.name|string
-
-- name: mail - reload postgres service
-  systemd:
-    name: postgresql.service
-    state: reloaded
-  when: ansible_hostname == server3.name|string

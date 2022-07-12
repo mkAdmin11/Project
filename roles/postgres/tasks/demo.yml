@@ -16,28 +16,37 @@
 
 - name: demo - create db
   postgresql_db:
-    name: "{{ db.demo.name1 }}"
+    name: "{{ db.demo.name }}"
     owner: "{{ db.demo.user }}"
     encoding: UTF-8
 
 - name: demo - grant privileges
   postgresql_privs:
-    db: "{{ db.demo.name1 }}"
+    db: "{{ db.demo.name }}"
     privs: ALL
     type: database
     role: "{{ db.demo.user }}"
 
+- name: demo - question
+  pause:
+    prompt: "Need dump restore (y - yes / other - no)?"
+    echo: yes
+  register: demo_dump
+
 - name: demo - restore db
   postgresql_db:
-    name: "{{ db.demo.name1 }}"
+    name: "{{ db.demo.name }}"
     state: restore
     target: /tmp/{{ unzip.files[0] }}
+  when: demo_dump.user_input == 'y' 
 
 - name: demo - user auth rule
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
     contype: host
     users: "{{ db.demo.user }}"
-    databases: "{{ db.demo.name1 }}"
+    databases: "{{ db.demo.name }}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
     method: md5
+  notify:
+    - handlers - reload postgresql service

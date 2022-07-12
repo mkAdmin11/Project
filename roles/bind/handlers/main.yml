@@ -1,0 +1,6 @@
+---
+
+- name: handlers - restarted systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: restarted

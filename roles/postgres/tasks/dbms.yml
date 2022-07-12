@@ -3,11 +3,11 @@
 - name: dbms - add postgresql repository key
   apt_key:
     id: B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
-# curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | tee | gpg --keyid-format long
+    # curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | tee | gpg --keyid-format long
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     state: present
 
-- name: Add pgAdmin repositorylist
+- name: dbms - add postgresql repository list
   template:
     src: pgdg.list 
     dest: /etc/apt/sources.list.d/pgdg.list
@@ -36,17 +36,17 @@
     name: psycopg2
     state: latest
 
-- name: dbms - stop and disable postgresql
+- name: dbms - stop and disable postgresql service
   systemd:
     name: postgresql.service
     enabled: no
     state: stopped
 
-- name: dbms - add cron rule
+- name: dbms - add cron job 
   cron:
     name: start postgresql after reboot server
     special_time: reboot
-    job: "/bin/sleep 45 && /bin/systemctl start postgresql.service"
+    job: "/bin/sleep 30 && /bin/systemctl start postgresql.service"
 
 - name: dbms - listen addresses
   replace:
@@ -62,10 +62,12 @@
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  register: ufw_changed
 
-- name: apache - reload ufw
+- name: dbms - reload ufw
   ufw:
     state: reloaded
+  when: ufw_changed is changed
 
 - name: dbms - start postgresql service
   systemd:

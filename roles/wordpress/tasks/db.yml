@@ -26,3 +26,5 @@
     databases: "{{ db.wordpress.name}}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
     method: md5
+  notify:
+    - handlers - reload postgresql service

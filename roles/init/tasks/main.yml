@@ -1,0 +1,15 @@
+---
+
+- name: init - prepare main share
+  include_tasks: share.yml
+  when: ansible_hostname == server1.name|string
+
+- name: init - config all servers
+  include_tasks: init_all.yml
+
+- name: init - prepare easy-rsa
+  include_tasks: easy_rsa.yml
+  when: ansible_hostname == server1.name|string
+
+- name: init - config ufw
+  include_tasks: ufw.yml

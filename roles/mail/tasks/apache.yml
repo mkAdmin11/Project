@@ -7,14 +7,13 @@
     mode: 0644
     owner: root
     group: root
+  notify:
+    - handlers - reload apache service
 
 - name: apache - enable roundcube config
   lineinfile:
     path: /etc/apache2/sites-available/apache.conf
     insertafter: '^  # Service list'
     line: '  Include  /etc/apache2/sites-available/roundcube.conf'
-
-- name: apache - reload
-  systemd:
-    name: apache2.service
-    state: reloaded
+  notify:
+    - handlers - reload apache service
