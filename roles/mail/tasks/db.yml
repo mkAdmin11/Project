@@ -28,7 +28,7 @@
 
 - name: db - question
   pause:
-    prompt: "Need dump restore (y - yes / other - no)?"
+    prompt: "Need to restore dump (y - yes / other - no)?"
     echo: yes
   register: roundcube_dump
 

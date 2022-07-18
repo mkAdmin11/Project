@@ -1,7 +1,0 @@
----
-
-- name: Remode job duplication
-  shell: sed -i '/systemctl start kibana.service/d' /root/start.sh
-
-- name: Add jod
-  shell: echo "systemctl start kibana.service" >> /root/start.sh

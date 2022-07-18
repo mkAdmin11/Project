@@ -1,24 +1,28 @@
 ---
 
 - name: db - create user
+  become_user: postgres
   postgresql_user:
     name: "{{ db.grafana.user }}"
     password: "{{ db.grafana.pass }}"
 
 - name: db - create db
+  become_user: postgres
   postgresql_db:
     name: "{{ db.grafana.name }}"
     owner: "{{ db.grafana.user }}"
     encoding: UTF-8
 
 - name: db - grant privileges
+  become_user: postgres
   postgresql_privs:
     db: "{{ db.grafana.name }}"
     privs: ALL
     type: database
     role: "{{ db.grafana.user }}"
 
-- name: wp - user auth rule
+- name: db - user auth rule
+  become_user: postgres
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
     contype: host
@@ -26,3 +30,10 @@
     databases: "{{ db.grafana.name}}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
     method: md5
+  register: auth_changed
+
+- name: db - reload postgresql
+  systemd:
+    name: postgresql.service
+    state: reloaded
+  when: auth_changed is changed

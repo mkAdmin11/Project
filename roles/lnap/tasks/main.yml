@@ -1,10 +1,10 @@
 ---
 
 - name: lnap - install php
-  import_tasks: php.yml
+  include_tasks: php.yml
 
 - name: lnap - install apache
-  import_tasks: apache.yml
+  include_tasks: apache.yml
 
 - name: lnap - install nginx
-  import_tasks: nginx.yml
+  include_tasks: nginx.yml

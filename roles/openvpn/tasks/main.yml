@@ -1,10 +1,10 @@
 ---
 
 - name: openvpn - install openvpn
-  import_tasks: install.yml
+  include_tasks: install.yml
 
 - name: openvpn - config openvpn-server
-  import_tasks: server.yml
+  include_tasks: server.yml
   when: ansible_hostname == server1.name|string
 
 - name: openvpn - config openvpn-clients
@@ -12,4 +12,4 @@
   when: ansible_hostname != server1.name|string
 
 - name: openvpn - config ssh
-  import_tasks: ssh.yml
+  include_tasks: ssh.yml

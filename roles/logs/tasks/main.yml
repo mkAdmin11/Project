@@ -17,11 +17,11 @@
     update_cache: yes
 
 - name: Install Logstash 
-  import_tasks: logstash.yml
+  include_tasks: logstash.yml
   when: ansible_hostname == 'mk-server3'
 
 - name: Install Filebeat
-  import_tasks: filebeat.yml
+  include_tasks: filebeat.yml
   when: ansible_hostname != 'mk-server3'
 
 - name: Change number of replicas

@@ -1,0 +1,6 @@
+---
+
+- name: handlers - reloaded grafana-server service
+  systemd:
+    name: grafana-server.service
+    state: restarted

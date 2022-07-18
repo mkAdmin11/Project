@@ -5,13 +5,13 @@
     name: zabbix-server-pgsql
     state: latest
 
-- name: server - stop and disable service
+- name: server - stop and disable zabbix-server service
   systemd:
     name: zabbix-server.service
     enabled: no
     state: stopped
 
-- name: server - cron
+- name: server - add cron job
   cron:
     name: start zabbix after reboot server
     special_time: reboot
@@ -32,12 +32,14 @@
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
+  register: ufw_changed
 
 - name: server - reload ufw
   ufw:
     state: reloaded
+  when: ufw_changed is changed
 
-- name: zabbix - start service
+- name: server - start zabbix-server service
   systemd:
     name: zabbix-server.service
     state: started

@@ -11,13 +11,13 @@
     enabled: no
     state: stopped
 
-- name: agent - cron
+- name: agent - cron job
   cron:
     name: start zabbix agent after reboot server
     special_time: reboot
-    job: "/bin/sleep 55 && /bin/systemctl start zabbix-agent.service"
+    job: "/bin/sleep 50 && /bin/systemctl start zabbix-agent.service"
 
-- name: agent - copy agent
+- name: agent - copy conf
   template:
     src: zabbix_agentd.conf
     dest: /etc/zabbix/zabbix_agentd.conf
@@ -30,10 +30,12 @@
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
+  register: ufw_changed
 
 - name: agent - reload ufw
   ufw:
     state: reloaded
+  when: ufw_changed is changed
 
 - name: agent - start service
   systemd:

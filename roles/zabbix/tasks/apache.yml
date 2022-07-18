@@ -4,6 +4,8 @@
   apt:
     name: zabbix-frontend-php
     state: latest
+  notify:
+    - handlers - reload apache service
 
 - name: apache - copy apache config
   template:
@@ -12,6 +14,8 @@
     mode: 0644
     owner: root
     group: root
+  notify:
+    - handlers - reload apache service
 
 - name: apache - copy php config
   template:
@@ -20,14 +24,13 @@
     mode: 0644
     owner: root
     group: root
+  notify:
+    - handlers - reload apache service
 
 - name: apache - enable zabbix config
   lineinfile:
     path: /etc/apache2/sites-available/apache.conf
     insertafter: '^  # Service list'
     line: '  Include  /etc/apache2/sites-available/zabbix.conf'
-
-- name: apache - reload
-  systemd:
-    name: apache2.service
-    state: reloaded
+  notify:
+    - handlers - reload apache service

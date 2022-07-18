@@ -1,71 +1,98 @@
 ---
 
-- name: grafana - add repository key
+- name: install - add repository key
   apt_key:
     id: CA6D481DBD044C76
-# curl -sL https://packages.grafana.com/gpg.key | tee | gpg --keyid-format long
+    # curl -sL https://packages.grafana.com/gpg.key | tee | gpg --keyid-format long
     url: https://packages.grafana.com/gpg.key
     state: present
 
-- name: grafana - add repository list
+- name: install - add repository list
   template:
     src: grafana.list
     dest: /etc/apt/sources.list.d/grafana.list
     owner: root
     group: root
     mode: 0644
+  register: repolist_changed
 
-- name: grafana - update apt cache
+- name: install - update apt cache
   apt:
     update_cache: yes
+  when: repolist_changed is changed
 
-- name: grafana - install
+- name: install - install grafana
   apt:
     name: grafana
     state: latest
 
-- name: grafana - stop and disabled service
+- name: install - resolve plugin dependence
+  apt:
+    pkg:
+    - libx11-6
+    - libx11-xcb1
+    - libxcomposite1
+    - libxcursor1
+    - libxdamage1
+    - libxext6
+    - libxfixes3
+    - libxi6
+    - libxrender1
+    - libxtst6
+    - libglib2.0-0
+    - libnss3
+    - libcups2
+    - libdbus-1-3
+    - libxss1
+    - libxrandr2
+    - libgtk-3-0
+    - libasound2
+    - libxcb-dri3-0
+    - libgbm1
+    - libxshmfence1
+
+- name: install - started and disabled grafana-server service
   systemd:
     name: grafana-server.service
     enabled: no 
-    state: stopped
+    state: started
 
-- name: grafana - cron
+- name: install - add grafana cron job
   cron:
     name: start grafana after reboot server
     special_time: reboot
-    job: "/bin/sleep 100 && /bin/systemctl start grafana-server.service"
+    job: "/bin/sleep 45 && /bin/systemctl start grafana-server.service"
 
-- name: Resolve plugin dependenc
-  import_tasks: plagins.yml
+- name: install - install grafana plagins
+  command:
+    creates: "{{ item.creates }}"
+    cmd: "{{ item.cmd }}"
+  with_items:
+    - {creates: '/var/lib/grafana/plugins/alexanderzobnin-zabbix-app', cmd: 'grafana-cli plugins install alexanderzobnin-zabbix-app'}
+    - {creates: '/var/lib/grafana/plugins/grafana-image-renderer', cmd: 'grafana-cli plugins install grafana-image-renderer'}
+  notify:
+    - handlers - reloaded grafana-server service
 
-#- name: Install plagins
-#  shell: "{{ item.shell }}"
-#  with_items:
-#  - {shell: 'grafana-cli plugins install alexanderzobnin-zabbix-app'}
-#  - {shell: 'grafana-cli plugins install grafana-image-renderer'}
-
-- name: Config Grafana
+- name: install - copy grafana config
   template:
     src: grafana.ini
     dest: "/etc/grafana/grafana.ini"
     owner: root
     group: grafana
     mode: 0640
+  notify:
+    - handlers - reloaded grafana-server service
 
-- name: grafana - add ufw rule
+- name: install - add grafana ufw rule
   ufw:
     rule: allow
     port: 3000
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  register: ufw_changed
 
 - name: grafana - reload ufw
   ufw:
     state: reloaded
-
-- name: grafana - start service
-  systemd:
-    name: grafana-server.service
-    state: started
+  when: ufw_changed is changed

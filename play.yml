@@ -1,6 +1,6 @@
 ---
 
-- hosts: main
+- hosts: [ main ]
   become: true
   become_user: root
   become_method: sudo
@@ -25,7 +25,7 @@
   tags:
     - novpn
 
-- hosts: [ vpn ]
+- hosts: [ web, db ]
   become: true
   become_user: root
   become_method: sudo
@@ -39,7 +39,7 @@
   tags:
     - vpn 
 
-- hosts: [ publick ]
+- hosts: [ web ]
   become: true
   become_user: root
   become_method: sudo
@@ -50,9 +50,9 @@
     - {role: lnap,        tags: lnap}
     - {role: ssl,         tags: ssl}
   tags:
-    - publick
+    - web
 
-- hosts: [ publick, db_elk ]
+- hosts: [ web, db ]
   become: true
   become_user: root
   become_method: sudo
@@ -66,7 +66,7 @@
   tags:
     - www
 
-- hosts: [ main, db_elk ]
+- hosts: [ main, db ]
   become: true
   become_user: root
   become_method: sudo
@@ -78,7 +78,7 @@
   tags:
     - grafana
 
-- hosts: [ db_elk ]
+- hosts: [ db ]
   become: true
   become_user: root
   become_method: sudo

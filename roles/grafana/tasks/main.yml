@@ -2,16 +2,8 @@
 
 - name: grafana - config db
   include_tasks: db.yml
-  vars:
-    ansible_become_user: postgres
   when: ansible_hostname == server3.name|string
 
-- name: grafana - reload postgresql
-  systemd:
-    name: postgresql.service
-    state: reloaded
-  when: ansible_hostname == server3.name|string
-
-- name: grafana - setup grafana
+- name: grafana - install grafana
   include_tasks: install.yml
   when: ansible_hostname == server1.name|string

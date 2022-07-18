@@ -49,10 +49,12 @@
     - 25
     - 587
     - 465
+  register: ufw_changed
 
 - name: postfix - reload ufw
   ufw:
     state: reloaded
+  when: ufw_changed is changed
 
 - name: postfix - start service
   systemd:

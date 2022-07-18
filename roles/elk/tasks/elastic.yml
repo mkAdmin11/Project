@@ -1,24 +1,21 @@
 ---
 
-- name: Install elasticsearch
+- name: elastic - install elasticsearch
   apt:
     name: elasticsearch
     state: latest
 
-- name: Increase startup timeout
-  include_tasks: systemd.yml
-
-- name: Systemd reread
+- name: elastic - systemd reload
   systemd:
     daemon_reload: yes
 
-- name: Start and Disable elasticsearch
+- name: elastic - start and disable elasticsearch service
   systemd:
     name: elasticsearch.service
     enabled: no
     state: started
 
-- name: Configure elasticsearch
+- name: elastic - copy config
   template:
     src: elasticsearch.yml
     dest: /etc/elasticsearch/elasticsearch.yml
