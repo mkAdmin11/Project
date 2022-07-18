@@ -1,7 +1,0 @@
----
-
-- name: Remode job duplication
-  shell: sed -i '/systemctl start logstash.service/d' /root/start.sh
-
-- name: Add jod
-  shell: echo "systemctl start logstash.service" >> /root/start.sh

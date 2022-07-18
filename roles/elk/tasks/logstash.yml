@@ -1,0 +1,34 @@
+---
+
+- name: logstash - install logstash 
+  apt:
+    name: logstash
+    state: latest
+
+- name: logstash - copy config
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+  - {src: 'logstash.conf',dest: '/etc/logstash/conf.d/logstash.conf'}
+  - {src: 'logstash.yml',dest: '/etc/logstash/logstash.yml'}
+  register: conf_changed
+
+- name: logstash - start and disable logstash service
+  systemd:
+    name: logstash.service
+    enabled: no
+    state: started
+
+- name: logstash - restart logstash service
+  systemd:
+    name: logstash.service
+    state: restarted
+  when: conf_changed is changed
+
+- name: logstash - add cron job
+  cron:
+    name: start logstash after reboot server
+    special_time: reboot
+    job: "/bin/sleep 180 && /bin/systemctl start logstash.service"

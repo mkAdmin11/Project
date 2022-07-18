@@ -1,0 +1,41 @@
+---
+
+- name: users - check elastic user
+  replace:
+    path: /etc/elasticsearch/users
+    regexp: "^{{ elk.elastic.name }}(.*)"
+    replace: "zero"
+  check_mode: yes
+  register: elastic_exist
+
+- name: users - add elastic user
+  command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.elastic.name }} -p {{ elk.elastic.pass }} -r {{ elk.elastic.role }}
+  when: elastic_exist is not changed
+
+- name: users - check kibana user
+  replace:
+    path: /etc/elasticsearch/users
+    regexp: "^{{ elk.kibana.name }}(.*)"
+    replace: "zero"
+  check_mode: yes
+  register: kibana_exist
+
+- name: users - add kibana user
+  command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.kibana.name }} -p {{ elk.kibana.pass }} -r {{ elk.kibana.role }}
+  when: kibana_exist is not changed
+
+- name: users - check logstash user
+  replace:
+    path: /etc/elasticsearch/users
+    regexp: "^{{ elk.logstash.name }}(.*)"
+    replace: "zero"
+  check_mode: yes
+  register: logstash_exist
+
+- name: users - add logstash role
+  command: "curl -k --user {{ elk.elastic.name }}:{{ elk.elastic.pass }} -X POST \"http://elk.local:9200/_xpack/security/role/{{ elk.logstash.name }}?pretty\" -H 'Content-Type: application/json' -d '{\"cluster\": [\"manage_index_templates\", \"monitor\", \"manage_ilm\"], \"indices\": [ {\"names\": [ \"*\" ], \"privileges\": [\"write\",\"create\",\"create_index\",\"manage\",\"manage_ilm\"] } ] }'"
+  when: logstash_exist is not changed
+
+- name: users - add kibana user
+  command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.logstash.name }} -p {{ elk.logstash.pass }} -r {{ elk.logstash.role }}
+  when: logstash_exist is not changed

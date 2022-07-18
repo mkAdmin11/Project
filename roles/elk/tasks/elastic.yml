@@ -5,34 +5,45 @@
     name: elasticsearch
     state: latest
 
-- name: elastic - systemd reload
-  systemd:
-    daemon_reload: yes
-
 - name: elastic - start and disable elasticsearch service
   systemd:
+    daemon_reload: yes
     name: elasticsearch.service
     enabled: no
     state: started
+
+- name: elastic - add cron job
+  cron:
+    name: start elasticsearch after reboot server
+    special_time: reboot
+    job: "/bin/sleep 40 && /bin/systemctl start elasticsearch.service"
+
+- name: elastic - add ufw rule
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  with_items:
+    - 9300
+    - 9200
+  register: ufw_changed
+  
+- name: elastic - reload ufw
+  ufw:
+    state: reloaded
+  when: ufw_changed is changed
 
 - name: elastic - copy config
   template:
     src: elasticsearch.yml
     dest: /etc/elasticsearch/elasticsearch.yml
     mode: 0660
+  register: conf_changed
 
-- name: Restart elasticsearch
+- name: elastic - restart elasticsearch service
   systemd:
     name: elasticsearch.service
     state: restarted
-
-- name: Config cron
-  include_tasks: elastic_cron.yml
-
-- name: Add ELK users
-  shell: "{{ item.shell }}"
-  with_items:
-  - {shell: '/usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.users.elastic.name }} -p {{ elk.users.elastic.pass }} -r {{ elk.users.elastic.role }}'}
-  - {shell: '/usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.users.kibana.name }} -p {{ elk.users.kibana.pass }} -r {{ elk.users.kibana.role }}'}
-  - {shell: '/usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.users.monitoring.name }} -p {{ elk.users.monitoring.pass }} -r {{ elk.users.monitoring.role }}'}
-  ignore_errors: True
+  when: conf_changed is changed

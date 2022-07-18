@@ -20,7 +20,7 @@ server.rewriteBasePath: true
 
 # Specifies the public URL at which Kibana is available for end users. If
 # `server.basePath` is configured this URL should end with the same basePath.
-server.publicBaseUrl: "https://{{ domain.second }}{{ domain.first }}/kibana"
+server.publicBaseUrl: "https://{{ domain.second }}{{ domain.top }}/kibana"
 
 # The maximum payload size in bytes for incoming server requests.
 #server.maxPayload: 1048576
@@ -43,8 +43,8 @@ elasticsearch.hosts: ["http://elk.local:9200"]
 # index at startup. Your Kibana users still need to authenticate with Elasticsearch, which
 # is proxied through the Kibana server.
 xpack.security.enabled: true
-elasticsearch.username: "{{ elk.users.kibana.name }}"
-elasticsearch.password: "{{ elk.users.kibana.pass }}"
+elasticsearch.username: "{{ elk.kibana.name }}"
+elasticsearch.password: "{{ elk.kibana.pass }}"
 
 # Kibana can also authenticate to Elasticsearch via "service account tokens".
 # If may use this token instead of a username/password.

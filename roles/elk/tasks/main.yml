@@ -34,5 +34,12 @@
 - name: elk - install elasticsearch
   include_tasks: elastic.yml
 
+- name: elk - add users
+  include_tasks: users.yml
+
 - name: elk - install kibana
   include_tasks: kibana.yml
+
+- name: elk - install logstash
+  include_tasks: logstash.yml
+
