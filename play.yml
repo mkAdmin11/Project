@@ -25,17 +25,16 @@
   tags:
     - novpn
 
-- hosts: [ web, db ]
+- hosts: [ vpn ]
   become: true
   become_user: root
   become_method: sudo
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [ bind, zabbix, logs ]}
+    - {role: facts,       tags: [ bind, zabbix ]}
     - {role: bind,        tags: bind}
     - {role: zabbix,      tags: zabbix}
-    - {role: logs,        tags: logs}
   tags:
     - vpn 
 
@@ -89,3 +88,15 @@
     - elk
   tags:
     - elk
+
+- hosts: [ main, web ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  roles:
+    - beats
+  tags:
+    - beats

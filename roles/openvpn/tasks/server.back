@@ -15,7 +15,6 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: 0640
-    follow: yes
     backup: yes
   with_items:
   - {src: '/share/vpn_conf/vpn-{{ server2.name }}', dest: '/etc/openvpn/ccd/vpn-{{ server2.name }}'}
@@ -31,15 +30,14 @@
   with_items:
     - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/openvpn/cert/ca.crt'}
     - {src: '/share/easy_rsa/pki/dh.pem', dest: '/etc/openvpn/cert/dh.pem'}
-    - {src: '/share/easy_rsa/pki/issued/vpn-server.crt', dest: '/etc/openvpn/cert/vpn-{{ ansible_hostname }}.crt'}
-    - {src: '/share/easy_rsa/pki/private/vpn-server.key', dest: '/etc/openvpn/cert/vpn-{{ ansible_hostname }}.key'}
+    - {src: '/share/easy_rsa/pki/issued/vpn-{{ ansible_hostname }}.crt', dest: '/etc/openvpn/cert/vpn-{{ ansible_hostname }}.crt'}
+    - {src: '/share/easy_rsa/pki/private/vpn-{{ ansible_hostname }}.key', dest: '/etc/openvpn/cert/vpn-{{ server1.name }}.key'}
 
 - name: server - config server
   template:
     src: /share/vpn_conf/{{ ansible_hostname }}
     dest: /etc/openvpn/vpn-{{ ansible_hostname }}.conf
     mode: 0640
-    follow: yes
     backup: yes
 
 - name: server - start openvpn-server service

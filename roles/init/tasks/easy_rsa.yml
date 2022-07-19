@@ -26,31 +26,51 @@
     creates: /share/easy_rsa/pki/dh.pem
     cmd: /share/easy_rsa/easyrsa gen-dh
 
-- name: easy_rsa - build vpn server cert
+- name: easy_rsa - build server cert - vpn-server
   become_user: "{{ ansible_user }}"
   expect:
-    creates: /share/easy_rsa/pki/reqs/vpn-{{ server1.name }}.req
-    command: /share/easy_rsa/easyrsa build-server-full vpn-{{ server1.name }} nopass
+    creates: /share/easy_rsa/pki/reqs/vpn-server.req
+    command: /share/easy_rsa/easyrsa build-server-full vpn-server nopass
     responses:
       (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build vpn client cert - 1
+- name: easy_rsa - build server cert - elk.local 
   become_user: "{{ ansible_user }}"
   expect:
-    creates: /share/easy_rsa/pki/reqs/vpn-{{ server2.name }}.req
-    command: /share/easy_rsa/easyrsa build-client-full vpn-{{ server2.name }} nopass
+    creates: /share/easy_rsa/pki/reqs/elk.local.req
+    command: /share/easy_rsa/easyrsa build-server-full elk.local nopass
     responses:
       (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build vpn client cert - 2
+- name: easy_rsa - build client cert - {{ server1.name }}
   become_user: "{{ ansible_user }}"
   expect:
-    creates: /share/easy_rsa/pki/reqs/vpn-{{ server3.name }}.req
-    command: /share/easy_rsa/easyrsa build-client-full vpn-{{ server3.name }} nopass
+    creates: /share/easy_rsa/pki/reqs/client-{{ server1.name }}.req
+    command: /share/easy_rsa/easyrsa build-client-full client-{{ server1.name }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: easy_rsa - build client cert - {{ server2.name }}
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/client-{{ server2.name }}.req
+    command: /share/easy_rsa/easyrsa build-client-full client-{{ server2.name }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: easy_rsa - build client cert - {{ server3.name }}
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/client-{{ server3.name }}.req
+    command: /share/easy_rsa/easyrsa build-client-full client-{{ server3.name }} nopass
     responses:
       (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
   args:

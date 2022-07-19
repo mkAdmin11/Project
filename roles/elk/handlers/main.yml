@@ -1,0 +1,15 @@
+---
+
+- name: handlers - restart kibana service
+  systemd:
+    name: kibana.service
+    state: restarted
+
+- name: handlers - restart logstash service
+  systemd:
+    name: logstash.service
+    state: restarted
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded

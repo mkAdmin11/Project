@@ -7,3 +7,7 @@
 - name: grafana - install grafana
   include_tasks: install.yml
   when: ansible_hostname == server1.name|string
+
+- name: grafana - set superuser password
+  command: grafana-cli admin reset-admin-password {{ user.grafana.pass }}
+  when: ansible_hostname == server1.name|string

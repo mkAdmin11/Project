@@ -4,28 +4,6 @@
   apt:
     name: kibana
     state: latest
-  register: apt_changed
-
-- name: kibana - copy config
-  template:
-    src: kibana.yml
-    dest: /etc/kibana/kibana.yml
-    mode: 0660
-  register: conf_changed
-
-- name: kibana - restart and disable kibana service
-  systemd:
-    daemon_reload: yes
-    name: kibana.service
-    enabled: no
-    state: restarted
-  when: apt_changed is changed or conf_changed is changed
-
-- name: kibana - add cron job
-  cron:
-    name: start kibana after reboot server
-    special_time: reboot
-    job: "/bin/sleep 180 && /bin/systemctl start kibana.service"
 
 - name: kibana - add ufw rule
   ufw:
@@ -34,9 +12,24 @@
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
-  register: ufw_changed
+  notify: handlers - reload ufw
 
-- name: kibana - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed
+- name: kibana - add cron job
+  cron:
+    name: start kibana after reboot server
+    special_time: reboot
+    job: "/bin/sleep 180 && /bin/systemctl start kibana.service"
+
+- name: kibana - copy config
+  template:
+    src: kibana.yml
+    dest: /etc/kibana/kibana.yml
+    mode: 0660
+  notify: handlers - restart kibana service
+
+- name: kibana - start and disable kibana service
+  systemd:
+    daemon_reload: yes
+    name: kibana.service
+    enabled: no
+    state: started

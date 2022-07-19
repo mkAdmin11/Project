@@ -17,12 +17,14 @@
     mode: 0750
 
 - name: share - prepare bash config
-  copy:
+  file:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0640
+    state: link
+    force: yes
   with_items:
     - {src: '/ansible/roles/init/templates/server1', dest: '/share/bash_conf/{{ server1.name }}'}
     - {src: '/ansible/roles/init/templates/server2', dest: '/share/bash_conf/{{ server2.name }}'}
@@ -37,18 +39,41 @@
     mode: 0750
 
 - name: share - prepare openvpn config
-  copy:
+  file:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0640
+    state: link
+    force: yes
   with_items:
     - {src: '/ansible/roles/openvpn/templates/server1', dest: '/share/vpn_conf/{{ server1.name }}'}
     - {src: '/ansible/roles/openvpn/templates/server2', dest: '/share/vpn_conf/{{ server2.name }}'}
     - {src: '/ansible/roles/openvpn/templates/server3', dest: '/share/vpn_conf/{{ server3.name }}'}
     - {src: '/ansible/roles/openvpn/templates/vpn-server2', dest: '/share/vpn_conf/vpn-{{ server2.name }}'}
     - {src: '/ansible/roles/openvpn/templates/vpn-server3', dest: '/share/vpn_conf/vpn-{{ server3.name }}'}
+
+- name: share - make beats config dir
+  file:
+    path: /share/beats_conf/
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0750
+
+- name: share - prepare bearts config
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640
+    state: link
+    force: yes
+  with_items:
+    - {src: '/ansible/roles/beats/templates/server1', dest: '/share/beats_conf/{{ server1.name }}'}
+    - {src: '/ansible/roles/beats/templates/server2', dest: '/share/beats_conf/{{ server2.name }}'}
 
 - name: share - download easy-rsa
   get_url:

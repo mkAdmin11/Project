@@ -1,0 +1,16 @@
+---
+
+- name: beats - add repository list
+  template:
+    src: elastic-7.x.list
+    dest: /etc/apt/sources.list.d/elastic-7.x.list
+    mode: 0644
+  register: repolist_changed
+
+- name: beats - update apt cache
+  apt:
+    update_cache: yes
+  when: repolist_changed is changed
+
+- name: beats - install filebeat
+  include_tasks: filebeat.yml

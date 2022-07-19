@@ -47,50 +47,64 @@
   #  level: debug
   #  review: 1
 
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+  - /var/log/nginx/access.log
+  exclude_files: ['\.gz$']
+  fields:
+    type: nginx_access
+  fields_under_root: true
+  scan_frequency: 5s
+- type: log
+  enabled: true
+  paths:
+  - /var/log/nginx/error.log
+  exclude_files: ['\.gz$']
+  fields:
+    type: nginx_error
+  fields_under_root: true
+  scan_frequency: 5s
+- type: log
+  enabled: true
+  paths:
+  - /var/log/apache2/*_access.log
+  exclude_files: ['\.gz$']
+  fields:
+    type: apache2_access
+  fields_under_root: true
+  scan_frequency: 5s
+- type: log
+  enabled: true
+  paths:
+  - /var/log/apache2/error.log
+  exclude_files: ['\.gz$']
+  fields:
+    type: apache2_error
+  fields_under_root: true
+  scan_frequency: 5s
+
 # ============================== Filebeat modules ==============================
-filebeat.modules:
-
-- module: system
-  # Syslog
-  syslog:
-    enabled: true
-
-    # Set custom paths for the log files. If left empty,
-    # Filebeat will choose the paths depending on your OS.
-    var.paths: ["/var/log/syslog*"]
-
-    # Input configuration (advanced). Any input configuration option
-    # can be added under this section.
-    #input:
-
-  # Authorization logs
-  auth:
-    enabled: true
-
-    # Set custom paths for the log files. If left empty,
-    # Filebeat will choose the paths depending on your OS.
-    var.paths: ["/var/log/auth.log*"]
-
-    # Input configuration (advanced). Any input configuration option
-    # can be added under this section.
-    #input:
 
 # filebeat.config.modules:
   # Glob pattern for configuration loading
   # path: ${path.config}/modules.d/*.yml
 
   # Set to true to enable config reloading
-  # reload.enabled: true
+  # reload.enabled: false
 
   # Period on which files under path should be checked for changes
-  # reload.period: 10s
+  #reload.period: 10s
 
 # ======================= Elasticsearch template setting =======================
 
-#setup.template.settings:
-  #index.number_of_shards: 1
+setup.template.settings:
+  index.number_of_shards: 0
+  index.lifecycle.name: 7-days-default
   #index.codec: best_compression
   #_source.enabled: false
+
 
 # ================================== General ===================================
 
@@ -154,39 +168,42 @@ filebeat.modules:
 # Configure what output to use when sending the data collected by the beat.
 
 # ---------------------------- Elasticsearch Output ----------------------------
-output.elasticsearch:
+#output.elasticsearch:
   # Array of hosts to connect to.
-  hosts: ["elk.local:9200"]
+  #hosts: [""]
 
   # Protocol - either `http` (default) or `https`.
   #protocol: "https"
 
   # Authentication credentials - either API key or username/password.
   #api_key: "id:api_key"
-  username: "{{ elk.users.logstash.name }}"
-  password: "{{ elk.users.logstash.pass }}"
-# ------------------------------ Logstash Output -------------------------------
-#output.logstash:
-  # The Logstash hosts
-  #hosts: ["localhost:5044"]
+  #username: ""
+  #password: ""
 
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
+  # The Logstash hosts
+  hosts: ["elk.local:5044"]
+
+  #username: "{{ elk.logstash.name }}"
+  #password: "{{ elk.logstash.pass }}"
   # Optional SSL. By default is off.
   # List of root certificates for HTTPS server verifications
-  #ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+  ssl.certificate_authorities: ["/etc/filebeat/cert/ca.crt"]
 
   # Certificate for SSL client authentication
-  #ssl.certificate: "/etc/pki/client/cert.pem"
+  ssl.certificate: "/etc/filebeat/cert/log-{{ ansible_hostname }}.crt"
 
   # Client Certificate Key
-  #ssl.key: "/etc/pki/client/cert.key"
+  ssl.key: "/etc/filebeat/cert/log-{{ ansible_hostname }}.key"
 
 # ================================= Processors =================================
 # processors:
   # - add_host_metadata:
-      # when.not.contains.tags: forwarded
+  #     when.not.contains.tags: forwarded
   # - add_cloud_metadata: ~
   # - add_docker_metadata: ~
-  # - add_kubernetes_metadata: ~
+  #- add_kubernetes_metadata: ~
 
 # ================================== Logging ===================================
 
@@ -247,4 +264,3 @@ output.elasticsearch:
 
 # This allows to enable 6.7 migration aliases
 #migration.6_to_7.enabled: true
-

@@ -29,3 +29,10 @@
 - name: zabbix - config monitoring
   include_tasks: db_monitoring.yml
   when: ansible_hostname == server3.name|string
+
+- name: zabbix - set superuser password
+  become_user: postgres
+  postgresql_query:
+    db: "{{ db.zabbix.name }}"
+    query: "update users set passwd=md5('{{ user.zabbix.pass }}') where username='Admin'"
+  when: ansible_hostname == server3.name|string

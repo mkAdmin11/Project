@@ -41,14 +41,21 @@
 - name: init_all - add bash source
   lineinfile:
     line: source .bashrc.local
-    path: /home/{{ ansible_user }}/.bashrc
+    path: "{{ item }}" #/home/{{ ansible_user }}/.bashrc
     backup: yes
+  loop:
+    - /home/{{ ansible_user }}/.bashrc
+    - /root/.bashrc
 
 - name: init_all - config bash
   template:
     src: /share/bash_conf/{{ ansible_hostname }}
-    dest: /home/{{ ansible_user }}/.bashrc.local
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: "0600"
+    dest: "{{ item.src }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: 0600
+    follow: yes
     backup: yes
+  with_items:
+    - {src: '/home/{{ ansible_user }}/.bashrc.local', owner: '{{ ansible_user }}', group: '{{ ansible_user }}'}
+    - {src: '/root/.bashrc.local', owner: 'root', group: 'root'}
