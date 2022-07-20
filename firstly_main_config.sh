@@ -108,13 +108,13 @@ do
 done
 sed -i "s/S1_NAME/$HN1/g" /ansible/secret.yml
 sed -i "s/S1_USER/$UN1/g" /ansible/secret.yml
-sed -i "s/S1_IP/$UN2/g" /ansible/secret.yml
+sed -i "s/S1_IP/$IP1/g" /ansible/secret.yml
 sed -i "s/S2_NAME/$HN2/g" /ansible/secret.yml
 sed -i "s/S2_USER/$UN2/g" /ansible/secret.yml
-sed -i "s/S2_IP/$UN2/g" /ansible/secret.yml
+sed -i "s/S2_IP/$IP2/g" /ansible/secret.yml
 sed -i "s/S3_NAME/$HN3/g" /ansible/secret.yml
 sed -i "s/S3_USER/$UN3/g" /ansible/secret.yml
-sed -i "s/S3_IP/$UN3/g" /ansible/secret.yml
+sed -i "s/S3_IP/$IP3/g" /ansible/secret.yml
 echo "Файл secret.yml частично сформирован"
 
 echo "========================================================================"

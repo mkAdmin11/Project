@@ -1,6 +1,6 @@
 ---
 
-- hosts: [ db ]
+- hosts: [ novpn ]
   become: true
   become_user: root
   become_method: sudo
