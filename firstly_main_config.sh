@@ -106,15 +106,15 @@ for((i=1; i<$line; i++))
 do
   sed -i "$i s/GEN_PASS/$(pwgen -1s 24)/g" /ansible/secret.yml
 done
-sed -i "$i s/S1_NAME/$HN1/g" /ansible/secret.yml
-sed -i "$i s/S1_USER/$UN1/g" /ansible/secret.yml
-sed -i "$i s/S1_IP/$UN2/g" /ansible/secret.yml
-sed -i "$i s/S2_NAME/$HN2/g" /ansible/secret.yml
-sed -i "$i s/S2_USER/$UN2/g" /ansible/secret.yml
-sed -i "$i s/S2_IP/$UN2/g" /ansible/secret.yml
-sed -i "$i s/S3_NAME/$HN3/g" /ansible/secret.yml
-sed -i "$i s/S3_USER/$UN3/g" /ansible/secret.yml
-sed -i "$i s/S3_IP/$UN3/g" /ansible/secret.yml
+sed -i "s/S1_NAME/$HN1/g" /ansible/secret.yml
+sed -i "s/S1_USER/$UN1/g" /ansible/secret.yml
+sed -i "s/S1_IP/$UN2/g" /ansible/secret.yml
+sed -i "s/S2_NAME/$HN2/g" /ansible/secret.yml
+sed -i "s/S2_USER/$UN2/g" /ansible/secret.yml
+sed -i "s/S2_IP/$UN2/g" /ansible/secret.yml
+sed -i "s/S3_NAME/$HN3/g" /ansible/secret.yml
+sed -i "s/S3_USER/$UN3/g" /ansible/secret.yml
+sed -i "s/S3_IP/$UN3/g" /ansible/secret.yml
 echo "Файл secret.yml частично сформирован"
 
 echo "========================================================================"
