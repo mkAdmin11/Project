@@ -10,11 +10,11 @@
 
 <br/> Настройка publick сервера:
 ```
-sh -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_publick_config.sh)"
+bash -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_publick_config.sh)"
 ```
 <br/> Настройка main сервера:
 ```
-sh -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_main_config.sh)"
+bash -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_main_config.sh)"
 ```
 
 <br/> Перед прокаткой ролей требуется заполнить secret.yml, за основу взять secret_sample.yml.
