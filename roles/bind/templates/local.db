@@ -22,5 +22,4 @@ grafana         IN      CNAME   {{ server1.name }}.local.
 web             IN      CNAME   {{ server2.name }}.local.
 
 elk             IN      CNAME   {{ server3.name }}.local.
-pg              IN      CNAME   {{ server3.name }}.local.
 db              IN      CNAME   {{ server3.name }}.local.

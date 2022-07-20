@@ -31,8 +31,8 @@
   expect:
     command: /usr/pgadmin4/bin/setup-web.sh
     responses:
-      (?i)Email address: "{{ mail.user4 }}@{{ domain.second }}{{ domain.top }}"
-      (?i)Password: "{{ mail.pass4 }}"
-      (?i)Retype password: "{{ mail.pass4 }}"
+      (?i)Email address: "{{ user.gpadmin.name }}@{{ domain.second }}{{ domain.top }}"
+      (?i)Password: "{{ user.gpadmin.pass }}"
+      (?i)Retype password: "{{ user.gpadmin.pass }}"
       (?i)Do you wish to continue(.*): "n"
   ignore_errors: yes

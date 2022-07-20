@@ -16,13 +16,13 @@
   with_items:
     - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/openvpn/cert/ca.crt'}
     - {src: '/share/easy_rsa/pki/dh.pem', dest: '/etc/openvpn/cert/dh.pem'}
-    - {src: '/share/easy_rsa/pki/issued/client-{{ ansible_hostname }}.crt', dest: '/etc/openvpn/cert/vpn-{{ ansible_hostname }}.crt'}
-    - {src: '/share/easy_rsa/pki/private/client-{{ ansible_hostname }}.key', dest: '/etc/openvpn/cert/vpn-{{ ansible_hostname }}.key'}
+    - {src: '/share/easy_rsa/pki/issued/{{ ansible_hostname }}.crt', dest: '/etc/openvpn/cert/{{ ansible_hostname }}.crt'}
+    - {src: '/share/easy_rsa/pki/private/{{ ansible_hostname }}.key', dest: '/etc/openvpn/cert/{{ ansible_hostname }}.key'}
 
 - name: client - config client
   template:
     src: /share/vpn_conf/{{ ansible_hostname }}
-    dest: /etc/openvpn/vpn-{{ ansible_hostname }}.conf
+    dest: /etc/openvpn/{{ ansible_hostname }}.conf
     mode: 0640
     follow: yes
     backup: yes
@@ -30,13 +30,13 @@
 - name: client - start openvpn-client service
   systemd:
     daemon_reload: yes
-    name: openvpn@vpn-{{ ansible_hostname }}.service
+    name: openvpn@{{ ansible_hostname }}.service
     enabled: yes
     state: started
   register: client_started
 
 - name: client - reload openvpn-client service
   systemd:
-    name: openvpn@vpn-{{ ansible_hostname }}.service
+    name: openvpn@{{ ansible_hostname }}.service
     state: restarted
   when: client_started is not changed

@@ -1,8 +1,20 @@
 ---
 
-- name: test - ping
-  ping:
+#- name: test - ping
+#  ping:
+#
+#- name: test - show facts 
+#  debug:
+#    var: ansible_facts
 
-- name: test - show facts 
-  debug:
-    var: ansible_facts
+- name: users - check monitoring user
+  replace:
+    path: /etc/elasticsearch/users
+    regexp: "^{{ elk.monitoring.name }}(.*)"
+    replace: "zero"
+  check_mode: yes
+  register: monitoring_exist
+
+- name: users - add monitoring user
+  command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ elk.monitoring.name }} -p {{ elk.monitoring.pass }} -r {{ elk.monitoring.role }}
+  when: monitoring_exist is not changed

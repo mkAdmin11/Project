@@ -100,5 +100,24 @@ echo "Настроен Ansible"
 
 echo "========================================================================"
 
-echo "Не забудьте отредактировать файл /ansible/hosts, смотрите INI и YAML примеры в директории /ansible/"
-echo "Также требуется сделать файл secret.yml, используйте /ansible/secret_sample.yml"
+cp /ansible/secret_sample.yml /ansible/secret.yml
+line=$(wc -l /ansible/secret.yml | awk '{ print $1 }')
+for((i=1; i<$line; i++))
+do
+  sed -i "$i s/GEN_PASS/$(pwgen -1s 24)/g" /ansible/secret.yml
+done
+sed -i "$i s/S1_NAME/$HN1/g" /ansible/secret.yml
+sed -i "$i s/S1_USER/$UN1/g" /ansible/secret.yml
+sed -i "$i s/S1_IP/$UN2/g" /ansible/secret.yml
+sed -i "$i s/S2_NAME/$HN2/g" /ansible/secret.yml
+sed -i "$i s/S2_USER/$UN2/g" /ansible/secret.yml
+sed -i "$i s/S2_IP/$UN2/g" /ansible/secret.yml
+sed -i "$i s/S3_NAME/$HN3/g" /ansible/secret.yml
+sed -i "$i s/S3_USER/$UN3/g" /ansible/secret.yml
+sed -i "$i s/S3_IP/$UN3/g" /ansible/secret.yml
+echo "Файл secret.yml частично сформирован"
+
+echo "========================================================================"
+
+echo "Пожалуйста заполните пустые поля в файл secret.yml перед началом работы"
+echo "После этого можно прокатить первую роль, для инициализации серверов ansible-playbook /ansible/play.yml -t init"

@@ -16,6 +16,6 @@ persist-tun
 status /var/log/openvpn/openvpn-status.log
 
 ca cert/ca.crt
-cert cert/vpn-{{ server1.name }}.crt
-key cert/vpn-{{ server1.name }}.key
+cert cert/vpn-server.crt
+key cert/vpn-server.key
 dh cert/dh.pem

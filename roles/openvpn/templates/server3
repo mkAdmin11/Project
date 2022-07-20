@@ -11,6 +11,5 @@ comp-lzo
 cipher DES-CBC
 
 ca cert/ca.crt
-cert cert/vpn-{{ server3.name }}.crt
-key cert/vpn-{{ server3.name }}.key
-dh cert/dh.pem
+cert cert/{{ server3.name }}.crt
+key cert/{{ server3.name }}.key
