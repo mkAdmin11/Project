@@ -12,7 +12,7 @@ echo "Добавлен репозиторий Ansible"
 
 echo "========================================================================"
 
-sudo apt install -y ansible git
+sudo apt install -y ansible git pwgen
 echo "Установлен Ansible и Git"
 
 echo "========================================================================"
