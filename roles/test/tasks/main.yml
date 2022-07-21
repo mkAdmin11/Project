@@ -3,14 +3,6 @@
 #- name: test - ping
 #  ping:
 
-#- name: test - show facts 
-#  debug:
-#    var: ansible_facts
-
-- name: share - unzip easy_rsa.zip
-  unarchive:
-    creates: /share/easy_rsa/
-    src: /share/easy_rsa.zip
-    dest: /tmp/
-    remote_src: yes
-    include: easy-rsa-release-3.0/easyrsa3/
+- name: test - show facts 
+  debug:
+    var: ansible_facts

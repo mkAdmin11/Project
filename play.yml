@@ -1,5 +1,8 @@
 ---
 
+#############
+## TESTING ##
+#############
 - hosts: [ server1.novpn ]
   become: true
   become_user: root
@@ -12,6 +15,27 @@
   tags:
     - test
 
+###############
+## RESET UFW ##
+###############
+- hosts: [ novpn ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  vars_files:
+    - secret.yml
+  tasks:
+    - name: disables and resets firewall to installation defaults
+      ufw:
+        state: reset
+  tags:
+    - reset_ufw
+
+################################################
+## 1. init - FIRST INITIALIZATION             ##
+## 2. openvpn - SETUP VIRTUAL PRIVATE NETWORK ##
+################################################
 - hosts: [ novpn ]
   become: true
   become_user: root
@@ -25,18 +49,20 @@
   tags:
     - novpn
 
+################################
+## 3. bind - SETUP DNS SERVER ##
+################################
 - hosts: [ vpn ]
   become: true
   become_user: root
-  become_method: sudo
+  become_metihod: sudo
+  gather_facts: yes
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [ bind, zabbix ]}
-    - {role: bind,        tags: bind}
-    - {role: zabbix,      tags: zabbix}
+    - bind
   tags:
-    - vpn 
+    - bind 
 
 - hosts: [ web ]
   become: true
@@ -64,6 +90,18 @@
     - {role: mail,        tags: mail}
   tags:
     - www
+
+- hosts: [ vpn ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  roles:
+    - zabbix
+  tags:
+    - zabbix
 
 - hosts: [ main, db ]
   become: true
@@ -100,17 +138,3 @@
     - beats
   tags:
     - beats
-
-- hosts: [ novpn ]
-  become: true
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  vars_files:
-    - secret.yml
-  tasks:
-    - name: init - disables and resets firewall to installation defaults
-      ufw:
-        state: reset
-  tags:
-    - reset_ufw

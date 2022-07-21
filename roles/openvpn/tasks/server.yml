@@ -4,6 +4,8 @@
   file:
     path: "{{ item.path }}"
     state: "{{ item.state }}"
+    owner: root
+    group: root
     mode: "{{ item.mode }}"
   with_items:
   - {path: '/etc/openvpn/client.list', state: 'touch', mode: '0640'}
@@ -14,12 +16,15 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
+    owner: root
+    group: root
     mode: 0640
     follow: yes
     backup: yes
   with_items:
   - {src: '/share/vpn_conf/vpn-{{ server2.name }}', dest: '/etc/openvpn/ccd/{{ server2.name }}'}
   - {src: '/share/vpn_conf/vpn-{{ server3.name }}', dest: '/etc/openvpn/ccd/{{ server3.name }}'}
+  notify: handlers - reload openvpn-server service
 
 - name: server - copy cert
   copy:
@@ -33,14 +38,18 @@
     - {src: '/share/easy_rsa/pki/dh.pem', dest: '/etc/openvpn/cert/dh.pem'}
     - {src: '/share/easy_rsa/pki/issued/vpn-server.crt', dest: '/etc/openvpn/cert/vpn-server.crt'}
     - {src: '/share/easy_rsa/pki/private/vpn-server.key', dest: '/etc/openvpn/cert/vpn-server.key'}
+  notify: handlers - reload openvpn-server service
 
 - name: server - config server
   template:
     src: /share/vpn_conf/{{ ansible_hostname }}
     dest: /etc/openvpn/vpn-server.conf
+    owner: root
+    group: root
     mode: 0640
     follow: yes
     backup: yes
+  notify: handlers - reload openvpn-server service
 
 - name: server - start openvpn-server service
   systemd:
@@ -48,13 +57,11 @@
     name: openvpn@vpn-server.service
     enabled: yes
     state: started
-  register: server_started
+  register: first_start
 
-- name: server - reload openvpn-server service
-  systemd:
-    name: openvpn@vpn-server.service
-    state: restarted
-  when: server_started is not changed
+- name: server - collect facts
+  gather_facts:
+  when: first_start is changed
 
 - name: server - add openvpn ufw rule
   ufw:
@@ -63,9 +70,4 @@
     port: 1194
     direction: in
     interface: "{{ ansible_facts.default_ipv4.interface }}"
-  register: ufw_changed
-
-- name: server - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed 
+  notify: handlers - reload ufw

@@ -1,17 +1,17 @@
 ---
 
-- name: ssh - allow ssh (vpn)
+- name: ssh - add ufw rule (allow vpn ssh)
   ufw:
     rule: allow
     proto: tcp
     port: 22
     direction: in
-    interface: tun0 
+    interface: "{{ ansible_facts.tun0.device }}"
     from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
   when: ansible_hostname != server2.name|string
   register: rule_changed
 
-- name: ssh - reload
+- name: ssh - reload ufw
   ufw:
     state: reloaded
   when: rule_changed is changed

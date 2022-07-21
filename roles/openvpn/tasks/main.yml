@@ -1,14 +1,22 @@
 ---
 
 - name: openvpn - install openvpn
-  include_tasks: install.yml
+  apt:
+    name: openvpn
+    state: latest
+
+- name: openvpn - start openvpn service
+  systemd:
+    name: openvpn.service
+    enabled: yes
+    state: started
 
 - name: openvpn - config openvpn-server
   include_tasks: server.yml
   when: ansible_hostname == server1.name|string
 
 - name: openvpn - config openvpn-clients
-  import_tasks: client.yml
+  include_tasks: client.yml
   when: ansible_hostname != server1.name|string
 
 - name: openvpn - config ssh

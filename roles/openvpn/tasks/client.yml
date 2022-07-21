@@ -4,6 +4,8 @@
   file:
     path: /etc/openvpn/cert
     state: directory
+    owner: root
+    group: root
     mode: 0750
 
 - name: client - copy cert
@@ -18,14 +20,18 @@
     - {src: '/share/easy_rsa/pki/dh.pem', dest: '/etc/openvpn/cert/dh.pem'}
     - {src: '/share/easy_rsa/pki/issued/{{ ansible_hostname }}.crt', dest: '/etc/openvpn/cert/{{ ansible_hostname }}.crt'}
     - {src: '/share/easy_rsa/pki/private/{{ ansible_hostname }}.key', dest: '/etc/openvpn/cert/{{ ansible_hostname }}.key'}
+  notify: handlers - reload openvpn-client service
 
 - name: client - config client
   template:
     src: /share/vpn_conf/{{ ansible_hostname }}
     dest: /etc/openvpn/{{ ansible_hostname }}.conf
+    owner: root
+    group: root
     mode: 0640
     follow: yes
     backup: yes
+  notify: handlers - reload openvpn-client service
 
 - name: client - start openvpn-client service
   systemd:
@@ -33,10 +39,9 @@
     name: openvpn@{{ ansible_hostname }}.service
     enabled: yes
     state: started
-  register: client_started
+  register: first_start
 
-- name: client - reload openvpn-client service
-  systemd:
-    name: openvpn@{{ ansible_hostname }}.service
-    state: restarted
-  when: client_started is not changed
+- name: server - collect facts
+  gather_facts:
+  when: first_start is changed and ansible_hostname != server2.name|string
+
