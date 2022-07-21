@@ -5,11 +5,11 @@
     name: nginx
     state: latest
 
-- name: nginx - stop and disabled nginx service
+- name: nginx - start and disabled nginx service
   systemd:
     name: nginx.service
     enabled: no
-    state: stopped
+    state: started
 
 - name: nginx - add cron job
   cron:
@@ -19,6 +19,7 @@
 
 - name: nginx - find enabled configs
   find:
+    excludes: nginx.conf
     path: /etc/nginx/sites-enabled/
     file_type: any
   register: nginx_conf
@@ -28,33 +29,28 @@
     path: "{{ item.path }}"
     state: absent
   with_items: "{{ nginx_conf.files }}"
+  notify: handlers - reload nginx service
 
 - name: nginx - copy config
   template:
     src: nginx.conf
-    dest: /etc/nginx/sites-available/nginx.conf 
-    mode: 0644
+    dest: /etc/nginx/sites-available/nginx.conf
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: handlers - reload nginx service
 
 - name: nginx - enabled config
   file:
     src: /etc/nginx/sites-available/nginx.conf
     dest: /etc/nginx/sites-enabled/nginx.conf
     owner: root
-    group: root
+    group: www-data
     state: link
+  notify: handlers - reload nginx service
 
 - name: nginx - add ufw rule
   ufw:
     rule: allow
     name: Nginx Full
-  register: ufw_changed
-
-- name: nginx - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed
-
-- name: nginx - started service
-  systemd:
-    name: nginx.service
-    state: started
+  notify: handlers - reload ufw

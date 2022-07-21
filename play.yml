@@ -1,8 +1,8 @@
 ---
 
-#############
-## TESTING ##
-#############
+#################################################################
+## TESTING TASKS                                               ##
+#################################################################
 - hosts: [ server1.novpn ]
   become: true
   become_user: root
@@ -10,14 +10,18 @@
   gather_facts: yes
   vars_files:
     - secret.yml
-  roles:
-    - test
+  tasks:
+    - name: ping
+      ping:
+    - name: show facts
+      debug:
+        var: ansible_facts
   tags:
     - test
 
-###############
-## RESET UFW ##
-###############
+#################################################################
+## RESET UFW                                                   ##
+#################################################################
 - hosts: [ novpn ]
   become: true
   become_user: root
@@ -32,10 +36,10 @@
   tags:
     - reset_ufw
 
-################################################
-## 1. init - FIRST INITIALIZATION             ##
-## 2. openvpn - SETUP VIRTUAL PRIVATE NETWORK ##
-################################################
+#################################################################
+##    1    ansible-playbook /ansible/play.yml -t init          ##
+##    2    ansible-playbook /ansible/play.yml -t openvpn       ##
+#################################################################
 - hosts: [ novpn ]
   become: true
   become_user: root
@@ -43,19 +47,18 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [ init, openvpn ]}
     - {role: init,        tags: init}
     - {role: openvpn,     tags: openvpn}
   tags:
     - novpn
 
-################################
-## 3. bind - SETUP DNS SERVER ##
-################################
+#################################################################
+##    3    ansible-playbook /ansible/play.yml -t bind          ##
+#################################################################
 - hosts: [ vpn ]
   become: true
   become_user: root
-  become_metihod: sudo
+  become_method: sudo
   gather_facts: yes
   vars_files:
     - secret.yml
@@ -64,6 +67,10 @@
   tags:
     - bind 
 
+#################################################################
+##    4    ansible-playbook /ansible/play.yml -t lnap          ##
+##    5    ansible-playbook /ansible/play.yml -t ssl           ##
+#################################################################
 - hosts: [ web ]
   become: true
   become_user: root
@@ -71,12 +78,16 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [ lnap, ssl ]}
     - {role: lnap,        tags: lnap}
     - {role: ssl,         tags: ssl}
   tags:
     - web
 
+#################################################################
+## 6    ansible-playbook /ansible/play.yml -t postgres         ##
+## 7    ansible-playbook /ansible/play.yml -t wordpress        ##
+## 8    ansible-playbook /ansible/play.yml -t mail             ##
+#################################################################
 - hosts: [ web, db ]
   become: true
   become_user: root
@@ -84,13 +95,14 @@
   vars_files:
     - secret.yml
   roles:
-    - {role: facts,       tags: [ wordpress, postgres, mail ]}
     - {role: postgres,    tags: postgres}
     - {role: wordpress,   tags: wordpress}
     - {role: mail,        tags: mail}
   tags:
     - www
 
+#################################################################
+#################################################################
 - hosts: [ vpn ]
   become: true
   become_user: root
@@ -103,6 +115,8 @@
   tags:
     - zabbix
 
+#################################################################
+#################################################################
 - hosts: [ main, db ]
   become: true
   become_user: root
@@ -115,6 +129,8 @@
   tags:
     - grafana
 
+#################################################################
+#################################################################
 - hosts: [ db ]
   become: true
   become_user: root
@@ -127,6 +143,8 @@
   tags:
     - elk
 
+#################################################################
+#################################################################
 - hosts: [ main, web ]
   become: true
   become_user: root

@@ -1,21 +1,23 @@
 ---
 
-- name: install - install bind9
+- name: install - install bind
   apt:
     name: bind9
     state: latest
 
-- name: install - stop and enable service
+- name: install - start and enable service
   systemd:
     name: named.service
     enabled: yes
-    state: stopped
+    state: started
 
 - name: install - make zones dir
   file:
     path: "{{ item.path }}"
     state: directory
-    mode: 0755
+    owner: root
+    group: bind
+    mode: 0750
   with_items:
     - {path: '/etc/bind/myzones/{{ domain.second }}'}
     - {path: '/etc/bind/myzones/local'}
@@ -24,25 +26,18 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    owner: root
+    group: bind
+    mode: 0640
   with_items:
     - {src: 'local.db', dest: '/etc/bind/myzones/local/local.db'}
     - {src: 'public.db', dest: '/etc/bind/myzones/{{ domain.second }}/{{ domain.second }}.db'}
     - {src: 'named.conf.local', dest: '/etc/bind/named.conf.local'}
     - {src: 'named.conf.options', dest: '/etc/bind/named.conf.options'}
+  notify: handlers - reload bind
 
 - name: install - add ufw bind rule
   ufw:
     rule: allow
     name: Bind9
-  register: ufw_changed
-
-- name: install - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed
-
-- name: install - start bind service
-  systemd:
-    name: named.service
-    state: started
+  notify: handlers - reload ufw

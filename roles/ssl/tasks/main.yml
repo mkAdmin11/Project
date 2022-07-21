@@ -1,6 +1,9 @@
 ---
 
-- name: ssl - install
+- name: ssl - collect facts
+  gather_facts:
+
+- name: ssl - install few pkg
   apt:
     pkg:
     - certbot
@@ -14,6 +17,11 @@
     - libssl-dev
     - libffi-dev
     - ca-certificates
+
+- name: ssl - nginx service mast be started
+  systemd:
+    name: nginx.service
+    state: started
 
 - name: ssl - generate cert
   command:

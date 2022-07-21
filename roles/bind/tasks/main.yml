@@ -1,6 +1,6 @@
 ---
 
-- name: bind - install and config bind9
+- name: bind - install bind
   include_tasks: install.yml
   when: ansible_hostname == server2.name|string
 
@@ -9,8 +9,7 @@
     src: resolved.conf
     dest: "/etc/systemd/resolved.conf"
     mode: 0644
-  notify:
-    - handlers - restarted systemd-resolved
+  notify: handlers - restarted systemd-resolved
 
 - name: bind - add cron job
   cron:

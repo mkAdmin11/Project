@@ -1,4 +1,0 @@
----
-
-- name: facts - collect
-  gather_facts:

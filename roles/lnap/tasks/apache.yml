@@ -5,11 +5,19 @@
     name: apache2
     state: latest
 
-- name: apache - stop and disable apache service
+- name: apache - set apache port
+  replace:
+    path: /etc/apache2/ports.conf
+    regexp: '^Listen 80$'
+    replace: 'Listen {{ ansible_facts.tun0.ipv4.address }}:8080'
+    backup: yes
+  notify: handlers - reload apache service
+
+- name: apache - start and disable apache service
   systemd:
     name: apache2.service
     enabled: no
-    state: stopped
+    state: started
 
 - name: apache - add cron job
   cron:
@@ -23,9 +31,11 @@
     - libapache2-mod-php
     - libapache2-mod-wsgi-py3
     - libapache2-mod-rpaf
+  notify: handlers - reload apache service
 
 - name: apache - find enabled configs
   find:
+    excludes: apache.conf
     path: /etc/apache2/sites-enabled/
     file_type: any
   register: apache_conf
@@ -35,30 +45,25 @@
     path: "{{ item.path }}"
     state: absent
   with_items: "{{ apache_conf.files }}"
-
-- name: apache - set port
-  replace:
-    path: /etc/apache2/ports.conf 
-    regexp: '^Listen 80$'
-    replace: 'Listen {{ ansible_facts.tun0.ipv4.address }}:8080'
-    backup: yes
+  notify: handlers - reload apache service
 
 - name: apache - copy config
   template:
     src: apache.conf
     dest: /etc/apache2/sites-available/apache.conf
     owner: root
-    group: root
-    mode: 0644
-    backup: yes
+    group: www-data
+    mode: 0640
+  notify: handlers - reload apache service
 
 - name: apache - enabled config
   file:
     src: /etc/apache2/sites-available/apache.conf
     dest: /etc/apache2/sites-enabled/apache.conf
     owner: root
-    group: root
+    group: www-data
     state: link
+  notify: handlers - reload apache service
 
 - name: apache - add ufw rule
   ufw:
@@ -67,14 +72,4 @@
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
-  register: ufw_changed
-
-- name: apache - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed
-
-- name: apache - start service
-  systemd:
-    name: apache2.service
-    state: started
+  notify: handlers - reload ufw

@@ -1,5 +1,8 @@
 ---
 
+- name: openvpn - collect facts
+  gather_facts:
+
 - name: openvpn - install openvpn
   apt:
     name: openvpn
