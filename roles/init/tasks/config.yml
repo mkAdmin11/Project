@@ -1,53 +1,24 @@
 ---
 
-- name: init_all - update cache
-  apt:
-    update_cache: yes
-
-- name: init_all - safe upgrade
-  apt:
-    upgrade: safe
-
-- name: init_all - install few packages
-  apt:
-    pkg:
-    - net-tools
-    - network-manager
-    - tree
-    - apt-transport-https
-    - unzip
-    - zip
-    - python3-pip
-    - python3-dev
-
-- name: init_all - install python lib
-  pip:
-    name: pexpect
-    state: latest
-
-- name: init_all - set timezone 
-  timezone:
-    name: Europe/Moscow
-
-- name: init_all - config vim
+- name: config - copy vim config
   template:
     src: vimrc.local
     dest: /etc/vim/vimrc.local
     owner: root
     group: root
-    mode: "0644"
+    mode: 0644
     backup: yes
 
-- name: init_all - add bash source
+- name: config - add bash source
   lineinfile:
     line: source .bashrc.local
-    path: "{{ item }}" #/home/{{ ansible_user }}/.bashrc
+    path: "{{ item }}"
     backup: yes
   loop:
     - /home/{{ ansible_user }}/.bashrc
     - /root/.bashrc
 
-- name: init_all - config bash
+- name: config - copy bash config
   template:
     src: /share/bash_conf/{{ ansible_hostname }}
     dest: "{{ item.src }}"

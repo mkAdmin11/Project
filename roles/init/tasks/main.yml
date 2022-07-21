@@ -1,15 +1,45 @@
 ---
 
-- name: init - prepare main share
+- name: init - update cache
+  apt:
+    update_cache: yes
+
+- name: init - safe upgrade
+  apt:
+    upgrade: safe
+
+- name: init - install few packages
+  apt:
+    pkg:
+    - net-tools
+    - network-manager
+    - tree
+    - apt-transport-https
+    - unzip
+    - zip
+    - python3-pip
+    - python3-dev
+
+- name: init - install python lib
+  pip:
+    name: pexpect
+    state: latest
+
+- name: init - set timezone
+  timezone:
+    name: Europe/Moscow
+
+- name: init - prepare share
   include_tasks: share.yml
   when: ansible_hostname == server1.name|string
 
-- name: init - config all servers
-  include_tasks: init_all.yml
+- name: init - config servers
+  include_tasks: config.yml
 
-- name: init - prepare easy-rsa
-  include_tasks: easy_rsa.yml
+- name: init - prepare certs
+  include_tasks: pki.yml
   when: ansible_hostname == server1.name|string
 
 - name: init - config ufw
   include_tasks: ufw.yml
+

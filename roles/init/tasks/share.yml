@@ -4,9 +4,9 @@
   file:
     path: /share
     state: directory
-    owner: root
-    group: root
-    mode: 0775
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0770
 
 - name: share - make bash config dir
   file:
@@ -24,7 +24,6 @@
     group: "{{ ansible_user }}"
     mode: 0640
     state: link
-    force: yes
   with_items:
     - {src: '/ansible/roles/init/templates/server1', dest: '/share/bash_conf/{{ server1.name }}'}
     - {src: '/ansible/roles/init/templates/server2', dest: '/share/bash_conf/{{ server2.name }}'}
@@ -46,7 +45,6 @@
     group: "{{ ansible_user }}"
     mode: 0640
     state: link
-    force: yes
   with_items:
     - {src: '/ansible/roles/openvpn/templates/server1', dest: '/share/vpn_conf/{{ server1.name }}'}
     - {src: '/ansible/roles/openvpn/templates/server2', dest: '/share/vpn_conf/{{ server2.name }}'}
@@ -62,7 +60,7 @@
     group: "{{ ansible_user }}"
     mode: 0750
 
-- name: share - prepare bearts config
+- name: share - prepare berts config
   file:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -70,7 +68,6 @@
     group: "{{ ansible_user }}"
     mode: 0640
     state: link
-    force: yes
   with_items:
     - {src: '/ansible/roles/beats/templates/server1', dest: '/share/beats_conf/{{ server1.name }}'}
     - {src: '/ansible/roles/beats/templates/server2', dest: '/share/beats_conf/{{ server2.name }}'}
@@ -79,69 +76,74 @@
   get_url:
     url: https://github.com/OpenVPN/easy-rsa/archive/refs/heads/release/3.0.zip
     dest: /share/easy_rsa.zip
-    owner: root
-    group: root
-    mode: 0664
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640
 
 - name: share - unzip easy_rsa.zip
   unarchive:
+    creates: /share/easy_rsa/pki/
     src: /share/easy_rsa.zip
     dest: /tmp/
-    list_files: yes
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     remote_src: yes
-  register: unzip
+    include: easy-rsa-release-3.0/easyrsa3/*
+  register: unzip_changed
 
 - name: share - copy easy_rsa dir
   copy:
-    src: /tmp/{{ unzip.files[0] }}/easyrsa3/
+    src: /tmp/easy-rsa-release-3.0/easyrsa3/
     dest: /share/easy_rsa
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     remote_src: yes
-
-- name: easy_rsa - remove easy_rsa tmp dir
-  file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - /tmp/{{ unzip.files[0] }}
+  when: unzip_changed is changed
 
 - name: share - download wordpress
   get_url:
     url: https://ru.wordpress.org/latest-ru_RU.zip
     dest: /share/wordpress.zip
-    mode: 0644
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640
+
+- name: share - download wp-cli
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /share/wp-cli.phar
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0750
 
 - name: share - download pg4wp
   get_url:
     url: https://github.com/kevinoid/postgresql-for-wordpress/archive/refs/heads/wordpress4-compat.zip
     dest: /share/pg4wp.zip
-    mode: 0644
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640
 
 - name: share - download roundcube
   get_url:
     url: https://github.com/roundcube/roundcubemail/releases/download/1.5.2/roundcubemail-1.5.2-complete.tar.gz
     dest: /share/roundcube.tar.gz
-    mode: 0644
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640
 
 - name: share - download demo dump
   get_url:
     url: https://edu.postgrespro.ru/demo-small.zip
     dest: /share/demo.zip
-    mode: 0644
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640
 
 - name: share - download zabbix sourse
   get_url:
     url: https://git.zabbix.com/rest/api/latest/projects/ZBX/repos/zabbix/archive?at=refs%2Fheads%2Frelease%2F6.0&format=zip
     dest: /share/zabbix.zip
-    mode: 0644
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640

@@ -1,6 +1,6 @@
 ---
 
-- hosts: [ novpn ]
+- hosts: [ server1.novpn ]
   become: true
   become_user: root
   become_method: sudo
@@ -100,3 +100,17 @@
     - beats
   tags:
     - beats
+
+- hosts: [ novpn ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  vars_files:
+    - secret.yml
+  tasks:
+    - name: init - disables and resets firewall to installation defaults
+      ufw:
+        state: reset
+  tags:
+    - reset_ufw

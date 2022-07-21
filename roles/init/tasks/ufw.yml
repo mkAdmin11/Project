@@ -1,29 +1,29 @@
 ---
 
-- name: ufw - disables and resets firewall to installation defaults
-  ufw:
-    state: reset
-
 - name: ufw - allow outgoing trafic
   ufw:
     default: allow
     direction: outgoing
+  notify: handlers - reload ufw
 
 - name: ufw - deny incoming trafic
   ufw:
     default: deny
     direction: incoming
+  notify: handlers - reload ufw
 
 - name: ufw -  reject IPv6
   ufw:
     rule: reject
     proto: ipv6
+  notify: handlers - reload ufw
 
 - name: ufw - allow ssh on {{ server2.name }} 
   ufw:
     rule: allow
     name: OpenSSH
   when: ansible_hostname == server2.name|string
+  notify: handlers - reload ufw
 
 - name: ufw - allow ssh on other servers (novpn)
   ufw:
@@ -37,6 +37,7 @@
     - "{{ server1.novpn_ip }}"
     - "{{ server2.novpn_ip }}"
   when: ansible_hostname != server2.name|string
+  notify: handlers - reload ufw
 
 - name: ufw - enable
   ufw:

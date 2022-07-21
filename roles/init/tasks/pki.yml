@@ -1,13 +1,13 @@
 ---
 
-- name: easy_rsa - init pki
+- name: pki - init pki
   become_user: "{{ ansible_user }}"
   command:
     chdir: /share/easy_rsa/
     creates: /share/easy_rsa/pki/
     cmd: /share/easy_rsa/easyrsa init-pki
 
-- name: easy_rsa - build ca
+- name: pki - build ca
   become_user: "{{ ansible_user }}"
   expect:
     command: /share/easy_rsa/easyrsa build-ca
@@ -19,14 +19,14 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - gen dh
+- name: pki - gen dh
   become_user: "{{ ansible_user }}"
   command:
     chdir: /share/easy_rsa/
     creates: /share/easy_rsa/pki/dh.pem
     cmd: /share/easy_rsa/easyrsa gen-dh
 
-- name: easy_rsa - build server cert - vpn-server
+- name: pki - build server cert - vpn-server
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/vpn-server.req
@@ -36,7 +36,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build server cert - elk.local 
+- name: pki - build server cert - elk.local 
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/elk.local.req
@@ -46,7 +46,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build server cert - zabbix.local
+- name: pki - build server cert - zabbix.local
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/zabbix.local.req
@@ -56,7 +56,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build server cert - grafana.local
+- name: pki - build server cert - grafana.local
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/grafana.local.req
@@ -66,7 +66,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build server cert - web.local
+- name: pki - build server cert - web.local
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/web.local.req
@@ -76,7 +76,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build server cert - db.local
+- name: pki - build server cert - db.local
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/db.local.req
@@ -86,7 +86,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build client cert - {{ server1.name }}
+- name: pki - build client cert - {{ server1.name }}
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/{{ server1.name }}.req
@@ -96,7 +96,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build client cert - {{ server2.name }}
+- name: pki - build client cert - {{ server2.name }}
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/{{ server2.name }}.req
@@ -106,7 +106,7 @@
   args:
     chdir: /share/easy_rsa/
 
-- name: easy_rsa - build client cert - {{ server3.name }}
+- name: pki - build client cert - {{ server3.name }}
   become_user: "{{ ansible_user }}"
   expect:
     creates: /share/easy_rsa/pki/reqs/{{ server3.name }}.req
