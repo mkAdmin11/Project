@@ -5,13 +5,44 @@
     name: apache2
     state: latest
 
-- name: apache - set apache port
-  replace:
-    path: /etc/apache2/ports.conf
-    regexp: '^Listen 80$'
-    replace: 'Listen {{ ansible_facts.tun0.ipv4.address }}:8080'
-    backup: yes
+- name: apache - make cert dir
+  file:
+    name: /etc/apache2/cert
+    state: directory
+
+- name: apache - copy cert
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: www-data
+    mode: 0640
+  with_items:
+    - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/apache2/cert/ca.crt'}
+    - {src: '/share/easy_rsa/pki/issued/web.local.crt', dest: '/etc/apache2/cert/web.local.crt'}
+    - {src: '/share/easy_rsa/pki/private/web.local.key', dest: '/etc/apache2/cert/web.local.key'}
   notify: handlers - reload apache service
+
+- name: apache - set apache port
+  template:
+    src: ports.conf
+    dest: /etc/apache2/ports.conf
+    owner: root
+    group: www-data
+    mode: 0640
+  register: port_changed
+
+- name: apache - enable ssl mode
+  command:
+    creates: /etc/apache2/mods-enabled/ssl.conf
+    cmd: sudo a2enmod ssl
+  register: ssl_enabled
+
+- name: apache - restart apache service
+  systemd:
+    name: apache2.service
+    state: restarted
+  when: port_changed is changed or ssl_enabled is changed
 
 - name: apache - start and disable apache service
   systemd:

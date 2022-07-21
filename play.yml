@@ -7,15 +7,15 @@
   become: true
   become_user: root
   become_method: sudo
-  gather_facts: yes
+  gather_facts: no
   vars_files:
     - secret.yml
   tasks:
-    - name: ping
-      ping:
-    - name: show facts
-      debug:
-        var: ansible_facts
+   - name: ping
+     ping:
+#   - name: show facts
+#     debug:
+#       var: ansible_facts
   tags:
     - test
 
@@ -68,18 +68,17 @@
     - bind 
 
 #################################################################
-##    4    ansible-playbook /ansible/play.yml -t lnap          ##
-##    5    ansible-playbook /ansible/play.yml -t ssl           ##
+##    4    ansible-playbook /ansible/play.yml -t web           ##
 #################################################################
 - hosts: [ web ]
   become: true
   become_user: root
   become_method: sudo
+  gather_facts: yes
   vars_files:
     - secret.yml
   roles:
-    - {role: lnap,        tags: lnap}
-    - {role: ssl,         tags: ssl}
+    - web
   tags:
     - web
 

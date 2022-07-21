@@ -1,8 +1,5 @@
 ---
 
-- name: ssl - collect facts
-  gather_facts:
-
 - name: ssl - install few pkg
   apt:
     pkg:
@@ -39,8 +36,17 @@
 
 - name: ssl - config nginx
   template:
-    src: nginx.conf
-    dest: /etc/nginx/sites-available/nginx.conf
+    src: nginx_ssl.conf
+    dest: /etc/nginx/sites-available/nginx_ssl.conf
     mode: 0644
   notify:
     - handlers - reload nginx service
+
+- name: nginx - enabled config
+  file:
+    src: /etc/nginx/sites-available/nginx_ssl.conf
+    dest: /etc/nginx/sites-enabled/nginx.conf
+    owner: root
+    group: www-data
+    state: link
+  notify: handlers - reload nginx service
