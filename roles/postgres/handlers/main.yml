@@ -10,3 +10,13 @@
   systemd:
     name: postgresql.service
     state: reloaded
+
+- name: handlers - restart postgresql service
+  become_user: root
+  systemd:
+    name: postgresql.service
+    state: restarted
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded

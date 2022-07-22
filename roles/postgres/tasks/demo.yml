@@ -1,13 +1,27 @@
 ---
 
+- name: demo - postgresql must be started
+  systemd:
+    name: postgresql.service
+    state: started
+
+- name: demo - check demo db
+  postgresql_info:
+    db: demo
+    filter:
+      - databases
+  register: pg_info
+
 - name: demo - unzip demo dump
   unarchive:
+    creates: /tmp/demo(.*)
     src: /share/demo.zip
     dest: /tmp/
     owner: postgres
     group: postgres
     list_files: yes
   register: unzip
+  when: pg_info.databases.demo.namespaces.bookings is undefined
 
 - name: demo - create user
   postgresql_user:
@@ -27,26 +41,20 @@
     type: database
     role: "{{ db.demo.user }}"
 
-- name: demo - question
-  pause:
-    prompt: "Need to restore dump (y - yes / other - no)?"
-    echo: yes
-  register: demo_dump
-
 - name: demo - restore db
   postgresql_db:
     name: "{{ db.demo.name }}"
     state: restore
     target: /tmp/{{ unzip.files[0] }}
-  when: demo_dump.user_input == 'y' 
+  when: pg_info.databases.demo.namespaces.bookings is undefined
 
 - name: demo - user auth rule
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
-    contype: host
+    contype: hostssl
     users: "{{ db.demo.user }}"
     databases: "{{ db.demo.name }}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
-    method: md5
-  notify:
-    - handlers - reload postgresql service
+    method: cert
+    options: clientcert=verify-full
+  notify: handlers - reload postgresql service

@@ -49,4 +49,4 @@
     owner: root
     group: www-data
     state: link
-  notify: handlers - reload nginx service
+  notify: handlers - restart nginx service
