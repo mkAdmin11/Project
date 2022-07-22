@@ -16,34 +16,11 @@
 #   - name: show facts
 #     debug:
 #       var: ansible_facts
-    - name: pki - build client cert - db user {{ db.demo.user }}
-      become_user: "{{ ansible_user }}"
-      expect:
-        creates: /share/easy_rsa/pki/reqs/{{ db.demo.user }}.req
-        command: /share/easy_rsa/easyrsa build-client-full {{ db.demo.user }} nopass
-        responses:
-          (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
-      args:
-        chdir: /share/easy_rsa/
+#   - name: disables and resets firewall to installation defaults
+#     ufw:
+#       state: reset
   tags:
     - test
-
-#################################################################
-## RESET UFW                                                   ##
-#################################################################
-- hosts: [ novpn ]
-  become: true
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  vars_files:
-    - secret.yml
-  tasks:
-    - name: disables and resets firewall to installation defaults
-      ufw:
-        state: reset
-  tags:
-    - reset_ufw
 
 #################################################################
 ##    1    ansible-playbook /ansible/play.yml -t init          ##
