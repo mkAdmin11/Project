@@ -7,6 +7,7 @@
     owner: root
     group: root
     mode: "{{ item.mode }}"
+    force: no
   with_items:
   - {path: '/etc/openvpn/client.list', state: 'touch', mode: '0640'}
   - {path: '/etc/openvpn/ccd', state: 'directory' , mode: '0750'}

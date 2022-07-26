@@ -1,17 +1,11 @@
 ---
 
-- name: clear - question
-  pause:
-    prompt: "Need to backup /var/www/ (y - yes / other - no)?"
-    echo: yes
-  register: backup_www
-
 - name: clear - backup www
   copy:
     src: /var/www/
-    dest: /var/www_{{ ansible_date_time.iso8601 }}/
+    dest: /var/www_backup
     remote_src: yes
-  when: backup_www.user_input == 'y'
+    force: no
 
 - name: clear - remove www
   file:
