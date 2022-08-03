@@ -11,16 +11,6 @@
   vars_files:
     - secret.yml
   tasks:
-    - name: roundcube - check source
-      find:
-        paths: /var/www/
-        patterns: '^wp-activate.php$'
-        recurse: yes
-        use_regex: yes
-      register: rc_source
-    - name: Print return information from the previous task
-      ansible.builtin.debug:
-        var: rc_source
 #   - name: ping
 #     ping:
 #   - name: show facts
@@ -97,6 +87,7 @@
     - www
 
 #################################################################
+## 9    ansible-playbook /ansible/play.yml -t zabbix           ##
 #################################################################
 - hosts: [ vpn ]
   become: true
@@ -111,6 +102,7 @@
     - zabbix
 
 #################################################################
+## 10   ansible-playbook /ansible/play.yml -t grafana          ##
 #################################################################
 - hosts: [ main, db ]
   become: true
@@ -125,6 +117,7 @@
     - grafana
 
 #################################################################
+## 11   ansible-playbook /ansible/play.yml -t elk              ##
 #################################################################
 - hosts: [ db ]
   become: true
@@ -139,6 +132,7 @@
     - elk
 
 #################################################################
+## 12   ansible-playbook /ansible/play.yml -t beats            ##
 #################################################################
 - hosts: [ main, web ]
   become: true
