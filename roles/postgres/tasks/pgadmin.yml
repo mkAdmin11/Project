@@ -44,6 +44,14 @@
   no_log: true
   ignore_errors: yes
 
+- name: pgadmin - make pgadmin user share
+  file:
+    path: /var/lib/pgadmin/storage/{{ user.gpadmin.name }}_{{ domain.second }}{{ domain.top }}
+    state: directory
+    owner: root
+    group: www-data
+    mode: 0750
+
 - name: pgadmin - copy cert
   copy:
     src: "{{ item.src }}"

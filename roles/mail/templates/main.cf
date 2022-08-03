@@ -61,5 +61,5 @@ relayhost=
 mynetworks = 127.0.0.0/8
 mailbox_size_limit = 0
 recipient_delimiter = +
-inet_interfaces = {{ ansible_facts.default_ipv4.address }}
+inet_interfaces = all
 inet_protocols = ipv4

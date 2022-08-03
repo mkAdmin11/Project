@@ -5,13 +5,6 @@
     name: postgresql.service
     state: started
 
-- name: demo - check demo db
-  postgresql_info:
-    db: demo
-    filter:
-      - databases
-  register: pg_info
-
 - name: demo - unzip demo dump
   unarchive:
     creates: /tmp/demo(.*)
@@ -21,12 +14,10 @@
     group: postgres
     list_files: yes
   register: unzip
-  when: pg_info.databases.demo.namespaces.bookings is undefined
 
 - name: demo - create user
   postgresql_user:
     name: "{{ db.demo.user }}"
-    password: "{{ db.demo.pass }}"
 
 - name: demo - create db
   postgresql_db:
@@ -41,12 +32,18 @@
     type: database
     role: "{{ db.demo.user }}"
 
+- name: demo - check demo db
+  postgresql_info:
+    filter:
+      - databases
+  register: pg_info
+
 - name: demo - restore db
   postgresql_db:
     name: "{{ db.demo.name }}"
     state: restore
     target: /tmp/{{ unzip.files[0] }}
-  when: pg_info.databases.demo.namespaces.bookings is undefined
+  when: pg_info.databases.demo.size == rc_info.databases.template1.size
 
 - name: demo - user auth rule
   postgresql_pg_hba:

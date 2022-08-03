@@ -21,10 +21,10 @@
 - name: wp - user auth rule
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
-    contype: host
+    contype: hostssl
     users: "{{ db.wordpress.user }}"
     databases: "{{ db.wordpress.name}}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
-    method: md5
+    method: scram-sha-256
   notify:
     - handlers - reload postgresql service

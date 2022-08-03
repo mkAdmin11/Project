@@ -43,4 +43,4 @@
   include_tasks: logstash.yml
 
 - name: elk - change number of replicas
-  command: "curl -k --user {{ elk.elastic.name }}:{{ elk.elastic.pass }} -X PUT \"elk.local:9200/_all/_settings\" -H 'Content-Type: application/json' -d '{ \"index\": { \"number_of_replicas\": 0 } }'"
+  command: "curl -k --user {{ user.elastic.name }}:{{ user.elastic.pass }} -X PUT \"elk.local:9200/_all/_settings\" -H 'Content-Type: application/json' -d '{ \"index\": { \"number_of_replicas\": 0 } }'"

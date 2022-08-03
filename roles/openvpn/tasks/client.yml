@@ -39,9 +39,3 @@
     name: openvpn@{{ ansible_hostname }}.service
     enabled: yes
     state: started
-  register: first_start
-
-- name: server - collect facts
-  gather_facts:
-  when: first_start is changed and ansible_hostname != server2.name|string
-

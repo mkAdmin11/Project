@@ -26,11 +26,11 @@
     type: database
     role: "{{ db.roundcube.user }}"
 
-- name: db - question
-  pause:
-    prompt: "Need to restore dump (y - yes / other - no)?"
-    echo: yes
-  register: roundcube_dump
+- name: roundcube - check db
+  postgresql_info:
+    filter:
+      - databases
+  register: rc_info
 
 - name: db - restore db
   postgresql_db:
@@ -38,15 +38,15 @@
     state: restore
     target: /tmp/{{ unzip.files[0] }}/SQL/postgres.initial.sql
     target_opts: pg_restore
-  when: roundcube_dump.user_input == 'y'
+  when: rc_info.databases.db_rc.size == rc_info.databases.template1.size 
 
 - name: db - user auth conf
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
-    contype: host
+    contype: hostssl
     users: "{{ db.roundcube.user }}"
     databases: "{{ db.roundcube.name }}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
-    method: md5
+    method: scram-sha-256
   notify:
     - handlers - reload postgresql service

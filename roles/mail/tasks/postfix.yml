@@ -14,29 +14,39 @@
     value: "'Internet Site'"
     vtype: select
 
-- name: postfix - install
+- name: postfix - install postfix
   apt:
     name: postfix
     state: present
 
-- name: postfix - stop and enable
+- name: postfix - start and enable dovecot service
   systemd:
     name: postfix.service
     enabled: yes
-    state: stopped
+    state: started
 
 - name: postfix - config
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    owner: root
+    group: postfix
+    mode: 0640
   with_items:
   - {src: 'main.cf',dest: '/etc/postfix/main.cf'}
-  - {src: 'virtual_mailbox_domains',dest: '/etc/postfix/virtual_mailbox_domains'}
   - {src: 'master.cf',dest: '/etc/postfix/master.cf'}
+  notify: handlers - restart postfix service
 
-- name: postfix - lookup
-  shell: "postmap /etc/postfix/virtual_mailbox_domains"
+- name: postfix - set virtual mailbox domain
+  template:
+    src: virtual_mailbox_domains
+    dest: /etc/postfix/virtual_mailbox_domains
+    owner: root
+    group: postfix
+    mode: 0640
+  notify:
+    - handlers - postfix lookup
+    - handlers - reload postfix service
 
 - name: postfix - add ufw rule
   ufw:
@@ -49,14 +59,7 @@
     - 25
     - 587
     - 465
-  register: ufw_changed
+  notify: handlers - reload ufw
 
-- name: postfix - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed
-
-- name: postfix - start service
-  systemd:
-    name: postfix.service
-    state: started
+- name: postfix - flush handlers
+  meta: flush_handlers

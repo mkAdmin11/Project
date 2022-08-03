@@ -3,19 +3,29 @@
 #################################################################
 ## TESTING TASKS                                               ##
 #################################################################
-- hosts: [ server1.novpn ]
+- hosts: [ server2.novpn ]
   become: true
-  become_user: postgres #root
+  become_user: root
   become_method: sudo
-  gather_facts: no
+  gather_facts: yes
   vars_files:
     - secret.yml
   tasks:
+    - name: roundcube - check source
+      find:
+        paths: /var/www/
+        patterns: '^wp-activate.php$'
+        recurse: yes
+        use_regex: yes
+      register: rc_source
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        var: rc_source
 #   - name: ping
 #     ping:
 #   - name: show facts
 #     debug:
-#       var: ansible_facts
+#       var: rc_info
 #   - name: disables and resets firewall to installation defaults
 #     ufw:
 #       state: reset

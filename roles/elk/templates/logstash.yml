@@ -163,8 +163,8 @@ api.auth.type: basic
 # resolves to the value stored in the keystore's `HTTP_PASS` variable if present
 # or the same variable from the environment)
 
-api.auth.basic.username: "{{ elk.logstash.name }}"
-api.auth.basic.password: "{{ elk.logstash.pass }}"
+api.auth.basic.username: "{{ user.logstash.name }}"
+api.auth.basic.password: "{{ user.logstash.pass }}"
 
 # ------------ Module Settings ---------------
 # Define modules here.  Modules definitions must be defined as an array.

@@ -185,8 +185,8 @@ output.logstash:
   # The Logstash hosts
   hosts: ["elk.local:5044"]
 
-  #username: "{{ elk.logstash.name }}"
-  #password: "{{ elk.logstash.pass }}"
+  #username: "{{ user.logstash.name }}"
+  #password: "{{ user.logstash.pass }}"
   # Optional SSL. By default is off.
   # List of root certificates for HTTPS server verifications
   ssl.certificate_authorities: ["/etc/filebeat/cert/ca.crt"]

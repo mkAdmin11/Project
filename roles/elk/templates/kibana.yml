@@ -43,8 +43,8 @@ elasticsearch.hosts: ["http://elk.local:9200"]
 # index at startup. Your Kibana users still need to authenticate with Elasticsearch, which
 # is proxied through the Kibana server.
 xpack.security.enabled: true
-elasticsearch.username: "{{ elk.kibana.name }}"
-elasticsearch.password: "{{ elk.kibana.pass }}"
+elasticsearch.username: "{{ user.kibana.name }}"
+elasticsearch.password: "{{ user.kibana.pass }}"
 
 # Kibana can also authenticate to Elasticsearch via "service account tokens".
 # If may use this token instead of a username/password.

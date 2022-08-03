@@ -15,7 +15,7 @@
   cron:
     name: start nginx after reboot server
     special_time: reboot
-    job: "/bin/sleep 40 && /bin/systemctl start nginx.service"
+    job: "/bin/sleep 45 && /bin/systemctl start nginx.service"
 
 - name: nginx - find enabled configs
   find:

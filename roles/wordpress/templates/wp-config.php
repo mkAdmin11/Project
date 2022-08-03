@@ -51,15 +51,14 @@ define( 'DB_COLLATE', '' );
  *
  * @since 2.6.0
  */
-define( 'AUTH_KEY',         'впишите сюда уникальную фразу' );
-define( 'SECURE_AUTH_KEY',  'впишите сюда уникальную фразу' );
-define( 'LOGGED_IN_KEY',    'впишите сюда уникальную фразу' );
-define( 'NONCE_KEY',        'впишите сюда уникальную фразу' );
-define( 'AUTH_SALT',        'впишите сюда уникальную фразу' );
-define( 'SECURE_AUTH_SALT', 'впишите сюда уникальную фразу' );
-define( 'LOGGED_IN_SALT',   'впишите сюда уникальную фразу' );
-define( 'NONCE_SALT',       'впишите сюда уникальную фразу' );
-
+define( 'AUTH_KEY',         '{{ WP_AUTH_KEY }}' );
+define( 'SECURE_AUTH_KEY',  '{{ WP_SECURE_AUTH_KEY }}' );
+define( 'LOGGED_IN_KEY',    '{{ WP_LOGGED_IN_KEY }}' );
+define( 'NONCE_KEY',        '{{ WP_NONCE_KEY }}' );
+define( 'AUTH_SALT',        '{{ WP_AUTH_SALT }}' );
+define( 'SECURE_AUTH_SALT', '{{ WP_SECURE_AUTH_SALT }}' );
+define( 'LOGGED_IN_SALT',   '{{ WP_LOGGED_IN_SALT }}' );
+define( 'NONCE_SALT',       '{{ WP_NONCE_SALT }}' );
 /**#@-*/
 
 /**

@@ -26,7 +26,7 @@ $config = [];
 // NOTE: for SQLite use absolute path (Linux): 'sqlite:////full/path/to/sqlite.db?mode=0646'
 //       or (Windows): 'sqlite:///C:/full/path/to/sqlite.db'
 // $config['db_dsnw'] = 'mysql://roundcube:pass@localhost/roundcubemail';
-$config['db_dsnw'] = 'pgsql://{{ db.roundcube.user }}:{{ db.roundcube.pass }}@pg.local/{{ db.roundcube.name }}';
+$config['db_dsnw'] = 'pgsql://{{ db.roundcube.user }}:{{ db.roundcube.pass }}@db.local/{{ db.roundcube.name }}';
 
 $config['enable_installer'] = false;
 

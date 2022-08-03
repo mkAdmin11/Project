@@ -10,3 +10,30 @@
   systemd:
     name: postgresql.service
     state: reloaded
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded
+
+- name: handlers - postfix lookup
+  command: postmap /etc/postfix/virtual_mailbox_domains
+
+- name: handlers - restart postfix service
+  systemd:
+    name: postfix.service
+    state: restarted
+
+- name: handlers - reload postfix service
+  systemd:
+    name: postfix.service
+    state: reloaded
+
+- name: handlers - restart dovecot service
+  systemd:
+    name: dovecot.service
+    state: restarted
+
+- name: handlers - reload dovecot service
+  systemd:
+    name: dovecot.service
+    state: reloaded

@@ -9,6 +9,14 @@
     list_files: yes
   register: unzip
 
+- name: roundcube - check source
+  find:
+    paths: /var/www/
+    patterns: '^config.inc.php$'
+    recurse: yes
+    use_regex: yes
+  register: rc_source
+
 - name: roundcube - move source dir
   copy:
     src: /tmp/{{ unzip.files[0] }}
@@ -16,6 +24,7 @@
     owner: www-data
     group: www-data
     remote_src: true
+  when: rc_source.matched == 0
 
 - name: roundcube - gen key
   set_fact:
@@ -25,6 +34,6 @@
   template:
     src: config.inc.php
     dest: /var/www/mail/config/config.inc.php
-    mode: 0640
-    owner: www-data
+    owner: root
     group: www-data
+    mode: 0640

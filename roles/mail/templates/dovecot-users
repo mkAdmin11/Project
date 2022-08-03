@@ -1,3 +1,3 @@
-{{ mail.user1 }}@{{ domain.second }}{{ domain.top }}:{{ mail.pass1 }}
-{{ mail.user2 }}@{{ domain.second }}{{ domain.top }}:{{ mail.pass2 }}
-{{ mail.user3 }}@{{ domain.second }}{{ domain.top }}:{{ mail.pass3 }}
+admin@{{ domain.second }}{{ domain.top }}:{{ mail.admin.pass }}
+info@{{ domain.second }}{{ domain.top }}:{{ mail.info.pass }}
+no-reply@{{ domain.second }}{{ domain.top }}:{{ mail.no_reply.pass }}
