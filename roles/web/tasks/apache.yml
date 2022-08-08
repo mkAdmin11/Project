@@ -10,6 +10,12 @@
     name: /etc/apache2/cert
     state: directory
 
+- name: apache - start and disable apache service
+  systemd:
+    name: apache2.service
+    enabled: no
+    state: started
+
 - name: apache - copy cert
   copy:
     src: "{{ item.src }}"
@@ -30,25 +36,13 @@
     owner: root
     group: www-data
     mode: 0640
-  register: port_changed
+  notify: handlers - restart apache service
 
 - name: apache - enable ssl mode
   command:
     creates: /etc/apache2/mods-enabled/ssl.conf
     cmd: sudo a2enmod ssl
-  register: ssl_enabled
-
-- name: apache - restart apache service
-  systemd:
-    name: apache2.service
-    state: restarted
-  when: port_changed is changed or ssl_enabled is changed
-
-- name: apache - start and disable apache service
-  systemd:
-    name: apache2.service
-    enabled: no
-    state: started
+  notify: handlers - restart apache service
 
 - name: apache - add cron job
   cron:
@@ -104,3 +98,6 @@
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
   notify: handlers - reload ufw
+
+- name: apache - flush handlers
+  meta: flush_handlers

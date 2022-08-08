@@ -64,3 +64,6 @@
     rule: allow
     name: Nginx Full
   notify: handlers - reload ufw
+
+- name: nginx - flush handlers
+  meta: flush_handlers
