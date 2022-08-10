@@ -32,18 +32,18 @@
     type: database
     role: "{{ db.demo.user }}"
 
-- name: demo - check demo db
+- name: demo - get db info
   postgresql_info:
     filter:
       - databases
-  register: pg_info
+  register: db_info
 
 - name: demo - restore db
   postgresql_db:
     name: "{{ db.demo.name }}"
     state: restore
     target: /tmp/{{ unzip.files[0] }}
-  when: pg_info.databases.demo.size == rc_info.databases.template1.size
+  when: db_info.databases.{{ db.demo.name }}.size == db_info.databases.template1.size
 
 - name: demo - user auth rule
   postgresql_pg_hba:

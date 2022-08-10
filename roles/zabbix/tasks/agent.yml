@@ -5,23 +5,20 @@
     name: zabbix-agent
     state: latest
 
-- name: agent - stop and disable service
+- name: agent - start and enable zabbix-agent service
   systemd:
     name: zabbix-agent.service
-    enabled: no
-    state: stopped
-
-- name: agent - cron job
-  cron:
-    name: start zabbix agent after reboot server
-    special_time: reboot
-    job: "/bin/sleep 50 && /bin/systemctl start zabbix-agent.service"
+    enabled: yes
+    state: started
 
 - name: agent - copy conf
   template:
     src: zabbix_agentd.conf
     dest: /etc/zabbix/zabbix_agentd.conf
-    mode: 0644
+    owner: root
+    group: zabbix
+    mode: 0640
+  notify: handlers - restart zabbix-agent service
 
 - name: agent - add ufw rule
   ufw:
@@ -30,14 +27,7 @@
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
-  register: ufw_changed
+  notify: handlers - reload ufw
 
-- name: agent - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed
-
-- name: agent - start service
-  systemd:
-    name: zabbix-agent.service
-    state: started
+- name: agent - flush handlers
+  meta: flush_handlers

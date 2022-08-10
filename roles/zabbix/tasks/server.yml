@@ -5,25 +5,20 @@
     name: zabbix-server-pgsql
     state: latest
 
-- name: server - stop and disable zabbix-server service
+- name: server - start and enable zabbix-server service
   systemd:
     name: zabbix-server.service
-    enabled: no
-    state: stopped
+    enabled: yes
+    state: started
 
-- name: server - add cron job
-  cron:
-    name: start zabbix after reboot server
-    special_time: reboot
-    job: "/bin/sleep 45 && /bin/systemctl start zabbix-server.service"
-
-- name: Config server
+- name: server - copy config
   template:
     src: zabbix_server.conf
     dest: "/etc/zabbix/zabbix_server.conf"
     owner: root
-    group: root
-    mode: 0600
+    group: zabbix
+    mode: 0640
+  notify: handlers - restart zabbix-server service
 
 - name: server - add ufw rule
   ufw:
@@ -32,14 +27,7 @@
     direction: in
     interface: "{{ ansible_facts.tun0.device }}"
     from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
-  register: ufw_changed
+  notify: handlers - reload ufw
 
-- name: server - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed
-
-- name: server - start zabbix-server service
-  systemd:
-    name: zabbix-server.service
-    state: started
+- name: server - flush handlers
+  meta: flush_handlers

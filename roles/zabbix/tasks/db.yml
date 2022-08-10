@@ -27,11 +27,12 @@
     type: database
     role: "{{ db.zabbix.user }}"
 
-- name: db - question
-  pause:
-    prompt: "Need to restore dump (y - yes / other - no)?"
-    echo: yes
-  register: zabbix_dump
+- name: db - get db info
+  become_user: postgres
+  postgresql_info:
+    filter:
+      - databases
+  register: db_info
 
 - name: db - restore db
   become_user: postgres
@@ -40,19 +41,18 @@
     state: restore
     target: /usr/share/doc/zabbix-sql-scripts/postgresql/server.sql.gz
     target_opts: pg_restore
-  when: zabbix_dump.user_input == 'y'
+  when: db_info.databases.{{ db.zabbix.name }}.size == db_info.databases.template1.size
 
 - name: db - user auth conf
   become_user: postgres
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
-    contype: host
+    contype: hostssl
     users: "{{ db.zabbix.user }}"
     databases: "{{ db.zabbix.name }}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
-    method: md5
+    method: scram-sha-256
+  notify: handlers - reload postgres service
 
-- name: db - reload postgres service
-  systemd:
-    name: postgresql.service
-    state: reloaded
+- name: db - flush handlers
+  meta: flush_handlers
