@@ -3,14 +3,23 @@
 #################################################################
 ## TESTING TASKS                                               ##
 #################################################################
-- hosts: [ server2.novpn ]
+- hosts: [ server1.novpn ]
   become: true
-  become_user: root
+  become_user: "{{ ansible_user }}"
   become_method: sudo
   gather_facts: yes
   vars_files:
     - secret.yml
   tasks:
+    - name: pki - build client cert - db user {{ db.grafana.user }}
+#      become_user: "{{ ansible_user }}"
+      expect:
+        creates: /share/easy_rsa/pki/reqs/{{ db.grafana.user }}.req
+        command: /share/easy_rsa/easyrsa build-client-full {{ db.grafana.user }} nopass
+        responses:
+          (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+      args:
+        chdir: /share/easy_rsa/
 #   - name: ping
 #     ping:
 #   - name: show facts

@@ -1,6 +1,20 @@
 ---
 
-- name: handlers - reloaded grafana-server service
+- name: handlers - reload postgresql service
+  become_user: root
+  systemd:
+    name: postgresql.service
+    state: reloaded
+
+- name: handlers - update apt cache
+  apt:
+    update_cache: yes
+
+- name: handlers - restart grafana-server service
   systemd:
     name: grafana-server.service
     state: restarted
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded

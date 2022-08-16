@@ -4,7 +4,7 @@
   become_user: postgres
   postgresql_user:
     name: "{{ db.grafana.user }}"
-    password: "{{ db.grafana.pass }}"
+#    password: "{{ db.grafana.pass }}"
 
 - name: db - create db
   become_user: postgres
@@ -22,18 +22,15 @@
     role: "{{ db.grafana.user }}"
 
 - name: db - user auth rule
-  become_user: postgres
   postgresql_pg_hba:
     dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
-    contype: host
+    contype: hostssl
     users: "{{ db.grafana.user }}"
-    databases: "{{ db.grafana.name}}"
+    databases: "{{ db.grafana.name }}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
-    method: md5
-  register: auth_changed
+    method: cert
+    options: clientcert=verify-full
+  notify: handlers - reload postgresql service
 
-- name: db - reload postgresql
-  systemd:
-    name: postgresql.service
-    state: reloaded
-  when: auth_changed is changed
+- name: db - flush handlers
+  meta: flush_handlers

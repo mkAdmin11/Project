@@ -13,7 +13,7 @@
 - name: apache - start and disable apache service
   systemd:
     name: apache2.service
-    enabled: no
+    enabled: yes
     state: started
 
 - name: apache - copy cert
@@ -43,12 +43,6 @@
     creates: /etc/apache2/mods-enabled/ssl.conf
     cmd: sudo a2enmod ssl
   notify: handlers - restart apache service
-
-- name: apache - add cron job
-  cron:
-    name: start apache after reboot server
-    special_time: reboot 
-    job: "/bin/sleep 40 && /bin/systemctl start apache2.service"
 
 - name: apache - install mods
   apt:
