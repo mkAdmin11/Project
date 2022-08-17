@@ -14,12 +14,10 @@
     owner: root
     group: root
     mode: 0644
-  register: sources_list
+  notify: handlers - update apt cache
 
-- name: pgadmin - update apt cache
-  apt:
-    update_cache: yes
-  when: sources_list is changed
+- name: pgadmin - flush handlers
+  meta: flush_handlers
 
 - name: pgadmin - install pgadmin
   apt:

@@ -1,5 +1,9 @@
 ---
 
+- name: handlers - update apt cache
+  apt:
+    update_cache: yes
+
 - name: handlers - reload apache service
   systemd:
     name: apache2.service

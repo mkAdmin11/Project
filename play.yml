@@ -3,7 +3,7 @@
 #################################################################
 ## TESTING TASKS                                               ##
 #################################################################
-- hosts: [ server1.novpn ]
+- hosts: [ server3.novpn ]
   become: true
   become_user: root
   become_method: sudo
@@ -11,50 +11,6 @@
   vars_files:
     - secret.yml
   tasks:
-    - name: nginx - 
-      lineinfile:
-        path: /share/nginx.service
-        insertbefore: '^After=(.*)$'
-        line: 'Requires=apache2.service openvpn@{{ ansible_hostname }}.service'
-    - name: nginx -
-      replace:
-        path: /share/nginx.service
-        regexp: "^After=(.*)openvpn@{{ ansible_hostname }}.service(.*)$"
-        replace: "zero"
-      check_mode: yes
-      register: line_vpn_exist
-    - name: nginx -
-      lineinfile:
-        path: /share/nginx.service
-        regexp: '^(After=.*)$'
-        line: \g<1> openvpn@{{ ansible_hostname }}.service
-        backrefs: yes
-      when: line_vpn_exist is not changed
-    - name: nginx -
-      replace:
-        path: /share/nginx.service
-        regexp: "^After=(.*)apache2.service(.*)$"
-        replace: "zero"
-      check_mode: yes
-      register: line_apache_exist
-    - name: nginx -
-      lineinfile:
-        path: /share/nginx.service
-        regexp: '^(After=.*)$'
-        line: \g<1> apache2.service
-        backrefs: yes
-      when: line_apache_exist is not changed
-    - name: nginx -
-      lineinfile:
-        path: /share/nginx.service
-        insertafter: '^KillMode=(.*)$'
-        line: 'Restart=on-failure'
-    - name: nginx -
-      lineinfile:
-        path: /share/nginx.service
-        insertafter: '^Restart=(.*)$'
-        line: 'RestartSec=60'
-
 #   - name: ping
 #     ping:
 #   - name: show facts

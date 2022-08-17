@@ -5,7 +5,7 @@
     id: B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
     # curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | tee | gpg --keyid-format long
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    state: present
+    keyring: /etc/apt/trusted.gpg.d/postgresql.gpg
 
 - name: dbms - add postgresql repository list
   template:
@@ -14,12 +14,10 @@
     owner: root
     group: root
     mode: 0644
-  register: sources_list
+  notify: handlers - update apt cache
 
-- name: dbms - update apt cache
-  apt:
-    update_cache: yes
-  when: sources_list is changed
+- name: dbms - flush handlers
+  meta: flush_handlers
 
 - name: dbms - install postgrsql
   apt:
@@ -38,10 +36,10 @@
     name: psycopg2
     state: latest
 
-- name: dbms - start and disable postgresql service
+- name: dbms - start and enable postgresql service
   systemd:
     name: postgresql.service
-    enabled: no
+    enabled: yes
     state: started
 
 - name: dbms - add ufw rule
@@ -90,3 +88,6 @@
     group: postgres
     mode: 0640
   notify: handlers - reload postgresql service
+
+- name: dbms - flush handlers
+  meta: flush_handlers
