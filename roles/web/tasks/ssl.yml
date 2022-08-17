@@ -5,8 +5,6 @@
     pkg:
     - certbot
     - python3-certbot-nginx
-    - python
-    - python-dev
     - gcc
     - dialog
     - libaugeas0
@@ -24,23 +22,22 @@
   command:
     creates: /etc/letsencrypt/live/{{ domain.second }}{{ domain.top }}/privkey.pem
     cmd: letsencrypt certonly --webroot --agree-tos -w /var/www/html -m admin@{{ domain.second }}{{ domain.top }} -d {{ domain.second }}{{ domain.top }}
-  notify:
-    - handlers - reload nginx service
+  notify: handlers - reload nginx service
 
 - name: ssl - generate dh
   command:
     creates: /etc/letsencrypt/ssl-dhparams.pem
     cmd: openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
-  notify:
-    - handlers - reload nginx service
+  notify: handlers - reload nginx service
 
 - name: ssl - config nginx
   template:
     src: nginx_ssl.conf
     dest: /etc/nginx/sites-available/nginx_ssl.conf
-    mode: 0644
-  notify:
-    - handlers - reload nginx service
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: handlers - reload nginx service
 
 - name: nginx - enabled config
   file:

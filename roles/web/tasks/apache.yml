@@ -8,9 +8,12 @@
 - name: apache - make cert dir
   file:
     name: /etc/apache2/cert
+    owner: root
+    group: www-data
+    mode: 0750
     state: directory
 
-- name: apache - start and disable apache service
+- name: apache - start and enable apache service
   systemd:
     name: apache2.service
     enabled: yes

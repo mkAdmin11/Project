@@ -5,7 +5,7 @@
     name: nginx
     state: latest
 
-- name: nginx - start and disabled nginx service
+- name: nginx - start and enable nginx service
   systemd:
     name: nginx.service
     enabled: yes

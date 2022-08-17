@@ -11,3 +11,6 @@
 
 - name: web - switch to ssl
   include_tasks: ssl.yml
+
+- name: web - config systemd
+  include_tasks: systemd.yml

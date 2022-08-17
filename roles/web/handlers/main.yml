@@ -20,11 +20,6 @@
     name: nginx.service
     state: reloaded
 
-- name: handlers - restart nginx service
-  systemd:
-    name: nginx.service
-    state: restarted
-
 - name: handlers - reload ufw
   ufw:
     state: reloaded
