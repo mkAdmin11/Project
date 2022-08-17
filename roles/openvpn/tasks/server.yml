@@ -7,7 +7,6 @@
     owner: root
     group: root
     mode: "{{ item.mode }}"
-    force: no
   with_items:
   - {path: '/etc/openvpn/client.list', state: 'touch', mode: '0640'}
   - {path: '/etc/openvpn/ccd', state: 'directory' , mode: '0750'}
@@ -21,7 +20,6 @@
     group: root
     mode: 0640
     follow: yes
-    backup: yes
   with_items:
   - {src: '/share/vpn_conf/vpn-{{ server2.name }}', dest: '/etc/openvpn/ccd/{{ server2.name }}'}
   - {src: '/share/vpn_conf/vpn-{{ server3.name }}', dest: '/etc/openvpn/ccd/{{ server3.name }}'}
@@ -49,7 +47,6 @@
     group: root
     mode: 0640
     follow: yes
-    backup: yes
   notify: handlers - reload openvpn-server service
 
 - name: server - start openvpn-server service
@@ -58,11 +55,10 @@
     name: openvpn@vpn-server.service
     enabled: yes
     state: started
-  register: first_start
+  notify: handlers - collect facts
 
-- name: server - collect facts
-  gather_facts:
-  when: first_start is changed
+- name: server - flush handlers
+  meta: flush_handlers
 
 - name: server - add openvpn ufw rule
   ufw:
@@ -72,3 +68,6 @@
     direction: in
     interface: "{{ ansible_facts.default_ipv4.interface }}"
   notify: handlers - reload ufw
+
+- name: server - flush handlers
+  meta: flush_handlers

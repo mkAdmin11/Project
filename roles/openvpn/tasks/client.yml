@@ -30,7 +30,6 @@
     group: root
     mode: 0640
     follow: yes
-    backup: yes
   notify: handlers - reload openvpn-client service
 
 - name: client - start openvpn-client service
@@ -39,3 +38,7 @@
     name: openvpn@{{ ansible_hostname }}.service
     enabled: yes
     state: started
+  notify: handlers - collect facts
+
+- name: client - flush handlers
+  meta: flush_handlers

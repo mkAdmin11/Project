@@ -8,11 +8,13 @@
   template:
     src: resolved.conf
     dest: "/etc/systemd/resolved.conf"
+    owner: root
+    group: root
     mode: 0644
   notify: handlers - restarted systemd-resolved
 
-- name: bind - add cron job
-  cron:
-    name: restart systemd-resolved after reboot server
-    special_time: reboot
-    job: "/bin/sleep 30 && /bin/systemctl restart systemd-resolved.service"
+- name: bind - systemd-resolved after vpn connect
+  lineinfile:
+    path: /lib/systemd/system/openvpn@.service
+    insertafter: '^ExecStart=(.*)$'
+    line: 'ExecStartPost=/bin/systemctl restart systemd-resolved.service'

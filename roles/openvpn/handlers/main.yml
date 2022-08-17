@@ -1,5 +1,8 @@
 ---
 
+- name: handlers - collect facts
+  gather_facts:
+
 - name: handlers - reload openvpn-server service
   systemd:
     name: openvpn@vpn-server.service

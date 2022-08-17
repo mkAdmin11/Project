@@ -26,7 +26,6 @@
     group: "{{ item.group }}"
     mode: 0600
     follow: yes
-    backup: yes
   with_items:
     - {src: '/home/{{ ansible_user }}/.bashrc.local', owner: '{{ ansible_user }}', group: '{{ ansible_user }}'}
     - {src: '/root/.bashrc.local', owner: 'root', group: 'root'}

@@ -41,3 +41,6 @@
     rule: allow
     name: Bind9
   notify: handlers - reload ufw
+
+- name: install - flush handlers
+  meta: flush_handlers

@@ -14,6 +14,8 @@
     responses:
       (?i)Enter New CA Key Passphrase: "{{ ca.pass }}"
       (?i)Re-Enter New CA Key Passphrase: "{{ ca.pass }}"
+      (?i)Enter PEM pass phrase: "{{ ca.pass }}"
+      (?i)Verifying - Enter PEM pass phrase: "{{ ca.pass }}"
       (?i)Common Name (.*): "{{ ca.name }}"
     creates: /share/easy_rsa/pki/ca.crt
   args:
@@ -121,6 +123,16 @@
   expect:
     creates: /share/easy_rsa/pki/reqs/{{ db.demo.user }}.req
     command: /share/easy_rsa/easyrsa build-client-full {{ db.demo.user }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build client cert - db user {{ db.grafana.user }}
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/{{ db.grafana.user }}.req
+    command: /share/easy_rsa/easyrsa build-client-full {{ db.grafana.user }} nopass
     responses:
       (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
   args:

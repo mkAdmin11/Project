@@ -22,9 +22,5 @@
   include_tasks: client.yml
   when: ansible_hostname != server1.name|string
 
-- name: openvpn - collect facts again
-  gather_facts:
-  when: ansible_hostname != server2.name|string
-
 - name: openvpn - config ssh
   include_tasks: ssh.yml

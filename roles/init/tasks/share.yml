@@ -6,7 +6,7 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0770
+    mode: 0755
 
 - name: share - make bash config dir
   file:
@@ -14,7 +14,7 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0750
+    mode: 0755
 
 - name: share - prepare bash config
   file:
@@ -58,9 +58,9 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: 0750
+    mode: 0755
 
-- name: share - prepare berts config
+- name: share - prepare beats config
   file:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -89,7 +89,6 @@
     group: "{{ ansible_user }}"
     remote_src: yes
     include: easy-rsa-release-3.0/easyrsa3/*
-  register: unzip_changed
 
 - name: share - copy easy_rsa dir
   copy:
@@ -98,7 +97,7 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     remote_src: yes
-  when: unzip_changed is changed
+    force: no
 
 - name: share - download wordpress
   get_url:
