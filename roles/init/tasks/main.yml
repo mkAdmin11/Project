@@ -42,6 +42,7 @@
 - name: init - prepare certs
   include_tasks: pki.yml
   when: ansible_hostname == server1.name|string
+  tags: init_pki
 
 - name: init - config ufw
   include_tasks: ufw.yml

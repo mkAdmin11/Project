@@ -33,6 +33,7 @@
     password: "{{ db.monidoring.pass }}"
     priv: ALL
     role_attr_flags: INHERIT
+  no_log: true
 
 - name: db_monitoring - user auth conf
   become_user: postgres

@@ -11,6 +11,7 @@
     name: "{{ db.zabbix.user }}"
     password: "{{ db.zabbix.pass }}"
     role_attr_flags: SUPERUSER
+  no_log: true
 
 - name: db - create db
   become_user: postgres

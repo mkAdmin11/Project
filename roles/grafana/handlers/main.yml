@@ -18,3 +18,8 @@
 - name: handlers - reload ufw
   ufw:
     state: reloaded
+
+- name: handlers - pause
+  pause:
+    minutes: 1
+    prompt: "Waiting for the full start of the grafana-server service"

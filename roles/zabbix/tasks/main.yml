@@ -2,7 +2,7 @@
 
 - name: zabbix - add repozitory
   apt:
-    deb: https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-3+ubuntu20.04_all.deb
+    deb: https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-3+ubuntu22.04_all.deb
   notify: handlers - update cache
 
 - name: zabbix - flush handlers
@@ -32,4 +32,5 @@
   postgresql_query:
     db: "{{ db.zabbix.name }}"
     query: "update users set passwd=md5('{{ user.zabbix.pass }}') where username='Admin'"
+  no_log: true
   when: ansible_hostname == server3.name|string
