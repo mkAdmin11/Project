@@ -14,12 +14,6 @@
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
   notify: handlers - reload ufw
 
-- name: logstash - add cron job
-  cron:
-    name: start logstash after reboot server
-    special_time: reboot
-    job: "/bin/sleep 180 && /bin/systemctl start logstash.service"
-
 - name: logstash - make cert dir
   file:
     name: /etc/logstash/cert
@@ -45,7 +39,9 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    owner: root
+    group: logstash
+    mode: 0640
   with_items:
   - {src: 'logstash.conf',dest: '/etc/logstash/conf.d/logstash.conf'}
   - {src: 'logstash.yml',dest: '/etc/logstash/logstash.yml'}
@@ -53,6 +49,7 @@
 
 - name: logstash - start and disable logstash service
   systemd:
+    daemon_reload: yes
     name: logstash.service
-    enabled: no
+    enabled: yes
     state: started

@@ -5,18 +5,12 @@
     name: elasticsearch
     state: latest
 
-- name: elastic - start and disable elasticsearch service
+- name: elastic - start and enable elasticsearch service
   systemd:
     daemon_reload: yes
     name: elasticsearch.service
-    enabled: no
+    enabled: yes
     state: started
-
-- name: elastic - add cron job
-  cron:
-    name: start elasticsearch after reboot server
-    special_time: reboot
-    job: "/bin/sleep 40 && /bin/systemctl start elasticsearch.service"
 
 - name: elastic - add ufw rule
   ufw:
@@ -28,22 +22,16 @@
   with_items:
     - 9300
     - 9200
-  register: ufw_changed
+  notify: handlers - reload ufw
   
-- name: elastic - reload ufw
-  ufw:
-    state: reloaded
-  when: ufw_changed is changed
-
 - name: elastic - copy config
   template:
     src: elasticsearch.yml
     dest: /etc/elasticsearch/elasticsearch.yml
-    mode: 0660
-  register: conf_changed
+    owner: root
+    group: elastic
+    mode: 0640
+  notify: handlers - restart elasticsearch service
 
-- name: elastic - restart elasticsearch service
-  systemd:
-    name: elasticsearch.service
-    state: restarted
-  when: conf_changed is changed
+- name: elastic - flush handlers
+  meta: flush_handlers

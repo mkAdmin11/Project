@@ -1,5 +1,14 @@
 ---
 
+- name: handlers - update cache
+  apt:
+    update_cache: yes
+
+- name: handlers - restart elasticsearch service
+  systemd:
+    name: elasticsearch.service
+    state: restarted
+
 - name: handlers - restart kibana service
   systemd:
     name: kibana.service

@@ -14,22 +14,18 @@
     from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
   notify: handlers - reload ufw
 
-- name: kibana - add cron job
-  cron:
-    name: start kibana after reboot server
-    special_time: reboot
-    job: "/bin/sleep 180 && /bin/systemctl start kibana.service"
-
 - name: kibana - copy config
   template:
     src: kibana.yml
     dest: /etc/kibana/kibana.yml
-    mode: 0660
+    owner: root
+    group: kibana
+    mode: 0640
   notify: handlers - restart kibana service
 
-- name: kibana - start and disable kibana service
+- name: kibana - start and enable kibana service
   systemd:
     daemon_reload: yes
     name: kibana.service
-    enabled: no
+    enabled: yes
     state: started

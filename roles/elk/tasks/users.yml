@@ -36,7 +36,7 @@
   command: "curl -k --user {{ user.elastic.name }}:{{ user.elastic.pass }} -X POST \"http://elk.local:9200/_xpack/security/role/{{ user.logstash.name }}?pretty\" -H 'Content-Type: application/json' -d '{\"cluster\": [\"manage_index_templates\", \"monitor\", \"manage_ilm\"], \"indices\": [ {\"names\": [ \"*\" ], \"privileges\": [\"write\",\"create\",\"create_index\",\"manage\",\"manage_ilm\"] } ] }'"
   when: logstash_exist is not changed
 
-- name: users - add kibana user
+- name: users - add logstash user
   command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ user.logstash.name }} -p {{ user.logstash.pass }} -r {{ user.logstash.role }}
   when: logstash_exist is not changed
 
