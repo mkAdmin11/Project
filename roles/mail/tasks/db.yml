@@ -48,5 +48,4 @@
     databases: "{{ db.roundcube.name }}"
     source: "{{ vpn.gate }}/{{ vpn.prefix }}"
     method: scram-sha-256
-  notify:
-    - handlers - reload postgresql service
+  notify: handlers - reload postgresql service

@@ -102,7 +102,7 @@ echo "========================================================================"
 
 cp /ansible/secret_sample.yml /ansible/secret.yml
 line=$(wc -l /ansible/secret.yml | awk '{ print $1 }')
-for((i=1; i<$line; i++))
+for((i=1; i<=$line; i++))
 do
   sed -i "$i s/GEN_PASS/$(pwgen -1s 24)/g" /ansible/secret.yml
 done

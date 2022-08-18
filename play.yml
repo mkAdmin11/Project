@@ -3,7 +3,7 @@
 #################################################################
 ## TESTING TASKS                                               ##
 #################################################################
-- hosts: [ server1.novpn ]
+- hosts: [ novpn ]
   become: true
   become_user: root
   become_method: sudo
@@ -11,15 +11,6 @@
   vars_files:
     - secret.yml
   tasks:
-    - name: install - make cms dir
-      file:
-        path: /var/www/cms
-        recurse: yes
-        force: no
-        state: directory
-        mode: 0755
-        owner: www-data
-        group: www-data
 #   - name: ping
 #     ping:
 #   - name: show facts

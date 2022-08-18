@@ -8,7 +8,7 @@
     - dovecot-pop3d
     - dovecot-lmtpd
 
-- name: dovecot - start and disable dovecot service
+- name: dovecot - start and enable dovecot service
   systemd:
     name: dovecot.service
     enabled: yes
