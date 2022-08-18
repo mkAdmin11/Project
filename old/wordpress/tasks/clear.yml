@@ -6,13 +6,10 @@
     dest: /var/www_backup
     remote_src: yes
     force: no
-  register: backup_changed
+  notify: handlers - remove www
 
-- name: clear - remove www
-  file:
-    path: /var/www/
-    state: absent
-  when: backup_changed is changed
+- name: clear - flush handlers
+  meta: flush_handlers
 
 - name: clear - make new www dir
   file:

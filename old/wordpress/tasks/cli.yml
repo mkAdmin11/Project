@@ -12,7 +12,7 @@
   command:
     chdir: /var/www/wordpress
     creates: /var/www/wordpress/wp-content/plugins/contact-form-7/
-    cmd: sudo -u www-data wp core install --url={{ domain.second }}{{ domain.top }} --title={{ domain.second }} --admin_user={{ user.wordpress.name }} --admin_password={{ user.wordpress.pass }} --admin_email=admin@{{ domain.second }}{{ domain.top }} --allow-root
+    cmd: sudo wp core install --url={{ domain.second }}{{ domain.top }} --title={{ domain.second }} --admin_user={{ user.wordpress.name }} --admin_password={{ user.wordpress.pass }} --admin_email=admin@{{ domain.second }}{{ domain.top }} --allow-root
 
 - name: cli - install plugin - Contact Form 7
   command:

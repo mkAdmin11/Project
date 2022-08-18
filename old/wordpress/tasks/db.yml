@@ -1,0 +1,30 @@
+---
+
+- name: db - create user
+  postgresql_user:
+    name: "{{ db.wordpress.user }}"
+    password: "{{ db.wordpress.pass }}"
+  no_log: true
+
+- name: db - create db
+  postgresql_db:
+    name: "{{ db.wordpress.name }}"
+    owner: "{{ db.wordpress.user }}"
+    encoding: UTF-8
+
+- name: db - grant privileges
+  postgresql_privs:
+    db: "{{ db.wordpress.name }}"
+    privs: ALL
+    type: database
+    role: "{{ db.wordpress.user }}"
+
+- name: wp - user auth rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: hostssl
+    users: "{{ db.wordpress.user }}"
+    databases: "{{ db.wordpress.name}}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: scram-sha-256
+  notify: handlers - reload postgresql service

@@ -1,0 +1,17 @@
+---
+
+- name: handlers - remove www
+  file:
+    path: /var/www/
+    state: absent
+
+- name: handlers - reload apache service
+  systemd:
+    name: apache2.service
+    state: reloaded
+
+- name: handlers - reload postgresql service
+  become_user: root
+  systemd:
+    name: postgresql.service
+    state: reloaded

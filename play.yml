@@ -3,7 +3,7 @@
 #################################################################
 ## TESTING TASKS                                               ##
 #################################################################
-- hosts: [ server3.novpn ]
+- hosts: [ server1.novpn ]
   become: true
   become_user: root
   become_method: sudo
@@ -11,6 +11,15 @@
   vars_files:
     - secret.yml
   tasks:
+    - name: install - make cms dir
+      file:
+        path: /var/www/cms
+        recurse: yes
+        force: no
+        state: directory
+        mode: 0755
+        owner: www-data
+        group: www-data
 #   - name: ping
 #     ping:
 #   - name: show facts
@@ -70,7 +79,7 @@
 
 #################################################################
 ## 6    ansible-playbook /ansible/play.yml -t postgres         ##
-## 7    ansible-playbook /ansible/play.yml -t wordpress        ##
+## 7    ansible-playbook /ansible/play.yml -t cms              ##
 ## 8    ansible-playbook /ansible/play.yml -t mail             ##
 #################################################################
 - hosts: [ web, db ]
@@ -81,7 +90,7 @@
     - secret.yml
   roles:
     - {role: postgres,    tags: postgres}
-    - {role: wordpress,   tags: wordpress}
+    - {role: cms,   tags: cms}
     - {role: mail,        tags: mail}
   tags:
     - www
