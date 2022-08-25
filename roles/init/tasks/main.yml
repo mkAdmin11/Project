@@ -14,7 +14,6 @@
 - name: init - install few packages
   apt:
     pkg:
-    - net-tools
     - network-manager
     - tree
     - apt-transport-https
