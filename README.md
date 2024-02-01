@@ -11,6 +11,14 @@
 - [Bind9](#Bind9)
 - [PostgreSQL](#PostgreSQL)
 - [WEB](#WEB)
+- [Certbot](#Certbot)
+- [WWW](#WWW)
+- [Mail](#Mail)
+- [pgAdmin4](#pgAdmin4)
+- [Elastic](#Elastic)
+- [Logs](#Logs)
+- [Zabbix](#Zabbix)
+- [Grafana](#Grafana)
 
 ---
 
@@ -105,7 +113,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 
 ---
 
-## WEB
+### WEB
 
 ***Сервер 2***
 <br/> Установка *nginx*.
@@ -123,7 +131,9 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 
 > Веб сервер подготовлен для получения *SSL* сертификатов.
 
-## Certbot
+---
+
+### Certbot
 
 ***Сервер 2***
 <br/> Установка *Certbot* и получение сертификатов через *webroot*.
@@ -133,7 +143,9 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 + Домен третьего уровя *forcustomer* проксирует запросы на *Apache2*. 
 + Все запросы с *http* перенаправляются на *https*.
 
-## WWW
+---
+
+### WWW
 
 ***Сервер 2***
 <br/> Использется шара - копируется код для обработки *Apache2*:
@@ -153,7 +165,9 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 + Домен третьего уровня.
 >> *ServerRoot* дирректоря *forcustomer*.
 
-## Mail
+---
+
+### Mail
 
 ***Сервер 2***
 <br/> Настройка почтового сервера:
@@ -162,7 +176,9 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 + Установка и настройка *Dovecot*.
 > Используется *SSL* сертификат домена второго уровня.
 
-## pgAdmin4
+---
+
+### pgAdmin4
 
 ***Сервер 2***
 <br/> Установка *pgAdmin4*.
@@ -171,7 +187,10 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 + В *PostgreSQL* ранее подготовлены базы данных и пользователь.
 + Подключение осуществляется по *VPN* сети, настраивается через *web*-интерфейс.
 
-## Elastic
+---
+
+### Elastic
+
 > Добавлен репозиторий *Elastic*, точнее зеркало *Yandex*.
 
 ***Сервер 3***
@@ -187,7 +206,9 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 + Настроен парольный доступ к кластеру.
 + В скрипт добавлена задача запуска службы *Kibana*, после перезагрузки сервера, послe службы *Elasticsearch*.
 
- ## Logs
+---
+
+### Logs
  
 ***Сервер 3***
 > **!!! Предварительно через веб интерфейс *Kibana* создан пользователь, с ролью для записи индексов !!!**
@@ -212,7 +233,9 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 + В скрипт добавлена задача запуска службы *Filebeat* после перезагрузки сервера.
 > Служба *Elasticsearch* к тому времени должна быть уже запущена.
 
-## Zabbix
+---
+
+### Zabbix
 > Добавлен репозиторий *Zabbix 5.0 TLS*.
 >> В *PostgreSQL* ранее подготовлена база данных и пользователь с правами доступа по *VPN* сети.
 
@@ -232,7 +255,9 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/maste
 + Настроен доступ к *Zabbix-server*.
 + На *Сервер 3* дополнительно установлены компоненты для мониторинга *PostgreSQL*.
 
-## Grafana
+---
+
+### Grafana
 
 ***Сервер 1***
 > Добавлен репозиторий *Grafana*.
