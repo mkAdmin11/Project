@@ -1,25 +1,49 @@
-# SKILLFACTORY FINAL PROJECT
- 
-<br/> Сценарий для развертывания финального проекта SkilFactory
+# SKILLFACTORY 21-22
 
-<br/> **Структура проекта**
+## Дипломная работа профессии "Системный администратор Linux"
 
-![Screenshot](source/project_page_1.png)
+### Содержание
 
-## Начало
+- [Графическая схема](#Графическая-схема)
+- [Скрипты](#Скрипты)
+- [Первоначальная настройка](#Первоначальная-настройка)
+- [OpenVPN](#OpenVPN)
+- [Bind9](#Bind9)
+- [PostgreSQL](#PostgreSQL)
+- [WEB](#WEB)
 
-<br/> Настройка publick сервера:
+---
+
+### Графическая схема
+
+Итоговая графическая схема проекта:
+
+<img src="source/project_page_1.png" width="800">
+
+---
+
+### Скрипты
+
+Скрипты для первичной настройки серверов
+
+Настройка publick сервера:
+
 ```
-bash -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_publick_config.sh)"
-```
-<br/> Настройка main сервера:
-```
-bash -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_main_config.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/master/scripts/publick_config.sh)"
 ```
 
-<br/> Перед прокаткой ролей требуется заполнить secret.yml, за основу взять secret_sample.yml.
+Настройка main сервера:
 
-## Start
+```
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/master/scripts/main_config.sh)"
+```
+
+---
+
+### Первоначальная настройка
+
+> [!CAUTION]
+> Перед прокаткой ролей требуется заполнить `secret.yml`, за основу рекомендуется взять `secret_sample.yml`.
 
 ***Все сервера***
 <br/> Первоначальная настройка всех серверов:
@@ -30,7 +54,9 @@ bash -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_ma
 + Созданы шаблоны скриптов автозапуска - для поднятия через *cron* сервисов с задержкой, после перезагрузки в правильном порядке.
 > *Сервер 3* - задержка 2 минуты. *Сервера 1 и 2* - задержка 5 минут.
 
-## OpenVPN
+---
+
+### OpenVPN
 
 ***Сервер 1***
 <br/> Поднимается *OpenVPN* сервер.
@@ -42,7 +68,9 @@ bash -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_ma
 ***Сервер 2 и 3***
 <br/> Настраивается 2 клиента, подключаются к серверу с автозагрузкой.
 
-## Bind9
+---
+
+### Bind9
 
 ***Сервер 2***
 <br/> Установка *Bind9*.
@@ -55,7 +83,9 @@ bash -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_ma
 ***Все сервера***
 <br/> Все сервера настраиваются на резолв через наш *DNS*.
 
-## PostgreSQL
+---
+
+### PostgreSQL
 
 ***Сервер 3***
 <br/> Установка *PostgreSQL*.
@@ -72,6 +102,8 @@ bash -c "$(curl -fsSL https://github.com/mkAdmin11/ansible/raw/master/firstly_ma
 + Rouncube.
 + Zabbix - база для сервиса, а также средства мониторинга PostgreSQL.
 + pgAdmin - для базы [Demo](https://postgrespro.com/education/demodb) и ее копия.
+
+---
 
 ## WEB
 
