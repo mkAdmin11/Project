@@ -26,7 +26,7 @@
 
 Итоговая графическая схема проекта:
 
-<img src="source/project_page_1.png" width="800">
+<img src="source/project.png" width="800">
 
 ---
 
