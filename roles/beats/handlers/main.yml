@@ -1,6 +1,0 @@
----
-
-- name: handlers - restart filebeat service
-  systemd:
-    name: filebeat.service
-    state: restarted

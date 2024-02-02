@@ -1,3 +1,0 @@
-admin@{{ domain.second }}{{ domain.top }}:{{ mail.admin.pass }}
-info@{{ domain.second }}{{ domain.top }}:{{ mail.info.pass }}
-no-reply@{{ domain.second }}{{ domain.top }}:{{ mail.no_reply.pass }}
