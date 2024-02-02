@@ -1,0 +1,63 @@
+---
+
+- name: nginx - install nginx
+  apt:
+    name: nginx
+    state: latest
+
+- name: nginx - start and enable nginx service
+  systemd:
+    name: nginx.service
+    enabled: yes
+    state: started
+
+- name: nginx - find enabled configs
+  find:
+    excludes: nginx.conf
+    path: /etc/nginx/sites-enabled/
+    file_type: any
+  register: nginx_conf
+
+- name: nginx - remove enabled config
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ nginx_conf.files }}"
+  notify: handlers - reload nginx service
+
+- name: nginx - copy config
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/nginx.conf
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: handlers - reload nginx service
+
+- name: nginx - check ssl
+  file:
+    src: /etc/nginx/sites-available/nginx_ssl.conf
+    dest: /etc/nginx/sites-enabled/nginx.conf
+    state: link
+    force: yes
+  check_mode: yes
+  register: ssl_on
+
+- name: nginx - enabled config
+  file:
+    src: /etc/nginx/sites-available/nginx.conf
+    dest: /etc/nginx/sites-enabled/nginx.conf
+    owner: root
+    group: www-data
+    state: link
+  when: ssl_on is changed
+  notify: handlers - reload nginx service
+
+- name: nginx - add ufw rule
+  ufw:
+    rule: allow
+    name: Nginx Full
+  notify: handlers - reload ufw
+
+- name: nginx - flush handlers
+  meta: flush_handlers

@@ -1,0 +1,100 @@
+---
+
+- name: apache - install apache
+  apt:
+    name: apache2
+    state: latest
+
+- name: apache - make cert dir
+  file:
+    name: /etc/apache2/cert
+    owner: root
+    group: www-data
+    mode: 0750
+    state: directory
+
+- name: apache - start and enable apache service
+  systemd:
+    name: apache2.service
+    enabled: yes
+    state: started
+
+- name: apache - copy cert
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: www-data
+    mode: 0640
+  with_items:
+    - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/apache2/cert/ca.crt'}
+    - {src: '/share/easy_rsa/pki/issued/web.local.crt', dest: '/etc/apache2/cert/web.local.crt'}
+    - {src: '/share/easy_rsa/pki/private/web.local.key', dest: '/etc/apache2/cert/web.local.key'}
+  notify: handlers - reload apache service
+
+- name: apache - set apache port
+  template:
+    src: ports.conf
+    dest: /etc/apache2/ports.conf
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: handlers - restart apache service
+
+- name: apache - enable ssl mode
+  command:
+    creates: /etc/apache2/mods-enabled/ssl.conf
+    cmd: sudo a2enmod ssl
+  notify: handlers - restart apache service
+
+- name: apache - install mods
+  apt:
+    pkg:
+    - libapache2-mod-php
+    - libapache2-mod-wsgi-py3
+    - libapache2-mod-rpaf
+  notify: handlers - reload apache service
+
+- name: apache - find enabled configs
+  find:
+    excludes: apache.conf
+    path: /etc/apache2/sites-enabled/
+    file_type: any
+  register: apache_conf
+
+- name: apache - remove enabled config
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ apache_conf.files }}"
+  notify: handlers - reload apache service
+
+- name: apache - copy config
+  template:
+    src: apache.conf
+    dest: /etc/apache2/sites-available/apache.conf
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: handlers - reload apache service
+
+- name: apache - enabled config
+  file:
+    src: /etc/apache2/sites-available/apache.conf
+    dest: /etc/apache2/sites-enabled/apache.conf
+    owner: root
+    group: www-data
+    state: link
+  notify: handlers - reload apache service
+
+- name: apache - add ufw rule
+  ufw:
+    rule: allow
+    port: 8080 
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  notify: handlers - reload ufw
+
+- name: apache - flush handlers
+  meta: flush_handlers

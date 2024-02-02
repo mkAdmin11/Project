@@ -1,0 +1,33 @@
+---
+
+- name: agent - install
+  apt:
+    name: zabbix-agent
+    state: latest
+
+- name: agent - start and enable zabbix-agent service
+  systemd:
+    name: zabbix-agent.service
+    enabled: yes
+    state: started
+
+- name: agent - copy conf
+  template:
+    src: zabbix_agentd.conf
+    dest: /etc/zabbix/zabbix_agentd.conf
+    owner: root
+    group: zabbix
+    mode: 0640
+  notify: handlers - restart zabbix-agent service
+
+- name: agent - add ufw rule
+  ufw:
+    rule: allow
+    port: 10050
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
+  notify: handlers - reload ufw
+
+- name: agent - flush handlers
+  meta: flush_handlers

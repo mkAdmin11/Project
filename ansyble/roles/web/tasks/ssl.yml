@@ -1,0 +1,49 @@
+---
+
+- name: ssl - install few pkg
+  apt:
+    pkg:
+    - certbot
+    - python3-certbot-nginx
+    - gcc
+    - dialog
+    - libaugeas0
+    - augeas-lenses
+    - libssl-dev
+    - libffi-dev
+    - ca-certificates
+
+- name: ssl - nginx service mast be started
+  systemd:
+    name: nginx.service
+    state: started
+
+- name: ssl - generate cert
+  command:
+    creates: /etc/letsencrypt/live/{{ domain.second }}{{ domain.top }}/privkey.pem
+    cmd: letsencrypt certonly --webroot --agree-tos -w /var/www/html -m admin@{{ domain.second }}{{ domain.top }} -d {{ domain.second }}{{ domain.top }}
+  notify: handlers - reload nginx service
+
+- name: ssl - generate dh
+  command:
+    creates: /etc/letsencrypt/ssl-dhparams.pem
+    cmd: openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
+  notify: handlers - reload nginx service
+
+- name: ssl - config nginx
+  template:
+    src: nginx_ssl.conf
+    dest: /etc/nginx/sites-available/nginx_ssl.conf
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: handlers - reload nginx service
+
+- name: nginx - enabled config
+  file:
+    src: /etc/nginx/sites-available/nginx_ssl.conf
+    dest: /etc/nginx/sites-enabled/nginx.conf
+    owner: root
+    group: www-data
+    state: link
+  notify: handlers - restart nginx service

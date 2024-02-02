@@ -1,0 +1,25 @@
+---
+
+- name: handlers - restart apache service
+  systemd:
+    name: apache2.service
+    state: restarted
+
+- name: handlers - reload apache service
+  systemd:
+    name: apache2.service
+    state: reloaded
+
+- name: handlers - restart nginx service
+  systemd:
+    name: nginx.service
+    state: restarted
+
+- name: handlers - reload nginx service
+  systemd:
+    name: nginx.service
+    state: reloaded
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded

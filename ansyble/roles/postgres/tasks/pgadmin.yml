@@ -1,0 +1,63 @@
+---
+
+- name: pgadmin - add pgadmin repository key
+  apt_key:
+    id: E8697E2EEF76C02D3A6332778881B2A8210976F2
+    # curl -sL https://www.pgadmin.org/static/packages_pgadmin_org.pub | tee | gpg --keyid-format long
+    url: https://www.pgadmin.org/static/packages_pgadmin_org.pub
+    state: present
+
+- name: pgadmin - add pgadmin repository list
+  template:
+    src: pgadmin4.list
+    dest: /etc/apt/sources.list.d/pgadmin4.list
+    owner: root
+    group: root
+    mode: 0644
+  notify: handlers - update apt cache
+
+- name: pgadmin - flush handlers
+  meta: flush_handlers
+
+- name: pgadmin - install pgadmin
+  apt:
+    name: pgadmin4
+    state: latest
+
+- name: pgadmin - install python3 and ower pkg
+  apt:
+    pkg:
+    - python3-pip
+    - python3-dev
+
+- name: pgadmin - script
+  expect:
+    creates: /var/lib/pgadmin/storage/{{ user.gpadmin.name }}_{{ domain.second }}{{ domain.top }}
+    command: /usr/pgadmin4/bin/setup-web.sh
+    responses:
+      (?i)Email address: "{{ user.gpadmin.name }}@{{ domain.second }}{{ domain.top }}"
+      (?i)Password: "{{ user.gpadmin.pass }}"
+      (?i)Retype password: "{{ user.gpadmin.pass }}"
+      (?i)Do you wish to continue(.*): "n"
+  no_log: true
+  ignore_errors: yes
+
+- name: pgadmin - make pgadmin user share
+  file:
+    path: /var/lib/pgadmin/storage/{{ user.gpadmin.name }}_{{ domain.second }}{{ domain.top }}
+    state: directory
+    owner: root
+    group: www-data
+    mode: 0750
+
+- name: pgadmin - copy cert
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: www-data
+    mode: 0640
+  with_items:
+    - {src: '/share/easy_rsa/pki/ca.crt', dest: '/var/lib/pgadmin/storage/{{ user.gpadmin.name }}_{{ domain.second }}{{ domain.top }}/ca.crt'}
+    - {src: '/share/easy_rsa/pki/issued/{{ db.demo.user }}.crt', dest: '/var/lib/pgadmin/storage/{{ user.gpadmin.name }}_{{ domain.second }}{{ domain.top }}/{{ db.demo.user }}.crt'}
+    - {src: '/share/easy_rsa/pki/private/{{ db.demo.user }}.key', dest: '/var/lib/pgadmin/storage/{{ user.gpadmin.name }}_{{ domain.second }}{{ domain.top }}/{{ db.demo.user }}.key'}

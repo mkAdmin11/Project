@@ -1,0 +1,18 @@
+---
+
+- name: handlers - collect facts
+  gather_facts:
+
+- name: handlers - reload openvpn-server service
+  systemd:
+    name: openvpn@vpn-server.service
+    state: restarted
+
+- name: handlers - reload openvpn-client service
+  systemd:
+    name: openvpn@{{ ansible_hostname }}.service
+    state: restarted
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded

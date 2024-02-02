@@ -1,0 +1,30 @@
+---
+
+- name: handlers - update cache
+  apt:
+    update_cache: yes
+
+- name: handlers - reload postgres service
+  become_user: root
+  systemd:
+    name: postgresql.service
+    state: reloaded
+
+- name: handlers - restart zabbix-server service
+  systemd:
+    name: zabbix-server.service
+    state: restarted
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded
+
+- name: handlers - restart zabbix-agent service
+  systemd:
+    name: zabbix-agent.service
+    state: restarted
+
+- name: handlers - reload apache service
+  systemd:
+    name: apache2.service
+    state: reloaded

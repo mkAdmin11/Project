@@ -1,0 +1,44 @@
+---
+
+- name: client - make client source dir
+  file:
+    path: /etc/openvpn/cert
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
+- name: client - copy cert
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/openvpn/cert/ca.crt'}
+    - {src: '/share/easy_rsa/pki/dh.pem', dest: '/etc/openvpn/cert/dh.pem'}
+    - {src: '/share/easy_rsa/pki/issued/{{ ansible_hostname }}.crt', dest: '/etc/openvpn/cert/{{ ansible_hostname }}.crt'}
+    - {src: '/share/easy_rsa/pki/private/{{ ansible_hostname }}.key', dest: '/etc/openvpn/cert/{{ ansible_hostname }}.key'}
+  notify: handlers - reload openvpn-client service
+
+- name: client - config client
+  template:
+    src: /share/vpn_conf/{{ ansible_hostname }}
+    dest: /etc/openvpn/{{ ansible_hostname }}.conf
+    owner: root
+    group: root
+    mode: 0640
+    follow: yes
+  notify: handlers - reload openvpn-client service
+
+- name: client - start openvpn-client service
+  systemd:
+    daemon_reload: yes
+    name: openvpn@{{ ansible_hostname }}.service
+    enabled: yes
+    state: started
+  notify: handlers - collect facts
+
+- name: client - flush handlers
+  meta: flush_handlers

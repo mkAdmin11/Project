@@ -1,0 +1,73 @@
+---
+
+- name: server - make server source
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+  - {path: '/etc/openvpn/client.list', state: 'touch', mode: '0640'}
+  - {path: '/etc/openvpn/ccd', state: 'directory' , mode: '0750'}
+  - {path: '/etc/openvpn/cert', state: 'directory' , mode: '0750'}
+
+- name: server - make client config file
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0640
+    follow: yes
+  with_items:
+  - {src: '/share/vpn_conf/vpn-{{ server2.name }}', dest: '/etc/openvpn/ccd/{{ server2.name }}'}
+  - {src: '/share/vpn_conf/vpn-{{ server3.name }}', dest: '/etc/openvpn/ccd/{{ server3.name }}'}
+  notify: handlers - reload openvpn-server service
+
+- name: server - copy cert
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/openvpn/cert/ca.crt'}
+    - {src: '/share/easy_rsa/pki/dh.pem', dest: '/etc/openvpn/cert/dh.pem'}
+    - {src: '/share/easy_rsa/pki/issued/vpn-server.crt', dest: '/etc/openvpn/cert/vpn-server.crt'}
+    - {src: '/share/easy_rsa/pki/private/vpn-server.key', dest: '/etc/openvpn/cert/vpn-server.key'}
+  notify: handlers - reload openvpn-server service
+
+- name: server - config server
+  template:
+    src: /share/vpn_conf/{{ ansible_hostname }}
+    dest: /etc/openvpn/vpn-server.conf
+    owner: root
+    group: root
+    mode: 0640
+    follow: yes
+  notify: handlers - reload openvpn-server service
+
+- name: server - start openvpn-server service
+  systemd:
+    daemon_reload: yes
+    name: openvpn@vpn-server.service
+    enabled: yes
+    state: started
+  notify: handlers - collect facts
+
+- name: server - flush handlers
+  meta: flush_handlers
+
+- name: server - add openvpn ufw rule
+  ufw:
+    rule: allow
+    proto: udp
+    port: 1194
+    direction: in
+    interface: "{{ ansible_facts.default_ipv4.interface }}"
+  notify: handlers - reload ufw
+
+- name: server - flush handlers
+  meta: flush_handlers

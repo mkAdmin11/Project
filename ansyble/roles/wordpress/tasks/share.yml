@@ -1,0 +1,33 @@
+---
+
+- name: share - create share dir
+  file:
+    path: /share
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+
+- name: share - download wordpress
+  get_url:
+    url: https://ru.wordpress.org/latest-ru_RU.zip
+    dest: /share/wordpress.zip
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640
+
+- name: share - download wp-cli
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /share/wp-cli.phar
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0750
+
+- name: share - download pg4wp
+  get_url:
+    url: https://github.com/kevinoid/postgresql-for-wordpress/archive/refs/heads/wordpress4-compat.zip
+    dest: /share/pg4wp.zip
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0640

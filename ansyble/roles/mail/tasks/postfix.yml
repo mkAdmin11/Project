@@ -1,0 +1,65 @@
+---
+
+- name: postfix - set option hostname
+  debconf: 
+    name: postifx
+    question: postfix/mailname
+    value: "{{ domain.second }}{{ domain.top }}"
+    vtype: string
+
+- name: postfix - set option type as internet site
+  debconf: 
+    name: postfix
+    question: postfix/main_mailer_type
+    value: "'Internet Site'"
+    vtype: select
+
+- name: postfix - install postfix
+  apt:
+    name: postfix
+    state: present
+
+- name: postfix - start and enable dovecot service
+  systemd:
+    name: postfix.service
+    enabled: yes
+    state: started
+
+- name: postfix - config
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: postfix
+    mode: 0640
+  with_items:
+  - {src: 'main.cf',dest: '/etc/postfix/main.cf'}
+  - {src: 'master.cf',dest: '/etc/postfix/master.cf'}
+  notify: handlers - restart postfix service
+
+- name: postfix - set virtual mailbox domain
+  template:
+    src: virtual_mailbox_domains
+    dest: /etc/postfix/virtual_mailbox_domains
+    owner: root
+    group: postfix
+    mode: 0640
+  notify:
+    - handlers - postfix lookup
+    - handlers - reload postfix service
+
+- name: postfix - add ufw rule
+  ufw:
+    rule: allow
+    proto: tcp
+    interface: "{{ ansible_facts.default_ipv4.interface }}"
+    direction: in
+    to_port: "{{ item }}"
+  loop:
+    - 25
+    - 587
+    - 465
+  notify: handlers - reload ufw
+
+- name: postfix - flush handlers
+  meta: flush_handlers

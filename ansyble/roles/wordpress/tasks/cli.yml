@@ -1,0 +1,32 @@
+---
+
+- name: cli - copy wp-cli
+  copy:
+    src: /share/wp-cli.phar
+    dest: /usr/local/bin/wp
+    owner: root
+    group: root
+    mode: 0755
+
+- name: cli - init wp
+  command:
+    chdir: /var/www/wordpress
+    creates: /var/www/wordpress/wp-content/plugins/contact-form-7/
+    cmd: sudo wp core install --url={{ domain.second }}{{ domain.top }} --title={{ domain.second }} --admin_user={{ user.wordpress.name }} --admin_password={{ user.wordpress.pass }} --admin_email=admin@{{ domain.second }}{{ domain.top }} --allow-root
+
+- name: cli - install plugin - Contact Form 7
+  command:
+    chdir: /var/www/wordpress
+    creates: /var/www/wordpress/wp-content/plugins/contact-form-7/
+    cmd: sudo -u www-data wp plugin install "Contact Form 7"
+
+- name: cli - activate plugin - Contact Form 7
+  command:
+    chdir: /var/www/wordpress
+    creates: /var/www/wordpress/wp-content/plugins/contact-form-7/
+    cmd: sudo -u www-data wp plugin activate "contact-form-7"
+
+- name: cli - remove install.php
+  file:
+    path: /var/www/wordpress/wp-admin/install.php
+    state: absent

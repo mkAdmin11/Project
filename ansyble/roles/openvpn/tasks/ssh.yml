@@ -1,0 +1,27 @@
+---
+
+- name: ssh - add ufw rule (allow vpn ssh)
+  ufw:
+    rule: allow
+    proto: tcp
+    port: 22
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
+  when: ansible_hostname != server2.name|string
+  notify: handlers - reload ufw
+
+- name: ssh - flush handlers
+  meta: flush_handlers
+
+- name: ssh - add know hosts
+  known_hosts:
+    path: /home/{{ ansible_user }}/.ssh/known_hosts
+    name: "{{ item }}"
+    state: present
+    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa {{ item }}') }}"
+  loop:
+    - "{{ server1.vpn_ip }}"
+    - "{{ server2.vpn_ip }}"
+    - "{{ server3.vpn_ip }}"
+  when: ansible_hostname == server1.name|string

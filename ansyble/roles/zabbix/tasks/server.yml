@@ -1,0 +1,33 @@
+---
+
+- name: server - install zabbix psql server 
+  apt:
+    name: zabbix-server-pgsql
+    state: latest
+
+- name: server - start and enable zabbix-server service
+  systemd:
+    name: zabbix-server.service
+    enabled: yes
+    state: started
+
+- name: server - copy config
+  template:
+    src: zabbix_server.conf
+    dest: "/etc/zabbix/zabbix_server.conf"
+    owner: root
+    group: zabbix
+    mode: 0640
+  notify: handlers - restart zabbix-server service
+
+- name: server - add ufw rule
+  ufw:
+    rule: allow
+    port: 10051
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: "{{ vpn.gate }}/{{ vpn.prefix }}"
+  notify: handlers - reload ufw
+
+- name: server - flush handlers
+  meta: flush_handlers

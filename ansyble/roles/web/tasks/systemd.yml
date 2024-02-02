@@ -1,0 +1,73 @@
+---
+
+- name: systemd - apache require
+  lineinfile:
+    path: /lib/systemd/system/apache2.service
+    insertbefore: '^After=(.*)$'
+    line: 'Requires=openvpn@{{ ansible_hostname }}.service'
+
+- name: systemd - check apache after-line
+  replace:
+    path: /lib/systemd/system/apache2.service
+    regexp: "^After=(.*) openvpn@{{ ansible_hostname }}.service$"
+    replace: "zero"
+  check_mode: yes
+  register: line_exist
+
+- name: systemd - apache after-line
+  lineinfile:
+    path: /lib/systemd/system/apache2.service
+    regexp: '^(After=.*)$'
+    line: \g<1> openvpn@{{ ansible_hostname }}.service
+    backrefs: yes
+  when: line_exist is not changed
+
+- name: systemd - nginx require
+  lineinfile:
+    path: /lib/systemd/system/nginx.service
+    insertbefore: '^After=(.*)$'
+    line: 'Requires=apache2.service openvpn@{{ ansible_hostname }}.service'
+
+- name: systemd - check nginx vpn-after-line
+  replace:
+    path: /lib/systemd/system/nginx.service
+    regexp: "^After=(.*)openvpn@{{ ansible_hostname }}.service(.*)$"
+    replace: "zero"
+  check_mode: yes
+  register: line_vpn_exist
+
+- name: systemd - nginx vpn-after-line
+  lineinfile:
+    path: /lib/systemd/system/nginx.service
+    regexp: '^(After=.*)$'
+    line: \g<1> openvpn@{{ ansible_hostname }}.service
+    backrefs: yes
+  when: line_vpn_exist is not changed
+
+- name: systemd - check nginx apache-after-line
+  replace:
+    path: /lib/systemd/system/nginx.service
+    regexp: "^After=(.*)apache2.service(.*)$"
+    replace: "zero"
+  check_mode: yes
+  register: line_apache_exist
+
+- name: systemd - nginx apache-after-line
+  lineinfile:
+    path: /lib/systemd/system/nginx.service
+    regexp: '^(After=.*)$'
+    line: \g<1> apache2.service
+    backrefs: yes
+  when: line_apache_exist is not changed
+
+- name: systemd - nginx restart conditions
+  lineinfile:
+    path: /lib/systemd/system/nginx.service
+    insertafter: '^KillMode=(.*)$'
+    line: 'Restart=on-failure'
+
+- name: systemd - nginx restart period
+  lineinfile:
+    path: /lib/systemd/system/nginx.service
+    insertafter: '^Restart=(.*)$'
+    line: 'RestartSec=60'

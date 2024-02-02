@@ -1,0 +1,39 @@
+---
+
+- name: roundcube - unzip roundcube.tar.gz
+  unarchive:
+    src: /share/roundcube.tar.gz
+    dest: /tmp/
+    owner: root
+    group: root
+    list_files: yes
+  register: unzip
+
+- name: roundcube - check source
+  find:
+    paths: /var/www/
+    patterns: '^config.inc.php$'
+    recurse: yes
+    use_regex: yes
+  register: rc_source
+
+- name: roundcube - move source dir
+  copy:
+    src: /tmp/{{ unzip.files[0] }}
+    dest: /var/www/mail/
+    owner: www-data
+    group: www-data
+    remote_src: true
+  when: rc_source.matched == 0
+
+- name: roundcube - gen key
+  set_fact:
+    roundcude_key_gen: "{{ lookup('password', '/dev/null length=24 seed=inventory_hostname chars=ascii_letters,digits') }}"
+
+- name: roundcube - copy config
+  template:
+    src: config.inc.php
+    dest: /var/www/mail/config/config.inc.php
+    owner: root
+    group: www-data
+    mode: 0640

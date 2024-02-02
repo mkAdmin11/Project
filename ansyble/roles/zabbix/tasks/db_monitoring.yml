@@ -1,0 +1,47 @@
+---
+
+- name: db_monitoring - make source dir
+  file:
+    path: /var/lib/zabbix/
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: db_monitoring - unzip zabbix.zip
+  unarchive:
+    src: /share/zabbix.zip
+    dest: /tmp/
+    include: templates/db/postgresql/*
+    owner: root
+    group: root
+
+- name: db_monitoring - copy source
+  copy:
+    src: "{{ item.src }}" 
+    dest: "{{ item.dest }}"
+    remote_src: yes
+  with_items:
+  - {src: '/tmp/templates/db/postgresql/template_db_postgresql.conf', dest: '/etc/zabbix/zabbix_agentd.d/template_db_postgresql.conf'}
+  - {src: '/tmp/templates/db/postgresql/postgresql/', dest: '/var/lib/zabbix/postgresql/'}
+
+- name: db_monitoring - add user
+  become_user: postgres
+  postgresql_user:
+    db: "{{ db.zabbix.name }}"
+    name: "{{ db.monidoring.user }}"
+    password: "{{ db.monidoring.pass }}"
+    priv: ALL
+    role_attr_flags: INHERIT
+  no_log: true
+
+- name: db_monitoring - user auth conf
+  become_user: postgres
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: hostssl
+    users: "{{ db.monidoring.user }}"
+    databases: "{{ db.zabbix.name }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: scram-sha-256
+  notify: handlers - reload postgres service

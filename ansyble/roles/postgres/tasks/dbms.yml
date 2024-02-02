@@ -1,0 +1,93 @@
+---
+
+- name: dbms - add postgresql repository key
+  apt_key:
+    id: B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
+    # curl -sL https://www.postgresql.org/media/keys/ACCC4CF8.asc | tee | gpg --keyid-format long
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    keyring: /etc/apt/trusted.gpg.d/postgresql.gpg
+
+- name: dbms - add postgresql repository list
+  template:
+    src: pgdg.list 
+    dest: /etc/apt/sources.list.d/pgdg.list
+    owner: root
+    group: root
+    mode: 0644
+  notify: handlers - update apt cache
+
+- name: dbms - flush handlers
+  meta: flush_handlers
+
+- name: dbms - install postgrsql
+  apt:
+    pkg:
+    - postgresql-{{ db.ver }}
+    - postgresql-contrib-{{ db.ver }}
+
+- name: dbms - install few pkg
+  apt:
+    pkg:
+    - libpq-dev
+    - acl
+
+- name: dbms - install python lib
+  pip:
+    name: psycopg2
+    state: latest
+
+- name: dbms - start and enable postgresql service
+  systemd:
+    name: postgresql.service
+    enabled: yes
+    state: started
+
+- name: dbms - add ufw rule
+  ufw:
+    rule: allow
+    port: 5432
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  notify: handlers - reload ufw
+
+- name: dbms - make cert dir
+  file:
+    name: /etc/postgresql/{{ db.ver }}/main/cert
+    owner: root
+    group: postgres
+    mode: 0750
+    state: directory
+
+- name: dbms - copy cert
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: postgres
+    mode: 0640
+  with_items:
+    - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/postgresql/{{ db.ver }}/main/cert/ca.crt'}
+    - {src: '/share/easy_rsa/pki/issued/db.local.crt', dest: '/etc/postgresql/{{ db.ver }}/main/cert/db.local.crt'}
+    - {src: '/share/easy_rsa/pki/private/db.local.key', dest: '/etc/postgresql/{{ db.ver }}/main/cert/db.local.key'}
+  notify: handlers - reload postgresql service
+
+- name: dbms - listen addresses
+  replace:
+    path: /etc/postgresql/{{ db.ver }}/main/postgresql.conf
+    regexp: "^#listen_addresses = 'localhost"
+    replace: "listen_addresses = '0.0.0.0"
+    backup: yes
+  notify: handlers - restart postgresql service
+
+- name: dbms - copy config
+  template:
+    src: postgresql.conf
+    dest: /etc/postgresql/{{ db.ver }}/main/postgresql.conf
+    owner: root
+    group: postgres
+    mode: 0640
+  notify: handlers - reload postgresql service
+
+- name: dbms - flush handlers
+  meta: flush_handlers

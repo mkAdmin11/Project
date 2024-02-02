@@ -1,0 +1,82 @@
+---
+
+- name: dovecot - install
+  apt:
+    pkg:
+    - dovecot-core
+    - dovecot-imapd
+    - dovecot-pop3d
+    - dovecot-lmtpd
+
+- name: dovecot - start and enable dovecot service
+  systemd:
+    name: dovecot.service
+    enabled: yes
+    state: started
+
+- name: dovecot - add mail group
+  group:
+    name: vmail
+    state: present
+    gid: 5000
+
+- name: dovecot - add mail user
+  user:
+    name: vmail
+    comment: "virtual mail user"
+    uid: 5000
+    group: vmail
+    home: "/var/mail/vhosts"
+    create_home: yes
+
+- name: dovecot - make mail dir
+  file:
+    path: "/var/mail/vhosts/{{ domain.second }}{{ domain.top }}"
+    state: directory
+    owner: root
+    group: vmail
+    mode: 0770
+
+- name: dovecot - copy config - need restart service
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+  - {src: '10-master.conf', dest: '/etc/dovecot/conf.d/10-master.conf'}
+  - {src: 'dovecot.conf', dest: '/etc/dovecot/dovecot.conf'}
+  notify: handlers - restart dovecot service
+
+- name: dovecot - copy config - need reload service
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+  - {src: 'auth-passwdfile.conf.ext', dest: '/etc/dovecot/conf.d/auth-passwdfile.conf.ext'}
+  - {src: 'dovecot-users', dest: '/etc/dovecot/dovecot-users'}
+  notify: handlers - reload dovecot service
+
+- name: dovecot - authentication processes
+  replace:
+    path: /etc/dovecot/conf.d/10-auth.conf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  with_items:
+    - {regexp: '^!include auth-system.conf.ext', replace: '#!include auth-system.conf.ext'}
+    - {regexp: '^#!include auth-passwdfile.conf.ext', replace: '!include auth-passwdfile.conf.ext'}
+  notify: handlers - reload dovecot service
+
+- name: dovecot - mail location
+  replace:
+    path: /etc/dovecot/conf.d/10-mail.conf
+    regexp: '^mail_location = mbox:~/mail:INBOX=/var/mail/%u'
+    replace: 'mail_location = maildir:/var/mail/vhosts/%d/%n'
+  notify: handlers - reload dovecot service
+
+- name: dovecot - flush handlers
+  meta: flush_handlers

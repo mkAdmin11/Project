@@ -1,0 +1,59 @@
+---
+
+- name: db - add zabbix sql script
+  apt:
+    name: zabbix-sql-scripts
+    state: latest
+
+- name: db - create user
+  become_user: postgres
+  postgresql_user:
+    name: "{{ db.zabbix.user }}"
+    password: "{{ db.zabbix.pass }}"
+    role_attr_flags: SUPERUSER
+  no_log: true
+
+- name: db - create db
+  become_user: postgres
+  postgresql_db:
+    name: "{{ db.zabbix.name }}"
+    owner: "{{ db.zabbix.user }}"
+    encoding: UTF-8
+
+- name: db - grant privileges
+  become_user: postgres
+  postgresql_privs:
+    db: "{{ db.zabbix.name }}"
+    privs: ALL
+    type: database
+    role: "{{ db.zabbix.user }}"
+
+- name: db - get db info
+  become_user: postgres
+  postgresql_info:
+    filter:
+      - databases
+  register: db_info
+
+- name: db - restore db
+  become_user: postgres
+  postgresql_db:
+    name: "{{ db.zabbix.name }}"
+    state: restore
+    target: /usr/share/doc/zabbix-sql-scripts/postgresql/server.sql.gz
+    target_opts: pg_restore
+  when: db_info.databases.{{ db.zabbix.name }}.size == db_info.databases.template1.size
+
+- name: db - user auth conf
+  become_user: postgres
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: hostssl
+    users: "{{ db.zabbix.user }}"
+    databases: "{{ db.zabbix.name }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: scram-sha-256
+  notify: handlers - reload postgres service
+
+- name: db - flush handlers
+  meta: flush_handlers

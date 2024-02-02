@@ -1,0 +1,16 @@
+---
+
+- name: web - install and config php
+  include_tasks: php.yml
+
+- name: web - install and config apache
+  include_tasks: apache.yml
+
+- name: web - install and config nginx
+  include_tasks: nginx.yml
+
+- name: web - switch to ssl
+  include_tasks: ssl.yml
+
+- name: web - config systemd
+  include_tasks: systemd.yml

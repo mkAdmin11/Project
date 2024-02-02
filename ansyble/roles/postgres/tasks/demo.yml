@@ -1,0 +1,57 @@
+---
+
+- name: demo - postgresql must be started
+  systemd:
+    name: postgresql.service
+    state: started
+
+- name: demo - unzip demo dump
+  unarchive:
+    creates: /tmp/demo(.*)
+    src: /share/demo.zip
+    dest: /tmp/
+    owner: postgres
+    group: postgres
+    list_files: yes
+  register: unzip
+
+- name: demo - create user
+  postgresql_user:
+    name: "{{ db.demo.user }}"
+
+- name: demo - create db
+  postgresql_db:
+    name: "{{ db.demo.name }}"
+    owner: "{{ db.demo.user }}"
+    encoding: UTF-8
+
+- name: demo - grant privileges
+  postgresql_privs:
+    db: "{{ db.demo.name }}"
+    privs: ALL
+    type: database
+    role: "{{ db.demo.user }}"
+
+- name: demo - get db info
+  postgresql_info:
+    filter:
+      - databases
+  register: db_info
+
+- name: demo - restore db
+  postgresql_db:
+    name: "{{ db.demo.name }}"
+    state: restore
+    target: /tmp/{{ unzip.files[0] }}
+  when: db_info.databases.{{ db.demo.name }}.size == db_info.databases.template1.size
+
+- name: demo - user auth rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: hostssl
+    users: "{{ db.demo.user }}"
+    databases: "{{ db.demo.name }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: cert
+    options: clientcert=verify-full
+  notify: handlers - reload postgresql service

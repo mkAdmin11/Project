@@ -1,0 +1,20 @@
+---
+
+- name: clear - backup www
+  copy:
+    src: /var/www/
+    dest: /var/www_backup
+    remote_src: yes
+    force: no
+  notify: handlers - remove www
+
+- name: clear - flush handlers
+  meta: flush_handlers
+
+- name: clear - make new www dir
+  file:
+    path: /var/www/
+    state: directory
+    mode: 0755
+    owner: root
+    group: root

@@ -1,0 +1,44 @@
+--- 
+
+- name: wp - unzip wordpress.zip
+  unarchive:
+    src: /share/wordpress.zip 
+    dest: /var/www/ 
+    creates: /var/www/wordpress/wp-content/plugins/contact-form-7/
+    owner: www-data
+    group: www-data
+
+- name: wp - gen key
+  set_fact:
+    WP_AUTH_KEY: "{{ lookup('password', '/dev/null length=48 seed={{ user.wordpress.pass }}_AUTH_KEY chars=ascii_letters,digits') }}"
+    WP_SECURE_AUTH_KEY: "{{ lookup('password', '/dev/null length=48 seed={{ inventory_hostname }}_SECURE_AUTH_KEY chars=ascii_letters,digits') }}"
+    WP_LOGGED_IN_KEY: "{{ lookup('password', '/dev/null length=48 seed={{ inventory_hostname }}_LOGGED_IN_KEY chars=ascii_letters,digits') }}"
+    WP_NONCE_KEY: "{{ lookup('password', '/dev/null length=48 seed={{ inventory_hostname }}_NONCE_KEY chars=ascii_letters,digits') }}"
+    WP_AUTH_SALT: "{{ lookup('password', '/dev/null length=48 seed={{ inventory_hostname }}_AUTH_SALT chars=ascii_letters,digits') }}"
+    WP_SECURE_AUTH_SALT: "{{ lookup('password', '/dev/null length=48 seed={{ inventory_hostname }}_SECURE_AUTH_SAL chars=ascii_letters,digits') }}"
+    WP_LOGGED_IN_SALT: "{{ lookup('password', '/dev/null length=48 seed={{ inventory_hostname }}_LOGGED_IN_SALT chars=ascii_letters,digits') }}"
+    WP_NONCE_SALT: "{{ lookup('password', '/dev/null length=48 seed={{ inventory_hostname }}_NONCE_SALT chars=ascii_letters,digits') }}"
+
+- name: wp - config wordpress
+  template:
+    src: wp-config.php
+    dest: /var/www/wordpress/wp-config.php
+    mode: 0640
+    owner: root 
+    group: www-data
+
+- name: wp - unzip pg4wp.zip
+  unarchive:
+    src: /share/pg4wp.zip
+    dest:  /tmp
+
+- name: wp - copy pg4wp
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: www-data
+    group: www-data
+    remote_src: yes
+  with_items:
+    - {src: /tmp/postgresql-for-wordpress-wordpress4-compat/pg4wp/, dest: /var/www/wordpress/wp-content/pg4wp/}
+    - {src: /var/www/wordpress/wp-content/pg4wp/db.php, dest: /var/www/wordpress/wp-content/db.php}
