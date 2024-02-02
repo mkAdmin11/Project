@@ -1,0 +1,48 @@
+---
+
+- name: init - collect facts
+  gather_facts:
+
+- name: init - update cache
+  apt:
+    update_cache: yes
+
+- name: init - safe upgrade
+  apt:
+    upgrade: safe
+
+- name: init - install few packages
+  apt:
+    pkg:
+    - network-manager
+    - tree
+    - apt-transport-https
+    - unzip
+    - zip
+    - python3-pip
+    - python3-dev
+
+- name: init - install python lib
+  pip:
+    name: pexpect
+    state: latest
+
+- name: init - set timezone
+  timezone:
+    name: Europe/Moscow
+
+- name: init - prepare share
+  include_tasks: share.yml
+  when: ansible_hostname == server1.name|string
+
+- name: init - config servers
+  include_tasks: config.yml
+
+- name: init - prepare certs
+  include_tasks: pki.yml
+  when: ansible_hostname == server1.name|string
+  tags: init_pki
+
+- name: init - config ufw
+  include_tasks: ufw.yml
+

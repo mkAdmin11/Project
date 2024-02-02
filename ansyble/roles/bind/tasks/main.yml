@@ -1,0 +1,20 @@
+---
+
+- name: bind - install bind
+  include_tasks: install.yml
+  when: ansible_hostname == server2.name|string
+
+- name: bind - config systemd-resolved
+  template:
+    src: resolved.conf
+    dest: "/etc/systemd/resolved.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: handlers - restarted systemd-resolved
+
+- name: bind - systemd-resolved after vpn connect
+  lineinfile:
+    path: /lib/systemd/system/openvpn@.service
+    insertafter: '^ExecStart=(.*)$'
+    line: 'ExecStartPost=/bin/systemctl restart systemd-resolved.service'

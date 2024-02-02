@@ -1,0 +1,147 @@
+---
+
+#################################################################
+## TESTING TASKS                                               ##
+#################################################################
+- hosts: [ novpn ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  tasks:
+#   - name: ping
+#     ping:
+#   - name: show facts
+#     debug:
+#       var: rc_info
+#   - name: disables and resets firewall to installation defaults
+#     ufw:
+#       state: reset
+  tags:
+    - test
+
+#################################################################
+##    1    ansible-playbook /ansible/play.yml -t init          ##
+##    2    ansible-playbook /ansible/play.yml -t openvpn       ##
+#################################################################
+- hosts: [ novpn ]
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: init,        tags: init}
+    - {role: openvpn,     tags: openvpn}
+  tags:
+    - novpn
+
+#################################################################
+##    3    ansible-playbook /ansible/play.yml -t bind          ##
+#################################################################
+- hosts: [ vpn ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  roles:
+    - bind
+  tags:
+    - bind 
+
+#################################################################
+##    4    ansible-playbook /ansible/play.yml -t web           ##
+#################################################################
+- hosts: [ web ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  roles:
+    - web
+  tags:
+    - web
+
+#################################################################
+## 6    ansible-playbook /ansible/play.yml -t postgres         ##
+## 7    ansible-playbook /ansible/play.yml -t cms              ##
+## 8    ansible-playbook /ansible/play.yml -t mail             ##
+#################################################################
+- hosts: [ web, db ]
+  become: true
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - secret.yml
+  roles:
+    - {role: postgres,    tags: postgres}
+    - {role: cms,   tags: cms}
+    - {role: mail,        tags: mail}
+  tags:
+    - www
+
+#################################################################
+## 9    ansible-playbook /ansible/play.yml -t zabbix           ##
+#################################################################
+- hosts: [ vpn ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  roles:
+    - zabbix
+  tags:
+    - zabbix
+
+#################################################################
+## 10   ansible-playbook /ansible/play.yml -t grafana          ##
+#################################################################
+- hosts: [ main, db ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  roles:
+    - grafana
+  tags:
+    - grafana
+
+#################################################################
+## 11   ansible-playbook /ansible/play.yml -t elk              ##
+#################################################################
+- hosts: [ db ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  roles:
+    - elk
+  tags:
+    - elk
+
+#################################################################
+## 12   ansible-playbook /ansible/play.yml -t beats            ##
+#################################################################
+- hosts: [ main, web ]
+  become: true
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars_files:
+    - secret.yml
+  roles:
+    - beats
+  tags:
+    - beats

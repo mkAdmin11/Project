@@ -1,0 +1,37 @@
+---
+
+- name: elastic - install elasticsearch
+  apt:
+    name: elasticsearch
+    state: latest
+
+- name: elastic - start and enable elasticsearch service
+  systemd:
+    daemon_reload: yes
+    name: elasticsearch.service
+    enabled: yes
+    state: started
+
+- name: elastic - add ufw rule
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  with_items:
+    - 9300
+    - 9200
+  notify: handlers - reload ufw
+  
+- name: elastic - copy config
+  template:
+    src: elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: elastic
+    mode: 0640
+  notify: handlers - restart elasticsearch service
+
+- name: elastic - flush handlers
+  meta: flush_handlers

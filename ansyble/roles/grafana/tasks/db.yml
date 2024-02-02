@@ -1,0 +1,36 @@
+---
+
+- name: db - create user
+  become_user: postgres
+  postgresql_user:
+    name: "{{ db.grafana.user }}"
+#    password: "{{ db.grafana.pass }}"
+
+- name: db - create db
+  become_user: postgres
+  postgresql_db:
+    name: "{{ db.grafana.name }}"
+    owner: "{{ db.grafana.user }}"
+    encoding: UTF-8
+
+- name: db - grant privileges
+  become_user: postgres
+  postgresql_privs:
+    db: "{{ db.grafana.name }}"
+    privs: ALL
+    type: database
+    role: "{{ db.grafana.user }}"
+
+- name: db - user auth rule
+  postgresql_pg_hba:
+    dest: /etc/postgresql/{{ db.ver }}/main/pg_hba.conf
+    contype: hostssl
+    users: "{{ db.grafana.user }}"
+    databases: "{{ db.grafana.name }}"
+    source: "{{ vpn.gate }}/{{ vpn.prefix }}"
+    method: cert
+    options: clientcert=verify-full
+  notify: handlers - reload postgresql service
+
+- name: db - flush handlers
+  meta: flush_handlers

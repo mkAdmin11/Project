@@ -1,0 +1,19 @@
+---
+
+- name: install - make cms dir
+  file:
+    path: /var/www/cms
+    recurse: yes
+    force: no
+    state: directory
+    mode: 0755
+    owner: www-data
+    group: www-data
+
+- name: dir - unzip cms.zip
+  unarchive:
+    src: /share/cms.zip 
+    dest: /var/www/cms
+    creates: /var/www/cms/configuration.php
+    owner: www-data
+    group: www-data

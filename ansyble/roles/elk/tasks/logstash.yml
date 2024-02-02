@@ -1,0 +1,55 @@
+---
+
+- name: logstash - install logstash 
+  apt:
+    name: logstash
+    state: latest
+
+- name: logstash - add ufw rule
+  ufw:
+    rule: allow
+    port: 5044
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  notify: handlers - reload ufw
+
+- name: logstash - make cert dir
+  file:
+    name: /etc/logstash/cert
+    state: directory
+    owner: root
+    group: logstash
+    mode: 0770
+
+- name: logstash - copy cert
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: logstash
+    mode: 0660
+  with_items:
+    - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/logstash/cert/ca.crt'}
+    - {src: '/share/easy_rsa/pki/issued/elk.local.crt', dest: '/etc/logstash/cert/elk.local.crt'}
+    - {src: '/share/easy_rsa/pki/private/elk.local.key', dest: '/etc/logstash/cert/elk.local.key'}
+  notify: handlers - restart logstash service
+
+- name: logstash - copy config
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: logstash
+    mode: 0640
+  with_items:
+  - {src: 'logstash.conf',dest: '/etc/logstash/conf.d/logstash.conf'}
+  - {src: 'logstash.yml',dest: '/etc/logstash/logstash.yml'}
+  notify: handlers - restart logstash service
+
+- name: logstash - start and disable logstash service
+  systemd:
+    daemon_reload: yes
+    name: logstash.service
+    enabled: yes
+    state: started

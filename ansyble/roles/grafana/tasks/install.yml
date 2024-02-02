@@ -1,0 +1,125 @@
+---
+
+- name: install - add repository key
+  apt_key:
+    id: CA6D481DBD044C76
+    # curl -sL https://packages.grafana.com/gpg.key | tee | gpg --keyid-format long
+    url: https://packages.grafana.com/gpg.key
+    state: present
+
+- name: install - add repository list
+  template:
+    src: grafana.list
+    dest: /etc/apt/sources.list.d/grafana.list
+    owner: root
+    group: root
+    mode: 0644
+  notify: handlers - update apt cache
+
+- name: install - flush handlers
+  meta: flush_handlers
+
+- name: install - install grafana
+  apt:
+    name: grafana
+    state: latest
+
+- name: install - resolve plugin dependence
+  apt:
+    pkg:
+    - libx11-6
+    - libx11-xcb1
+    - libxcomposite1
+    - libxcursor1
+    - libxdamage1
+    - libxext6
+    - libxfixes3
+    - libxi6
+    - libxrender1
+    - libxtst6
+    - libglib2.0-0
+    - libnss3
+    - libcups2
+    - libdbus-1-3
+    - libxss1
+    - libxrandr2
+    - libgtk-3-0
+    - libasound2
+    - libxcb-dri3-0
+    - libgbm1
+    - libxshmfence1
+
+- name: install - start and enable grafana-server service
+  systemd:
+    name: grafana-server.service
+    enabled: yes
+    state: started
+
+- name: grafana - make cert dir
+  file:
+    name: /etc/grafana/cert
+    state: directory
+    owner: root
+    group: grafana
+    mode: 0755
+
+- name: grafana - copy cert
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: grafana
+    mode: 0640
+  with_items:
+    - {src: '/share/easy_rsa/pki/ca.crt', dest: '/etc/grafana/cert/ca.crt'}
+    - {src: '/share/easy_rsa/pki/issued/grafana.local.crt', dest: '/etc/grafana/cert/grafana.local.crt'}
+    - {src: '/share/easy_rsa/pki/private/grafana.local.key', dest: '/etc/grafana/cert/grafana.local.key'}
+    - {src: '/share/easy_rsa/pki/issued/{{ db.grafana.user }}.crt', dest: '/etc/grafana/cert/{{ db.grafana.user }}.crt'}
+  notify:
+    - handlers - restart grafana-server service
+    - handlers - pause 
+
+- name: grafana - copy db key
+  copy:
+    src: /share/easy_rsa/pki/private/{{ db.grafana.user }}.key
+    dest: /etc/grafana/cert/{{ db.grafana.user }}.key
+    owner: grafana
+    group: grafana
+    mode: 0400
+  notify:
+    - handlers - restart grafana-server service
+    - handlers - pause
+
+- name: install - copy grafana config
+  template:
+    src: grafana.ini
+    dest: "/etc/grafana/grafana.ini"
+    owner: root
+    group: grafana
+    mode: 0640
+  notify:
+    - handlers - restart grafana-server service
+    - handlers - pause
+
+- name: install - install grafana plagins
+  command:
+    creates: "{{ item.creates }}"
+    cmd: "{{ item.cmd }}"
+  with_items:
+    - {creates: '/var/lib/grafana/plugins/alexanderzobnin-zabbix-app', cmd: 'grafana-cli plugins install alexanderzobnin-zabbix-app'}
+    - {creates: '/var/lib/grafana/plugins/grafana-image-renderer', cmd: 'grafana-cli plugins install grafana-image-renderer'}
+  notify:
+    - handlers - restart grafana-server service
+    - handlers - pause
+
+- name: install - add grafana ufw rule
+  ufw:
+    rule: allow
+    port: 3000
+    direction: in
+    interface: "{{ ansible_facts.tun0.device }}"
+    from_ip: '{{ vpn.gate }}/{{ vpn.prefix }}'
+  notify: handlers - reload ufw
+
+- name: install - flush handlers
+  meta: flush_handlers

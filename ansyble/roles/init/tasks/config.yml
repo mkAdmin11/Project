@@ -1,0 +1,31 @@
+---
+
+- name: config - copy vim config
+  template:
+    src: vimrc.local
+    dest: /etc/vim/vimrc.local
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+
+- name: config - add bash source
+  lineinfile:
+    line: source .bashrc.local
+    path: "{{ item }}"
+    backup: yes
+  loop:
+    - /home/{{ ansible_user }}/.bashrc
+    - /root/.bashrc
+
+- name: config - copy bash config
+  template:
+    src: /share/bash_conf/{{ ansible_hostname }}
+    dest: "{{ item.src }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: 0600
+    follow: yes
+  with_items:
+    - {src: '/home/{{ ansible_user }}/.bashrc.local', owner: '{{ ansible_user }}', group: '{{ ansible_user }}'}
+    - {src: '/root/.bashrc.local', owner: 'root', group: 'root'}

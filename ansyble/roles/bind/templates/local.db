@@ -1,0 +1,25 @@
+$TTL 30m
+
+@ IN SOA ns.local. admin.local. (
+        1 ; serial
+        5h ; renew period
+        5m ; retry
+        1w ; expire
+        30m ); denial cache;
+
+local.          IN      NS      ns.local.
+local.          IN      A       {{ server2.vpn_ip }}
+
+ns              IN      A       {{ server2.vpn_ip }}
+
+{{ server1.name }}      IN      A       {{ server1.vpn_ip }}
+{{ server2.name }}      IN      A       {{ server2.vpn_ip }}
+{{ server3.name }}      IN      A       {{ server3.vpn_ip }}
+
+zabbix          IN      CNAME   {{ server1.name }}.local.
+grafana         IN      CNAME   {{ server1.name }}.local.
+
+web             IN      CNAME   {{ server2.name }}.local.
+
+elk             IN      CNAME   {{ server3.name }}.local.
+db              IN      CNAME   {{ server3.name }}.local.

@@ -1,0 +1,53 @@
+---
+
+- name: users - check elastic user
+  replace:
+    path: /etc/elasticsearch/users
+    regexp: "^{{ user.elastic.name }}(.*)"
+    replace: "zero"
+  check_mode: yes
+  register: elastic_exist
+
+- name: users - add elastic user
+  command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ user.elastic.name }} -p {{ user.elastic.pass }} -r {{ user.elastic.role }}
+  when: elastic_exist is not changed
+
+- name: users - check kibana user
+  replace:
+    path: /etc/elasticsearch/users
+    regexp: "^{{ user.kibana.name }}(.*)"
+    replace: "zero"
+  check_mode: yes
+  register: kibana_exist
+
+- name: users - add kibana user
+  command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ user.kibana.name }} -p {{ user.kibana.pass }} -r {{ user.kibana.role }}
+  when: kibana_exist is not changed
+
+- name: users - check logstash user
+  replace:
+    path: /etc/elasticsearch/users
+    regexp: "^{{ user.logstash.name }}(.*)"
+    replace: "zero"
+  check_mode: yes
+  register: logstash_exist
+
+- name: users - add logstash role
+  command: "curl -k --user {{ user.elastic.name }}:{{ user.elastic.pass }} -X POST \"http://elk.local:9200/_xpack/security/role/{{ user.logstash.name }}?pretty\" -H 'Content-Type: application/json' -d '{\"cluster\": [\"manage_index_templates\", \"monitor\", \"manage_ilm\"], \"indices\": [ {\"names\": [ \"*\" ], \"privileges\": [\"write\",\"create\",\"create_index\",\"manage\",\"manage_ilm\"] } ] }'"
+  when: logstash_exist is not changed
+
+- name: users - add logstash user
+  command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ user.logstash.name }} -p {{ user.logstash.pass }} -r {{ user.logstash.role }}
+  when: logstash_exist is not changed
+
+- name: users - check monitoring user
+  replace:
+    path: /etc/elasticsearch/users
+    regexp: "^{{ user.monitoring.name }}(.*)"
+    replace: "zero"
+  check_mode: yes
+  register: monitoring_exist
+
+- name: users - add monitoring user
+  command: /usr/share/elasticsearch/bin/elasticsearch-users useradd {{ user.monitoring.name }} -p {{ user.monitoring.pass }} -r {{ user.monitoring.role }}
+  when: monitoring_exist is not changed

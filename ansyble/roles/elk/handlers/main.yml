@@ -1,0 +1,24 @@
+---
+
+- name: handlers - update cache
+  apt:
+    update_cache: yes
+
+- name: handlers - restart elasticsearch service
+  systemd:
+    name: elasticsearch.service
+    state: restarted
+
+- name: handlers - restart kibana service
+  systemd:
+    name: kibana.service
+    state: restarted
+
+- name: handlers - restart logstash service
+  systemd:
+    name: logstash.service
+    state: restarted
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded

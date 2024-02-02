@@ -1,0 +1,18 @@
+---
+
+- name: cms - collect facts
+  gather_facts:
+
+- name: cms - install cms
+  include_tasks: install.yml
+  when: ansible_hostname == server2.name|string
+
+- name: cms - config db
+  include_tasks: db.yml
+  vars:
+    ansible_become_user: postgres
+  when: ansible_hostname == server3.name|string
+
+- name: cms - config apache
+  include_tasks: apache.yml
+  when: ansible_hostname == server2.name|string

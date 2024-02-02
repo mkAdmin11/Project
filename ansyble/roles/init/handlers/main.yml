@@ -1,0 +1,5 @@
+---
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded

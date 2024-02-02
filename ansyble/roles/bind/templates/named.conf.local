@@ -1,0 +1,18 @@
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+zone "{{ domain.second }}{{ domain.top }}" {
+        type master;
+        file "/etc/bind/myzones/{{ domain.second }}/{{ domain.second }}.db";
+};
+
+zone "local" {
+        type master;
+        file "/etc/bind/myzones/local/local.db";
+        allow-query { {{ vpn.gate }}/{{ vpn.prefix }}; };
+};

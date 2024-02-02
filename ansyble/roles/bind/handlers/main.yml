@@ -1,0 +1,13 @@
+---
+
+- name: handlers - reload ufw
+  ufw:
+    state: reloaded
+
+- name: handlers - reload bind
+  command: rndc reload
+
+- name: handlers - restarted systemd-resolved
+  systemd:
+    name: systemd-resolved
+    state: restarted

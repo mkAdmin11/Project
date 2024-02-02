@@ -1,0 +1,139 @@
+---
+
+- name: pki - init pki
+  become_user: "{{ ansible_user }}"
+  command:
+    chdir: /share/easy_rsa/
+    creates: /share/easy_rsa/pki/
+    cmd: /share/easy_rsa/easyrsa init-pki
+
+- name: pki - build ca
+  become_user: "{{ ansible_user }}"
+  expect:
+    command: /share/easy_rsa/easyrsa build-ca
+    responses:
+      (?i)Enter New CA Key Passphrase: "{{ ca.pass }}"
+      (?i)Re-Enter New CA Key Passphrase: "{{ ca.pass }}"
+      (?i)Enter PEM pass phrase: "{{ ca.pass }}"
+      (?i)Verifying - Enter PEM pass phrase: "{{ ca.pass }}"
+      (?i)Common Name (.*): "{{ ca.name }}"
+    creates: /share/easy_rsa/pki/ca.crt
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - gen dh
+  become_user: "{{ ansible_user }}"
+  command:
+    chdir: /share/easy_rsa/
+    creates: /share/easy_rsa/pki/dh.pem
+    cmd: /share/easy_rsa/easyrsa gen-dh
+
+- name: pki - build server cert - vpn-server
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/vpn-server.req
+    command: /share/easy_rsa/easyrsa build-server-full vpn-server nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build server cert - elk.local 
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/elk.local.req
+    command: /share/easy_rsa/easyrsa build-server-full elk.local nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build server cert - zabbix.local
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/zabbix.local.req
+    command: /share/easy_rsa/easyrsa build-server-full zabbix.local nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build server cert - grafana.local
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/grafana.local.req
+    command: /share/easy_rsa/easyrsa build-server-full grafana.local nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build server cert - web.local
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/web.local.req
+    command: /share/easy_rsa/easyrsa build-server-full web.local nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build server cert - db.local
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/db.local.req
+    command: /share/easy_rsa/easyrsa build-server-full db.local nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build client cert - {{ server1.name }}
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/{{ server1.name }}.req
+    command: /share/easy_rsa/easyrsa build-client-full {{ server1.name }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build client cert - {{ server2.name }}
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/{{ server2.name }}.req
+    command: /share/easy_rsa/easyrsa build-client-full {{ server2.name }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build client cert - {{ server3.name }}
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/{{ server3.name }}.req
+    command: /share/easy_rsa/easyrsa build-client-full {{ server3.name }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build client cert - db user {{ db.demo.user }}
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/{{ db.demo.user }}.req
+    command: /share/easy_rsa/easyrsa build-client-full {{ db.demo.user }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/
+
+- name: pki - build client cert - db user {{ db.grafana.user }}
+  become_user: "{{ ansible_user }}"
+  expect:
+    creates: /share/easy_rsa/pki/reqs/{{ db.grafana.user }}.req
+    command: /share/easy_rsa/easyrsa build-client-full {{ db.grafana.user }} nopass
+    responses:
+      (?i)Enter pass phrase for (.*): "{{ ca.pass }}"
+  args:
+    chdir: /share/easy_rsa/

@@ -1,0 +1,48 @@
+---
+
+- name: elk - add repository list
+  template:
+    src: elastic-7.x.list
+    dest: /etc/apt/sources.list.d/elastic-7.x.list
+    mode: 0644
+  notify: handlers - update cache
+
+- name: elk - flush handlers
+  meta: flush_handlers
+
+- name: elk - install few pkg
+  apt:
+    pkg:
+    - openjdk-11-jre-headless
+    - uuid-runtime
+
+- name: elk - make systemd conf dir
+  file:
+    path: /etc/systemd/system/elasticsearch.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: elk - copy timout config
+  template:
+    src: startup-timeout.conf
+    dest: /etc/systemd/system/elasticsearch.service.d/startup-timeout.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: elk - install elasticsearch
+  include_tasks: elastic.yml
+
+- name: elk - add users
+  include_tasks: users.yml
+
+- name: elk - install kibana
+  include_tasks: kibana.yml
+
+- name: elk - install logstash
+  include_tasks: logstash.yml
+
+- name: elk - change number of replicas
+  command: "curl -k --user {{ user.elastic.name }}:{{ user.elastic.pass }} -X PUT \"elk.local:9200/_all/_settings\" -H 'Content-Type: application/json' -d '{ \"index\": { \"number_of_replicas\": 0 } }'"
