@@ -43,19 +43,9 @@
 
 ### Скрипты
 
-Скрипты для первичной настройки серверов.  
-
-Настройка _Сервера 2_ (_publick_):  
-
-```
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/master/scripts/publick_config.sh)"
-```
-
-Настройка _Сервера 1_ (_main_):  
-
-```
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkAdmin11/admin-11/master/scripts/main_config.sh)"
-```
+ 
+Используются виртуальные машины, созданные по шаблону _Yandex Cloud_, которые уже неплохо настроены.  
+Но для автоматизации, перед прокаткой ролей в _ancyble_, написаны [скипты](scripts/).
 
 ---
 
